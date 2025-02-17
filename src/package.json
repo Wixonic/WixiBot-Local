@@ -1,0 +1,21 @@
+{
+	"name": "wixibot-local",
+	"displayName": "WixiBot Local",
+	"description": "WixiLand Management Agency's local server",
+	"author": "Wixonic <contact@wixonic.fr> (https://wixonic.fr)",
+	"version": "1.0.0-dev",
+	"main": "main.js",
+	"scripts": {
+		"test": "node --trace-warnings ./main.js",
+		"start": "node --no-warnings ./main.js"
+	},
+	"engines": {
+		"node": "20"
+	},
+	"dependencies": {
+		"mic": "2.1.2"
+	},
+	"devDependencies": {
+		"@types/node": "20.17.19"
+	}
+}
