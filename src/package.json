@@ -13,7 +13,9 @@
 		"node": "20"
 	},
 	"dependencies": {
-		"mic": "2.1.2"
+		"mic": "2.1.2",
+		"@wixonic/logger": "1.0.0",
+		"ws": "8.18.0"
 	},
 	"devDependencies": {
 		"@types/node": "20.17.19"

@@ -1,42 +1,21 @@
 const { spawn } = require("child_process");
-const readline = require("readline");
 const WebSocket = require("ws");
 
 const url = "ws://server.wixonic.fr:444";
 
-const getAvailableDevices = () => {
-	return new Promise((resolve, reject) => {
-		const devices = [];
-		const listDevices = spawn("sox", ["-V6", "-n", "-t", "coreaudio", "null"]);
-
-		listDevices.stderr.on("data", (data) => {
-			for (const line of data.toString().split("\n")) {
-				const match = line.match(/sox INFO coreaudio: Found Audio Device "(.*?)"/);
-				if (match) devices.push(match[1]);
-			}
-		});
-
-		listDevices.on("close", () => {
-			resolve(devices);
-		});
-
-		listDevices.on("error", (err) => {
-			reject(err);
-		});
-	});
-};
-
-const startMicProcess = (device) => {
-	return spawn("sox", [
-		"-t", "coreaudio", device,
+const startMicProcess = () => {
+	const sox = spawn("sox", [
+		"-t", "coreaudio", "BlackHole 2ch",
 		"-b", "16",
 		"-c", "2",
 		"-r", "48000",
 		"-t", "raw",
 		"-e", "signed-integer",
+		"-q",
 		"-",
 		"vol", "0.5"
 	]);
+	return sox;
 };
 
 const connectWebSocket = (micProcess) => {
@@ -73,15 +52,9 @@ const connectWebSocket = (micProcess) => {
 	return ws;
 };
 
-const handleMicCrash = async (device) => {
+const handleMicCrash = async () => {
 	try {
-		const availableDevices = await getAvailableDevices();
-		if (!availableDevices.includes(device)) {
-			console.log(`Device ${device} is no longer available. Stopping...`);
-			return;
-		}
-
-		const micProcess = startMicProcess(device);
+		const micProcess = startMicProcess();
 		const ws = connectWebSocket(micProcess);
 
 		micProcess.stderr.on("data", (e) => console.error("sox error:", e.toString()));
@@ -96,6 +69,7 @@ const handleMicCrash = async (device) => {
 			process.on(signal, () => {
 				if (ws.readyState === WebSocket.OPEN) ws.close(0);
 				micProcess.kill();
+				process.exit();
 			});
 		}
 	} catch (e) {
@@ -103,17 +77,4 @@ const handleMicCrash = async (device) => {
 	}
 };
 
-getAvailableDevices()
-	.then((devices) => {
-		console.log(devices.join("\n"));
-		console.log("-----");
-		const rl = readline.createInterface({
-			input: process.stdin,
-			output: process.stdout
-		});
-
-		rl.question("Enter input ID: ", (device) => {
-			handleMicCrash(device);
-			rl.close();
-		});
-	});
+handleMicCrash();
