@@ -6,15 +6,16 @@
 	"version": "1.0.0-dev",
 	"main": "main.js",
 	"scripts": {
-		"test": "node --trace-warnings ./main.js",
+		"test": "config=test node --trace-warnings ./main.js",
 		"start": "node --no-warnings ./main.js"
 	},
 	"engines": {
 		"node": "20"
 	},
 	"dependencies": {
+		"@wixonic/logger": "1.0.1",
+		"express": "4.21.2",
 		"mic": "2.1.2",
-		"@wixonic/logger": "1.0.0",
 		"ws": "8.18.0"
 	},
 	"devDependencies": {
