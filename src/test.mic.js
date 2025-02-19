@@ -1,7 +1,10 @@
 const { spawn } = require("child_process");
+const fs = require("fs");
 const WebSocket = require("ws");
 
-const url = "ws://server.wixonic.fr:444";
+const secrets = require("./secrets.js");
+
+const url = "wss://localhost:999/";
 
 const startMicProcess = () => {
 	const sox = spawn("sox", [
@@ -19,32 +22,45 @@ const startMicProcess = () => {
 };
 
 const connectWebSocket = (micProcess) => {
-	let ws = new WebSocket(url);
+	/**
+	 * @type {import("ws").WebSocket?}
+	 */
+	let ws = null
 
 	const connect = () => {
-		console.log("Reconnecting WebSocket...");
-		ws = new WebSocket(url);
+		console.log("Connecting WebSocket...");
+		if (!fs.existsSync(secrets.server.cert)) throw new Error("SSL certificate is missing.");
+
+		ws = new WebSocket(url, {
+			cert: fs.readFileSync(secrets.server.cert),
+			rejectUnauthorized: false // config.rejectUnauthorized
+		});
 
 		ws.on("open", () => {
 			console.log("WebSocket connected");
-			micProcess.stdout.on("data", (chunk) => {
-				if (ws.readyState === WebSocket.OPEN) ws.send(chunk);
+
+			ws.once("message", (message) => {
+				if (message[0] == 0x00) {
+					console.log("Server answered");
+
+					micProcess.stdout.on("data", (chunk) => {
+						if (ws.readyState == WebSocket.OPEN) ws.send(chunk);
+					});
+				} else console.log("Server didn't answered");
 			});
+
+			ws.send(Buffer.from([0x01]));
 		});
 
-		ws.on("message", (message) => {
-			console.log("Received message from server:", message);
+		ws.on("error", (e) => {
+			console.log("WebSocket error:", e);
+			ws.close();
 		});
 
 		ws.on("close", () => {
 			console.log("WebSocket closed, attempting to reconnect...");
 			micProcess.kill();
 			setTimeout(connect, 1000);
-		});
-
-		ws.on("error", (err) => {
-			console.log("WebSocket error:", err);
-			ws.close();
 		});
 	};
 
