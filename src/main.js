@@ -16,8 +16,8 @@ const main = async (logger) => {
 
 		logger.debug("Using", process.env.config ?? "default", "config");
 
-		const client = new Client(logger, config.client);
-		const server = new Server(logger, config.server);
+		/* const client = new Client(logger, config.client);
+		const server = new Server(logger, config.server); */
 	} else logger.error("Can't find the configuration file");
 };
 
