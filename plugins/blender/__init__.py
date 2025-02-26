@@ -105,7 +105,7 @@ def update():
     }
 
     try:
-        response = requests.post("https://localhost:1000/blender", data=json.dumps(data))
+        response = requests.post("http://localhost:1000/blender", data=json.dumps(data))
         if response.status_code != 200:
             print(f"Failed to send data: {response.status_code}, {response.text}")
     except requests.RequestException as e:
