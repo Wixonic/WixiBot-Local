@@ -3,8 +3,6 @@ export interface ClientConfig {
 };
 
 export interface ServerConfig {
-	cert: string;
-	key: string;
 	port: number;
 };
 
@@ -18,14 +16,8 @@ export interface DiscordSecrets {
 	token: string;
 };
 
-export interface ServerSecrets {
-	cert: string;
-	key: string;
-};
-
 export interface Secrets {
 	discord: DiscordSecrets;
-	server: ServerSecrets;
 };
 
 export type RequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";

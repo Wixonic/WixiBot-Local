@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { log } = require("@wixonic/logger");
 
-const Client = require("./client.js");
+// const Client = require("./client.js");
 const Server = require("./server.js");
 
 /**
@@ -16,8 +16,11 @@ const main = async (logger) => {
 
 		logger.debug("Using", process.env.config ?? "default", "config");
 
-		/* const client = new Client(logger, config.client);
-		const server = new Server(logger, config.server); */
+		// const client = new Client(logger, config.client);
+		const server = new Server(logger, config.server);
+
+		// await client.init();
+		await server.init();
 	} else logger.error("Can't find the configuration file");
 };
 
