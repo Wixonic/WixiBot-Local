@@ -7,10 +7,42 @@ const config = {
 	client: {
 		hostname: "server.wixonic.fr"
 	},
+	discord: {
+		application: {
+			clientId: "1179518852846067833",
+			assets: {
+				"Apple M2": "1328832475300102277",
+				"Apple M4 Max": "1328832475723599995",
+				apple_music: "1313227217194582076",
+				blender: "1328822621550153791",
+				clock: "1317445148896133171",
+				war_thunder: "1315377212257599558",
+				youtube: "1313574569231257737"
+			}
+		},
+		token: secrets.discord.token
+	},
 	server: {
-		cert: secrets.server.cert,
-		key: secrets.server.key,
 		port: 1000
+	},
+	spotify: {
+		id: secrets.spotify.id,
+		secret: secrets.spotify.secret,
+	},
+	warThunder: {
+		paths: {
+			map: {
+				image: "/map.img",
+				info: "/map_info.json",
+				objects: "/map_obj.json"
+			},
+			vehicle: {
+				indicators: "/indicators",
+				state: "/state"
+			}
+		},
+		port: 8111,
+		waitingTime: 0.01
 	},
 	rejectUnauthorized: true
 };

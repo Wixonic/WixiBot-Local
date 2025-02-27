@@ -19,8 +19,11 @@
 		"node": "20"
 	},
 	"dependencies": {
+		"applescript": "1.0.0",
+		"discord.js-selfbot-v13": "3.6.0",
 		"express": "4.21.2",
 		"@wixonic/logger": "1.0.2",
+		"sharp": "0.33.5",
 		"ws": "8.18.0"
 	},
 	"devDependencies": {
