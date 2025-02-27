@@ -4,9 +4,10 @@ const request = require("./request.js");
 const { wait } = require("./utils.js");
 
 /**
+ * @param {import("@wixonic/logger").Logger} logger
  * @param {import("../types").WarThunderConfig} config
  */
-const get = async (config) => {
+const get = async (logger, config) => {
 	const errors = [];
 	let info = {};
 	let map = Buffer.from("");
@@ -14,7 +15,7 @@ const get = async (config) => {
 	let vehicle = "unknown vehicle";
 
 	try {
-		info = await request({
+		info = await request(logger, {
 			url: new URL(config.paths.map.info, `http://localhost:${config.port}`),
 			type: "json",
 			secure: false
@@ -22,7 +23,7 @@ const get = async (config) => {
 
 		await wait(config.waitingTime);
 
-		objs = await request({
+		objs = await request(logger, {
 			url: new URL(config.paths.map.objects, `http://localhost:${config.port}`),
 			type: "json",
 			secure: false
@@ -30,8 +31,8 @@ const get = async (config) => {
 
 		await wait(config.waitingTime);
 
-		const imageResponse = await request({
-			url: new URL(config.paths.map.image, `http://localhost:${port}`),
+		const imageResponse = await request(logger, {
+			url: new URL(config.paths.map.image, `http://localhost:${config.port}`),
 			type: "raw",
 			secure: false
 		});
@@ -49,6 +50,8 @@ const get = async (config) => {
 				height,
 				fit: "contain"
 			});
+
+			type = dummy_plane
 
 			const svgPoints = [];
 			for (const obj of objs) {
@@ -77,11 +80,13 @@ const get = async (config) => {
 
 	if (errors.length == 0) {
 		try {
-			const indicators = await request({
+			const indicators = await request(logger, {
 				url: new URL(config.paths.vehicle.indicators, `http://localhost:${config.port}`),
 				type: "json",
 				secure: false
 			});
+
+			if (indicators.error) throw indicators.error;
 
 			switch (indicators?.army) {
 				case "tank":
@@ -92,7 +97,7 @@ const get = async (config) => {
 					await wait(config.waitingTime);
 
 					try {
-						const state = await request({
+						const state = await request(logger, {
 							url: new URL(config.paths.vehicle.state, `http://localhost:${config.port}`),
 							type: "json",
 							secure: false

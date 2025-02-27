@@ -82,7 +82,7 @@ class ClientManager {
 
 		this.client.on("error", (error) => this.logger.error(`An error occured: ${error}`));
 
-		/* this.destroyed = false;
+		this.destroyed = false;
 		for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
 			process.on(signal, async (reason, code) => {
 				if (!this.destroyed) {
@@ -97,7 +97,7 @@ class ClientManager {
 					}
 				}
 			});
-		} */
+		}
 	};
 
 	/**

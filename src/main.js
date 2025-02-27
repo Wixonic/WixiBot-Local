@@ -75,13 +75,13 @@ const handlers = async (logger, client, discord, server, config) => {
 	let inWarThunderGameSince = null;
 
 	const processWarThunder = async () => {
-		const data = await wt(config.warThunder);
+		const data = await wt(logger, config.warThunder);
 
 		if (data.valid) {
 			if (!inWarThunderGameSince) inWarThunderGameSince = Date.now();
 			if (lastMapRefresh + 30 * 1000 < Date.now()) {
 				/* const getImage = async () => {
-					await request({
+					await request(logger, {
 						url: new URL("/warthunder/warthundermap.png", config.server.url),
 						method: "POST",
 						headers: {
@@ -103,6 +103,7 @@ const handlers = async (logger, client, discord, server, config) => {
 					applicationId: config.discord.application.clientId,
 					assets: {
 						// large_image: mapImage[0].external_asset_path,
+						large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.war_thunder}.png`,
 						large_text: data.vehicle,
 						small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.war_thunder}.png`,
 						small_text: "War Thunder"
