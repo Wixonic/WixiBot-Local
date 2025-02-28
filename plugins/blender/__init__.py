@@ -7,7 +7,7 @@ from bpy.app.handlers import persistent
 bl_info = {
     "name": "BlenderRPC",
     "author": "Wixonic",
-    "version": (1, 1, 2),
+    "version": (1, 1, 3),
     "blender": (2, 8, 0),
     "description": "Blender add-on for WixiBot",
     "category": "System"
@@ -52,7 +52,7 @@ def render_started(dummy):
     scene = bpy.context.scene
     total_frames = scene.frame_end - scene.frame_start + 1
     
-    small_image = "blender"
+    small_image = "icon"
     small_text = app_version
     large_image = GPUName
     large_text = f"Rendering {total_frames} frames"
@@ -68,7 +68,7 @@ def render_ended(dummy):
     
     small_image = GPUName
     small_text = GPUName
-    large_image = "blender"
+    large_image = "icon"
     large_text = app_version
     details = None
     state = None
@@ -84,7 +84,7 @@ def render_frame(dummy):
     frames_done = scene.frame_current - scene.frame_start
     progress_percentage = (frames_done / total_frames) * 100
     
-    small_image = "blender"
+    small_image = "icon"
     small_text = f"{progress_percentage:.1f}% completed"
     large_image = GPUName
     large_text = f"Rendering {current_frame}/{total_frames} frames"
