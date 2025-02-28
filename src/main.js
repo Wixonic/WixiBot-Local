@@ -179,6 +179,96 @@ const handlers = async (logger, client, discord, server, config) => {
 		}
 	};
 
+	let lastRobloxRefresh = 0;
+
+	const processRoblox = async () => {
+		if (lastRobloxRefresh + 15 * 1000 < Date.now()) {
+			const response = await request(logger, {
+				body: JSON.stringify({
+					userIds: [
+						config.roblox.id
+					]
+				}),
+				headers: {
+					"accept": "application/json",
+					"content-type": "application/json",
+					"cookie": ".ROBLOSECURITY=" + config.roblox.token
+				},
+				method: "POST",
+				type: "json",
+				url: "https://presence.roblox.com/v1/presence/users"
+			});
+
+			const presence = response?.userPresences?.at(0) ?? {};
+
+			switch (presence.userPresenceType) {
+				case 2: // InGame
+					const icon = await request(logger, {
+						url: `https://thumbnails.roblox.com/v1/games/icons?universeIds=${presence.universeId}&size=512x512&format=Png`,
+						type: "json"
+					});
+
+					discord.addActivity("roblox", {
+						level: 3,
+						applicationId: config.discord.application.clients.roblox.id,
+						assets: {
+							large_image: (await RichPresence.getExternal(discord.client, config.discord.application.clients.roblox.id, icon.data[0].imageUrl))[0].external_asset_path,
+							large_text: presence.lastLocation,
+							small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.roblox.id}/${config.discord.application.clients.roblox.assets.icon}.png`,
+							small_text: "Roblox"
+						},
+						timestamps: {
+							start: new Date(presence.lastOnline).getTime()
+						},
+						buttons: [
+							"Play",
+							"Open my profile"
+						],
+						metadata: {
+							button_urls: [
+								"https://www.roblox.com/games/" + presence.rootPlaceId,
+								"https://www.roblox.com/users/" + config.roblox.id
+							]
+						},
+						name: presence.lastLocation,
+						details: "Playing on Roblox",
+						type: 0 // PLAYING
+					});
+					break;
+
+				case 3: // InStudio
+					clientManager.addActivity("roblox", {
+						level: 3,
+						applicationId: config.discord.application.clients.roblox.id,
+						assets: {
+							small_image: config.discord.application.clients.roblox.assets.roblox_studio,
+							small_text: "Roblox Studio"
+						},
+						timestamps: {
+							start: new Date(presence.lastOnline).getTime()
+						},
+						buttons: [
+							"Open my profile"
+						],
+						metadata: {
+							button_urls: [
+								"https://www.roblox.com/users/" + config.roblox.id
+							]
+						},
+						name: "Roblox Studio",
+						type: 0 // PLAYING
+					});
+					break;
+
+				default:
+					discord.removeActivity("roblox");
+					break;
+			};
+
+			lastRobloxRefresh = Date.now();
+		}
+	};
+
 
 	/**
 	 * @type {import("./types.d.ts").Song?}
@@ -356,6 +446,7 @@ const handlers = async (logger, client, discord, server, config) => {
 	const update = async () => {
 		await processBlender();
 		await processGitHub();
+		await processRoblox();
 		await processTrack();
 		await processWarThunder();
 		await processYouTube();

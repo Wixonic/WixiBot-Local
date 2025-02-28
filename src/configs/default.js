@@ -27,7 +27,7 @@ const config = {
 				github: {
 					id: "1345002044162834486",
 					assets: {
-						icon: "1345002396258140260"
+						icon: "1345034466460045442"
 					}
 				},
 				minecraft: {
@@ -71,12 +71,19 @@ const config = {
 		},
 		token: secrets.discord.token
 	},
+	roblox: {
+		id: secrets.roblox.id,
+		token: secrets.roblox.token
+	},
 	server: {
 		port: 1000
 	},
 	spotify: {
 		id: secrets.spotify.id,
 		secret: secrets.spotify.secret,
+	},
+	steam: {
+
 	},
 	warThunder: {
 		paths: {
