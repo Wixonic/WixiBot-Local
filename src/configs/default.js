@@ -6,7 +6,7 @@ const secrets = require("../secrets.js");
 const config = {
 	client: {
 		hostname: "server.wixonic.fr",
-		wixkey: "UzLjlbEtrFe7N6IGhIrBhehB8G6JDoce"
+		wixkey: secrets.client.wixkey
 	},
 	discord: {
 		application: {
@@ -21,7 +21,7 @@ const config = {
 					id: "1344996879402008681",
 					assets: {
 						icon: "1345001855448780830",
-						"Apple M4 Max": ""
+						"Apple M4 Max": "1345009271431237744"
 					}
 				},
 				github: {
@@ -47,6 +47,12 @@ const config = {
 					id: "1345002860416598027",
 					assets: {
 						icon: "1345003018483142656"
+					}
+				},
+				vsc: {
+					id: "1345007945997619290",
+					assets: {
+						icon: "1345008241561829437"
 					}
 				},
 				war_thunder: {
