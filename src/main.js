@@ -51,9 +51,9 @@ const handlers = async (logger, client, discord, server, config) => {
 				level: 3,
 				applicationId: config.discord.application.clients.blender.id,
 				assets: {
-					small_image: blenderData.small_image ? `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.blender.id}/${config.discord.application.clients.blender.assets[blenderData.small_image]}.png` : null,
+					small_image: blenderData.small_image ? config.discord.application.clients.blender.assets[blenderData.small_image] : null,
 					small_text: blenderData.small_text,
-					large_image: blenderData.large_image ? `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.blender.id}/${config.discord.application.clients.blender.assets[blenderData.large_image]}.png` : null,
+					large_image: blenderData.large_image ? config.discord.application.clients.blender.assets[blenderData.large_image] : null,
 					large_text: blenderData.large_text
 				},
 				timestamps: {
@@ -140,7 +140,7 @@ const handlers = async (logger, client, discord, server, config) => {
 						level: 1,
 						applicationId: config.discord.application.clients.github.id,
 						assets: {
-							small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.github.id}/${config.discord.application.clients.github.assets.icon}.png`,
+							small_image: config.discord.application.clients.github.assets.icon,
 							small_text: "GitHub",
 							large_image: githubData.large_image,
 							large_text: owner
@@ -159,7 +159,7 @@ const handlers = async (logger, client, discord, server, config) => {
 						level: 1,
 						applicationId: config.discord.application.clients.github.id,
 						assets: {
-							small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.github.id}/${config.discord.application.clients.github.assets.icon}.png`,
+							small_image: config.discord.application.clients.github.assets.icon,
 							small_text: "GitHub",
 							large_image: githubData.large_image,
 							large_text: profile
@@ -214,7 +214,7 @@ const handlers = async (logger, client, discord, server, config) => {
 						assets: {
 							large_image: (await RichPresence.getExternal(discord.client, config.discord.application.clients.roblox.id, icon.data[0].imageUrl))[0].external_asset_path,
 							large_text: presence.lastLocation,
-							small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.roblox.id}/${config.discord.application.clients.roblox.assets.icon}.png`,
+							small_image: config.discord.application.clients.roblox.assets.icon,
 							small_text: "Roblox"
 						},
 						timestamps: {
@@ -237,12 +237,12 @@ const handlers = async (logger, client, discord, server, config) => {
 					break;
 
 				case 3: // InStudio
-					clientManager.addActivity("roblox", {
+					discord.addActivity("roblox", {
 						level: 3,
 						applicationId: config.discord.application.clients.roblox.id,
 						assets: {
-							small_image: config.discord.application.clients.roblox.assets.roblox_studio,
-							small_text: "Roblox Studio"
+							large_image: config.discord.application.clients.roblox.assets.studio_icon,
+							large_text: "Roblox Studio"
 						},
 						timestamps: {
 							start: new Date(presence.lastOnline).getTime()
@@ -256,6 +256,7 @@ const handlers = async (logger, client, discord, server, config) => {
 							]
 						},
 						name: "Roblox Studio",
+						details: "Creating in Roblox",
 						type: 0 // PLAYING
 					});
 					break;
@@ -302,7 +303,7 @@ const handlers = async (logger, client, discord, server, config) => {
 						assets: {
 							large_image: `spotify:${song.spotifyArtwork}`,
 							large_text: song.album,
-							small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.apple_music.id}/${config.discord.application.clients.apple_music.assets.icon}.png`,
+							small_image: config.discord.application.clients.apple_music.assets.icon,
 							small_text: "Apple Music"
 						},
 						timestamps: {
@@ -360,9 +361,8 @@ const handlers = async (logger, client, discord, server, config) => {
 					applicationId: config.discord.application.clients.war_thunder.id,
 					assets: {
 						large_image: mapImage[0].external_asset_path,
-						large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.war_thunder.id}/${config.discord.application.clients.war_thunder.assets.icon}.png`,
 						large_text: data.vehicle,
-						small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.war_thunder.id}/${config.discord.application.clients.war_thunder.assets.icon}.png`,
+						small_image: config.discord.application.clients.war_thunder.assets.icon,
 						small_text: "War Thunder"
 					},
 					timestamps: {
@@ -424,7 +424,7 @@ const handlers = async (logger, client, discord, server, config) => {
 				level: 2,
 				applicationId: config.discord.application.clients.youtube.id,
 				assets: {
-					small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.youtube.id}/${config.discord.application.clients.youtube.assets.icon}.png`,
+					small_image: config.discord.application.clients.youtube.assets.icon,
 					small_text: "YouTube",
 					large_image: youtubeData.thumbnail,
 					large_text: youtubeData.name
