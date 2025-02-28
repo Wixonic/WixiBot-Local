@@ -38,7 +38,7 @@ def start_timer(dummy):
 
     small_image = GPUName
     small_text = GPUName
-    large_image = "blender"
+    large_image = "icon"
     large_text = app_version
     start_time = int(round(time.time() * 1000))
     
