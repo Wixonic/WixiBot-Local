@@ -7,7 +7,7 @@ from bpy.app.handlers import persistent
 bl_info = {
     "name": "BlenderRPC",
     "author": "Wixonic",
-    "version": (1, 1, 1),
+    "version": (1, 1, 2),
     "blender": (2, 8, 0),
     "description": "Blender add-on for WixiBot",
     "category": "System"
@@ -105,7 +105,7 @@ def update():
     }
 
     try:
-        response = requests.post("http://localhost:1000/blender", data=json.dumps(data))
+        response = requests.post("http://localhost:1000/rpc/blender/", data=json.dumps(data))
         if response.status_code != 200:
             print(f"Failed to send data: {response.status_code}, {response.text}")
     except requests.RequestException as e:
