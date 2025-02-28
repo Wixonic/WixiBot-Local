@@ -73,9 +73,9 @@ const extensions = [
 const sendStatus = (method = "POST", path = "/", data = {}) => {
 	browser.runtime.sendMessage({
 		action: "sendStatus",
-		method: method,
+		method,
 		url: new URL(path, "http://localhost:1000").toString(),
-		data: data
+		data
 	}, (response) => {
 		if (response && response.error) {
 			console.error("Error:", response.error);
@@ -108,14 +108,17 @@ check();
 setInterval(check, 10000);
 window.addEventListener("beforeunload", () => {
 	if (onUnload.path) {
-		if (navigator.sendBeacon) {
-			const url = new URL(onUnload.path, "http://localhost:1000");
-			const blob = new Blob([JSON.stringify(onUnload.data)], {
-				type: "application/json"
-			});
-			navigator.sendBeacon(url, blob);
-		} else {
-			sendStatus("DELETE", onUnload.path, onUnload.data);
-		}
+		browser.runtime.sendMessage({
+			action: "sendStatus",
+			method: "DELETE",
+			url: new URL(onUnload.path, "http://localhost:1000").toString(),
+			data: onUnload.data
+		}, (response) => {
+			if (response && response.error) {
+				console.error("Error:", response.error);
+			} else {
+				console.log("Response:", response.data);
+			}
+		});
 	}
 });
