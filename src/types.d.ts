@@ -3,10 +3,14 @@ export interface ClientConfig {
 	wixkey: string;
 };
 
+export interface DiscordClient {
+	id: string;
+	assets: Record<string, string>;
+};
+
 export interface DiscordConfig {
 	application: {
-		clientId: string;
-		assets: Record<string, string>;
+		clients: Record<string, DiscordClient>;
 	};
 
 	token: string;

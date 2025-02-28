@@ -18,10 +18,35 @@ class ClientManager {
 	 * @param {import("../types.d.ts").Activity} activity
 	 */
 	addActivity(id, activity) {
-		if (this.activities[id] != activity) {
+		if (this.activityChanged(id, activity)) {
 			this.activities[id] = activity;
+			this.logger.info("Activity", id, "changed");
 			this.updateActivities();
 		}
+	};
+
+	/**
+	 * @param {string} id
+	 * @param {import("../types.d.ts").Activity} activity
+	 */
+	activityChanged(id, activity) {
+		const previousActivity = this.activities[id];
+		let changed = false;
+
+		changed ||= activity.level != previousActivity?.level;
+		changed ||= activity.applicationId != previousActivity?.applicationId;
+		changed ||= activity.assets?.small_image != previousActivity?.assets?.small_image;
+		changed ||= activity.assets?.small_text != previousActivity?.assets?.small_text;
+		changed ||= activity.assets?.large_image != previousActivity?.assets?.large_image;
+		changed ||= activity.assets?.large_text != previousActivity?.assets?.large_text;
+		changed ||= activity.timestamps?.start != previousActivity?.timestamps?.start;
+		changed ||= activity.timestamps?.end != previousActivity?.timestamps?.end;
+		changed ||= activity.name != previousActivity?.name;
+		changed ||= activity.details != previousActivity?.details;
+		changed ||= activity.state != previousActivity?.state;
+		changed ||= activity.type != previousActivity?.type;
+
+		return changed;
 	};
 
 	/**
@@ -37,7 +62,7 @@ class ClientManager {
 		* @type {import("./types.d.ts").Activity[]}
 		*/
 		const activities = Object.values(clone(this.activities));
-		activities.sort((activityA, activityB) => (activityB.level ?? 0) - (activityA.level ?? 0));
+		activities.sort((activityA, activityB) => (activityA.level ?? 0) - (activityB.level ?? 0));
 
 		this.client.user.setPresence({
 			activities,

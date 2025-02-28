@@ -21,6 +21,7 @@ const wt = require("./lib/warThunder.js");
  */
 const handlers = async (logger, client, discord, server, config) => {
 	let blenderData = null;
+
 	server.app.post("/rpc/blender/", (req, res) => {
 		let body = "";
 
@@ -41,19 +42,18 @@ const handlers = async (logger, client, discord, server, config) => {
 		});
 	});
 
-	let lastBlenderUpdate = 0;
 	const processBlender = async () => {
 		if (blenderData && blenderData.date + 30 * 1000 < Date.now()) blenderData = null;
 
 		if (!blenderData) discord.removeActivity("blender");
-		else if (lastBlenderUpdate + 20 * 1000 < Date.now()) {
+		else {
 			discord.addActivity("blender", {
 				level: 3,
-				applicationId: config.discord.application.clientId,
+				applicationId: config.discord.application.clients.blender.id,
 				assets: {
-					small_image: blenderData.small_image ? `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets[blenderData.small_image]}.png` : null,
+					small_image: blenderData.small_image ? `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.blender.id}/${config.discord.application.clients.blender.assets[blenderData.small_image]}.png` : null,
 					small_text: blenderData.small_text,
-					large_image: blenderData.large_image ? `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets[blenderData.large_image]}.png` : null,
+					large_image: blenderData.large_image ? `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.blender.id}/${config.discord.application.clients.blender.assets[blenderData.large_image]}.png` : null,
 					large_text: blenderData.large_text
 				},
 				timestamps: {
@@ -64,8 +64,7 @@ const handlers = async (logger, client, discord, server, config) => {
 				state: blenderData.state,
 				type: 0 // PLAYING
 			});
-
-			lastBlenderUpdate = Date.now();
+			logger.debug("[Blender RPC]", "RPC updated");
 		}
 	};
 
@@ -79,10 +78,40 @@ const handlers = async (logger, client, discord, server, config) => {
 			body += chunk.toString();
 		});
 
-		req.on("end", () => {
+		req.on("end", async () => {
 			try {
-				githubData = JSON.parse(body);
-				githubData.date = Date.now();
+				const githubResponse = JSON.parse(body);
+				let conditions = githubResponse.type != githubData?.type;
+				switch (githubResponse.type) {
+					case "repository":
+						conditions ||= githubResponse.repository != githubData?.repository || githubResponse.owner != githubData?.owner;
+						break;
+
+					case "profile":
+						conditions ||= githubResponse.profile != githubData?.profile;
+						break;
+				};
+
+				if (conditions) {
+					githubData = githubResponse;
+					githubData.startedAt = Date.now();
+					githubData.updatedAt = Date.now();
+
+					switch (githubResponse.type) {
+						case "repository":
+							githubData.large_image = (await RichPresence.getExternal(discord.client, config.discord.application.clients.github.id, `https://github.com/${githubData.owner}.png`))[0].external_asset_path;
+							break;
+
+						case "profile":
+							githubData.large_image = (await RichPresence.getExternal(discord.client, config.discord.application.clients.github.id, `https://github.com/${githubData.profile}.png`))[0].external_asset_path;
+							break;
+					}
+
+					logger.info("[GitHub RCP]", "Data updated");
+				} else {
+					if (githubData) githubData.updatedAt = Date.now();
+					logger.debug("[GitHub RPC]", "Timings updated");
+				}
 
 				res.writeHead(200).end("Ok");
 			} catch (e) {
@@ -92,12 +121,14 @@ const handlers = async (logger, client, discord, server, config) => {
 		});
 	});
 
-	let lastGitHubUpdate = 0;
+	server.app.delete("/rpc/github/", (req, res) => githubData = null);
+
 	const processGitHub = async () => {
-		if (githubData && githubData.date + 30 * 1000 < Date.now()) githubData = null;
+		if (githubData && githubData.updatedAt + 30 * 1000 < Date.now()) githubData = null;
 
 		if (!githubData) discord.removeActivity("github");
-		else if (lastGitHubUpdate + 20 * 1000 < Date.now()) {
+		else {
+			let data = null;
 			const type = githubData.type;
 
 			switch (type) {
@@ -105,39 +136,46 @@ const handlers = async (logger, client, discord, server, config) => {
 					const owner = githubData.owner ?? "owner";
 					const repo = githubData.repository ?? "repository";
 
-					discord.addActivity(`github-${type}`, {
+					data = {
 						level: 1,
-						applicationId: config.discord.application.clientId,
+						applicationId: config.discord.application.clients.github.id,
 						assets: {
-							large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets["github"]}.png`,
-							large_text: "GitHub"
+							small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.github.id}/${config.discord.application.clients.github.assets.icon}.png`,
+							small_text: "GitHub",
+							large_image: githubData.large_image,
+							large_text: owner
 						},
 						name: `${owner}/${repo}`,
 						details: `Watching ${githubData.details ?? "the repository"}`,
 						state: "On GitHub",
 						type: 3 // WATCHING
-					});
+					};
 					break;
 
 				case "profile":
 					const profile = githubData.profile ?? "someone";
 
-					discord.addActivity(`github-${type}`, {
+					data = {
 						level: 1,
-						applicationId: config.discord.application.clientId,
+						applicationId: config.discord.application.clients.github.id,
 						assets: {
-							large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets["github"]}.png`,
-							large_text: "GitHub"
+							small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.github.id}/${config.discord.application.clients.github.assets.icon}.png`,
+							small_text: "GitHub",
+							large_image: githubData.large_image,
+							large_text: profile
 						},
 						name: `${profile}'${profile.endsWith("s") ? "" : "s"} profile`,
 						details: `Watching ${githubData.details ?? "the profile"}`,
 						state: "On GitHub",
 						type: 3 // WATCHING
-					});
+					};
 					break;
 			};
 
-			lastGitHubUpdate = Date.now();
+			if (data) {
+				discord.addActivity("github", data);
+				logger.debug("[GitHub RPC]", "RPC updated");
+			} else discord.removeActivity("github");
 		}
 	};
 
@@ -174,7 +212,7 @@ const handlers = async (logger, client, discord, server, config) => {
 						assets: {
 							large_image: `spotify:${song.spotifyArtwork}`,
 							large_text: song.album,
-							small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.apple_music}.png`,
+							small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.apple_music.id}/${config.discord.application.clients.apple_music.assets.icon}.png`,
 							small_text: "Apple Music"
 						},
 						timestamps: {
@@ -200,7 +238,6 @@ const handlers = async (logger, client, discord, server, config) => {
 		}
 	};
 
-
 	let lastMapRefresh = 0;
 	let inWarThunderGameSince = null;
 
@@ -223,19 +260,19 @@ const handlers = async (logger, client, discord, server, config) => {
 						body: data.map.toString("base64url")
 					});
 
-					return await RichPresence.getExternal(discord.client, config.discord.application.clientId, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, "https://" + config.client.hostname));
+					return await RichPresence.getExternal(discord.client, config.discord.application.clients.war_thunder.id, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, "https://" + config.client.hostname));
 				};
 
 				const mapImage = await getImage();
 
 				discord.addActivity("wt", {
 					level: 4,
-					applicationId: config.discord.application.clientId,
+					applicationId: config.discord.application.clients.war_thunder.id,
 					assets: {
 						large_image: mapImage[0].external_asset_path,
-						large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.war_thunder}.png`,
+						large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.war_thunder.id}/${config.discord.application.clients.war_thunder.assets.icon}.png`,
 						large_text: data.vehicle,
-						small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.war_thunder}.png`,
+						small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.war_thunder.id}/${config.discord.application.clients.war_thunder.assets.icon}.png`,
 						small_text: "War Thunder"
 					},
 					timestamps: {
@@ -263,31 +300,47 @@ const handlers = async (logger, client, discord, server, config) => {
 			body += chunk.toString();
 		});
 
-		req.on("end", () => {
+		req.on("end", async () => {
 			try {
-				youtubeData = JSON.parse(body);
-				youtubeData.date = Date.now();
+				const youtubeResponse = JSON.parse(body);
+				if (youtubeResponse.name != youtubeData?.name || youtubeResponse.author != youtubeData?.author) {
+					youtubeData = youtubeResponse;
+					youtubeData.thumbnail = (await RichPresence.getExternal(discord.client, config.discord.application.clients.youtube.id, youtubeData.thumbnail))[0].external_asset_path;
+					youtubeData.startedAt = Date.now();
+					youtubeData.updatedAt = Date.now();
+					logger.info("[YouTube RCP]", "Data updated");
+				} else {
+					if (youtubeData) youtubeData.updatedAt = Date.now();
+					logger.debug("[YouTube RPC]", "Timings updated");
+				}
 
 				res.writeHead(200).end("Ok");
 			} catch (e) {
 				youtubeData = null;
 				res.writeHead(400).end("Bad content");
+				logger.warn("[YouTube RPC]", e);
 			}
 		});
 	});
 
-	let lastYouTubeUpdate = 0;
+	server.app.delete("/rpc/youtube/", (req, res) => youtubeData = null);
+
 	const processYouTube = async () => {
-		if (youtubeData && youtubeData.date + 30 * 1000 < Date.now()) youtubeData = null;
+		if (youtubeData && youtubeData.updatedAt + 30 * 1000 < Date.now()) youtubeData = null;
 
 		if (!youtubeData) discord.removeActivity("youtube");
-		else if (lastYouTubeUpdate + 20 * 1000 < Date.now()) {
+		else {
 			discord.addActivity("youtube", {
 				level: 2,
-				applicationId: config.discord.application.clientId,
+				applicationId: config.discord.application.clients.youtube.id,
 				assets: {
-					large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets["youtube"]}.png`,
-					large_text: "YouTube"
+					small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clients.youtube.id}/${config.discord.application.clients.youtube.assets.icon}.png`,
+					small_text: "YouTube",
+					large_image: youtubeData.thumbnail,
+					large_text: youtubeData.name
+				},
+				timestamps: {
+					start: youtubeData.startedAt
 				},
 				name: youtubeData.name,
 				details: youtubeData.name,
@@ -295,7 +348,7 @@ const handlers = async (logger, client, discord, server, config) => {
 				type: 3 // WATCHING
 			});
 
-			lastYouTubeUpdate = Date.now();
+			logger.debug("[YouTube RPC]", "RPC updated");
 		}
 	};
 
