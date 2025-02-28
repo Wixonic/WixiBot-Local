@@ -209,7 +209,7 @@ const handlers = async (logger, client, discord, server, config) => {
 					});
 
 					discord.addActivity("roblox", {
-						level: 3,
+						level: 4,
 						applicationId: config.discord.application.clients.roblox.id,
 						assets: {
 							large_image: (await RichPresence.getExternal(discord.client, config.discord.application.clients.roblox.id, icon.data[0].imageUrl))[0].external_asset_path,
@@ -271,6 +271,59 @@ const handlers = async (logger, client, discord, server, config) => {
 	};
 
 
+	let lastSteamRefresh = 0;
+
+	const processSteam = async () => {
+		if (lastSteamRefresh + 15 * 1000 < Date.now()) {
+			const response = (await request(logger, {
+				method: "GET",
+				type: "json",
+				url: `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002?key=${config.steam.token}&steamids=${config.steam.id}`
+			})).response ?? {};
+
+			const player = response?.players?.at(0) ?? {};
+
+			if (player.gameid) {
+				const response = (await request(logger, {
+					method: "GET",
+					type: "json",
+					url: `https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${config.steam.token}&steamid=${config.steam.id}&include_appinfo=true&include_played_free_games=true&appids_filter=${player.gameid}&include_free_sub=true`
+				})).response ?? {};
+
+				const game = response?.games?.find((game) => game.appid == player.gameid);
+
+				if (game) {
+					discord.addActivity("steam", {
+						level: 4,
+						applicationId: config.discord.application.clients.steam.id,
+						assets: {
+							large_image: (await RichPresence.getExternal(discord.client, config.discord.application.clients.steam.id, `https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/${player.gameid}/${game.img_icon_url}.jpg`))[0].external_asset_path,
+							large_text: game.name,
+							small_image: config.discord.application.clients.steam.assets.icon,
+							small_text: "Steam"
+						},
+						buttons: [
+							"Play",
+							"Open my profile"
+						],
+						metadata: {
+							button_urls: [
+								"https://store.steampowered.com/app/" + player.gameid,
+								player.profileurl
+							]
+						},
+						name: game.name,
+						details: "Playing on Steam",
+						type: 0 // PLAYING
+					});
+				} else discord.removeActivity("steam");
+			} else discord.removeActivity("steam");
+
+			lastSteamRefresh = Date.now();
+		}
+	};
+
+
 	/**
 	 * @type {import("./types.d.ts").Song?}
 	 */
@@ -300,6 +353,7 @@ const handlers = async (logger, client, discord, server, config) => {
 				if (song.state == "PLAYING") {
 					discord.addActivity("music", {
 						level: 0,
+						applicationId: config.discord.application.clients.apple_music.id,
 						assets: {
 							large_image: `spotify:${song.spotifyArtwork}`,
 							large_text: song.album,
@@ -328,6 +382,7 @@ const handlers = async (logger, client, discord, server, config) => {
 			if (currentSong == null || (currentSong?.state != song.state || currentSong?.track != song.track || currentSong?.artist != song.artist || currentSong?.album != song.album || currentSong?.startedAt != song.startedAt)) await update();
 		}
 	};
+
 
 	let lastMapRefresh = 0;
 	let inWarThunderGameSince = null;
@@ -421,7 +476,7 @@ const handlers = async (logger, client, discord, server, config) => {
 		if (!youtubeData) discord.removeActivity("youtube");
 		else {
 			discord.addActivity("youtube", {
-				level: 2,
+				level: 3,
 				applicationId: config.discord.application.clients.youtube.id,
 				assets: {
 					small_image: config.discord.application.clients.youtube.assets.icon,
@@ -447,6 +502,7 @@ const handlers = async (logger, client, discord, server, config) => {
 		await processBlender();
 		await processGitHub();
 		await processRoblox();
+		await processSteam();
 		await processTrack();
 		await processWarThunder();
 		await processYouTube();

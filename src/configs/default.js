@@ -83,7 +83,8 @@ const config = {
 		secret: secrets.spotify.secret,
 	},
 	steam: {
-
+		id: secrets.steam.id,
+		token: secrets.steam.token
 	},
 	warThunder: {
 		paths: {
