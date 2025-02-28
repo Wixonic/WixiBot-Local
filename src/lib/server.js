@@ -43,8 +43,8 @@ class Server {
 				next();
 			});
 
-			this.app.use(express.static(websitePath));
 			this.app.use(express.text({ limit: "1gb", type: "*/*" }));
+			this.app.use(express.static(websitePath));
 
 			this.app.use((req, res) => {
 				this.logger.warn(`404: ${req.method} ${req.url}`);

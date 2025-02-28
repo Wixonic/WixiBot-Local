@@ -20,11 +20,8 @@ const wt = require("./lib/warThunder.js");
  * @param {import("./types.d.ts").Config} config
  */
 const handlers = async (logger, client, discord, server, config) => {
-	let blenderData = {
-		date: 0
-	};
-
-	server.app.post("/rpc/blender", (req, res) => {
+	let blenderData = null;
+	server.app.post("/rpc/blender/", (req, res) => {
 		let body = "";
 
 		req.on("data", (chunk) => {
@@ -51,7 +48,7 @@ const handlers = async (logger, client, discord, server, config) => {
 		if (!blenderData) discord.removeActivity("blender");
 		else if (lastBlenderUpdate + 20 * 1000 < Date.now()) {
 			discord.addActivity("blender", {
-				level: 2,
+				level: 3,
 				applicationId: config.discord.application.clientId,
 				assets: {
 					small_image: blenderData.small_image ? `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets[blenderData.small_image]}.png` : null,
@@ -72,58 +69,78 @@ const handlers = async (logger, client, discord, server, config) => {
 		}
 	};
 
-	let lastMapRefresh = 0;
-	let inWarThunderGameSince = null;
 
-	const processWarThunder = async () => {
-		const data = await wt(logger, config.warThunder);
+	let githubData = null;
 
-		if (data.valid) {
-			if (!inWarThunderGameSince) inWarThunderGameSince = Date.now();
-			if (lastMapRefresh + 30 * 1000 < Date.now()) {
-				const getImage = async () => {
-					await request(logger, {
-						url: new URL("/rpc/warthunder/map.png", "https://" + config.client.hostname),
-						method: "POST",
-						headers: {
-							authorization: `WixKey ${config.client.wixkey}`,
-							"content-type": "image/png"
-						},
-						secure: true,
-						type: "raw",
-						body: data.map.toString("base64url")
-					});
+	server.app.post("/rpc/github/", (req, res) => {
+		let body = "";
 
-					return await RichPresence.getExternal(discord.client, config.discord.application.clientId, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, "https://" + config.client.hostname));
-				};
+		req.on("data", (chunk) => {
+			body += chunk.toString();
+		});
 
-				const mapImage = await getImage();
+		req.on("end", () => {
+			try {
+				githubData = JSON.parse(body);
+				githubData.date = Date.now();
 
-				discord.addActivity("wt", {
-					level: 2,
-					applicationId: config.discord.application.clientId,
-					assets: {
-						large_image: mapImage[0].external_asset_path,
-						large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.war_thunder}.png`,
-						large_text: data.vehicle,
-						small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.war_thunder}.png`,
-						small_text: "War Thunder"
-					},
-					timestamps: {
-						start: inWarThunderGameSince
-					},
-					name: "War Thunder",
-					details: data.vehicle,
-					type: 0 // PLAYING
-				});
-
-				lastMapRefresh = Date.now();
+				res.writeHead(200).end("Ok");
+			} catch (e) {
+				githubData = null;
+				res.writeHead(400).end("Bad content");
 			}
-		} else {
-			discord.removeActivity("wt");
-			inWarThunderGameSince = null;
+		});
+	});
+
+	let lastGitHubUpdate = 0;
+	const processGitHub = async () => {
+		if (githubData && githubData.date + 30 * 1000 < Date.now()) githubData = null;
+
+		if (!githubData) discord.removeActivity("github");
+		else if (lastGitHubUpdate + 20 * 1000 < Date.now()) {
+			const type = githubData.type;
+
+			switch (type) {
+				case "repository":
+					const owner = githubData.owner ?? "owner";
+					const repo = githubData.repository ?? "repository";
+
+					discord.addActivity(`github-${type}`, {
+						level: 1,
+						applicationId: config.discord.application.clientId,
+						assets: {
+							large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets["github"]}.png`,
+							large_text: "GitHub"
+						},
+						name: `${owner}/${repo}`,
+						details: `Watching ${githubData.details ?? "the repository"}`,
+						state: "On GitHub",
+						type: 3 // WATCHING
+					});
+					break;
+
+				case "profile":
+					const profile = githubData.profile ?? "someone";
+
+					discord.addActivity(`github-${type}`, {
+						level: 1,
+						applicationId: config.discord.application.clientId,
+						assets: {
+							large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets["github"]}.png`,
+							large_text: "GitHub"
+						},
+						name: `${profile}'${profile.endsWith("s") ? "" : "s"} profile`,
+						details: `Watching ${githubData.details ?? "the profile"}`,
+						state: "On GitHub",
+						type: 3 // WATCHING
+					});
+					break;
+			};
+
+			lastGitHubUpdate = Date.now();
 		}
 	};
+
 
 	/**
 	 * @type {import("./types.d.ts").Song?}
@@ -183,45 +200,117 @@ const handlers = async (logger, client, discord, server, config) => {
 		}
 	};
 
-	server.app.post("/rpc/youtube", (req, res) => {
-		const data = JSON.parse(req.body);
 
-		clientManager.addActivity("youtube", {
-			name: data?.name ?? "a video on YouTube",
-			details: data?.name ?? "Details not available",
-			state: data?.author ? `By ${data.author}` : "On YouTube",
+	let lastMapRefresh = 0;
+	let inWarThunderGameSince = null;
 
-			assets: {
-				small_image: config.assets.logo_youtube,
-				small_text: data?.name
-			},
+	const processWarThunder = async () => {
+		const data = await wt(logger, config.warThunder);
 
-			buttons: [
-				"Watch the video",
-				"Open my channel"
-			],
-			metadata: {
-				button_urls: [
-					data?.url,
-					"https://go.wixonic.fr/youtube"
-				]
-			},
+		if (data.valid) {
+			if (!inWarThunderGameSince) inWarThunderGameSince = Date.now();
+			if (lastMapRefresh + 30 * 1000 < Date.now()) {
+				const getImage = async () => {
+					await request(logger, {
+						url: new URL("/rpc/warthunder/map.png", "https://" + config.client.hostname),
+						method: "POST",
+						headers: {
+							authorization: `WixKey ${config.client.wixkey}`,
+							"content-type": "image/png"
+						},
+						secure: true,
+						type: "raw",
+						body: data.map.toString("base64url")
+					});
 
-			type: 3 // WATCHING
+					return await RichPresence.getExternal(discord.client, config.discord.application.clientId, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, "https://" + config.client.hostname));
+				};
+
+				const mapImage = await getImage();
+
+				discord.addActivity("wt", {
+					level: 4,
+					applicationId: config.discord.application.clientId,
+					assets: {
+						large_image: mapImage[0].external_asset_path,
+						large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.war_thunder}.png`,
+						large_text: data.vehicle,
+						small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.war_thunder}.png`,
+						small_text: "War Thunder"
+					},
+					timestamps: {
+						start: inWarThunderGameSince
+					},
+					name: "War Thunder",
+					details: data.vehicle,
+					type: 0 // PLAYING
+				});
+
+				lastMapRefresh = Date.now();
+			}
+		} else {
+			discord.removeActivity("wt");
+			inWarThunderGameSince = null;
+		}
+	};
+
+
+	let youtubeData = null;
+	server.app.post("/rpc/youtube/", (req, res) => {
+		let body = "";
+
+		req.on("data", (chunk) => {
+			body += chunk.toString();
 		});
 
-		res.status(204).end();
+		req.on("end", () => {
+			try {
+				youtubeData = JSON.parse(body);
+				youtubeData.date = Date.now();
+
+				res.writeHead(200).end("Ok");
+			} catch (e) {
+				youtubeData = null;
+				res.writeHead(400).end("Bad content");
+			}
+		});
 	});
+
+	let lastYouTubeUpdate = 0;
+	const processYouTube = async () => {
+		if (youtubeData && youtubeData.date + 30 * 1000 < Date.now()) youtubeData = null;
+
+		if (!youtubeData) discord.removeActivity("youtube");
+		else if (lastYouTubeUpdate + 20 * 1000 < Date.now()) {
+			discord.addActivity("youtube", {
+				level: 2,
+				applicationId: config.discord.application.clientId,
+				assets: {
+					large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets["youtube"]}.png`,
+					large_text: "YouTube"
+				},
+				name: youtubeData.name,
+				details: youtubeData.name,
+				state: `By ${youtubeData.author}`,
+				type: 3 // WATCHING
+			});
+
+			lastYouTubeUpdate = Date.now();
+		}
+	};
+
 
 	const update = async () => {
 		await processBlender();
+		await processGitHub();
 		await processTrack();
 		await processWarThunder();
+		await processYouTube();
 
 		setTimeout(update, 2500);
 	};
 
-	update();
+	return update;
 };
 
 /**
@@ -242,11 +331,13 @@ const main = async (logger) => {
 		const discord = new DiscordClient(logger);
 		const server = new Server(logger, config.server);
 
+		const update = await handlers(logger, /*client*/ null, discord, server, config);
+
 		// await client.init();
 		await discord.login(config.discord.token);
 		await server.init();
 
-		await handlers(logger, /*client*/ null, discord, server, config);
+		update();
 	} else logger.error("Can't find the configuration file");
 };
 

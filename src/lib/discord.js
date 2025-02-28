@@ -15,11 +15,9 @@ class ClientManager {
 
 	/**
 	 * @param {string} id
-	 * @param {import("./types.d.ts").Activity} activity
+	 * @param {import("../types.d.ts").Activity} activity
 	 */
 	addActivity(id, activity) {
-		clearTimeout(this.activities[id]?.keepAliveId);
-
 		if (this.activities[id] != activity) {
 			this.activities[id] = activity;
 			this.updateActivities();
@@ -28,14 +26,10 @@ class ClientManager {
 
 	/**
 	 * @param {string} id
-	 * @param {boolean?} fromKeepAlive
 	 */
-	removeActivity(id, fromKeepAlive = false) {
-		clearTimeout(this.activities[id]?.keepAliveId);
-
+	removeActivity(id) {
 		delete this.activities[id];
 		this.updateActivities();
-		if (fromKeepAlive) this.log(`${id} deleted by Keep-Alive.`);
 	};
 
 	async updateActivities() {
