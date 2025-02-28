@@ -1,5 +1,6 @@
 export interface ClientConfig {
 	host: string;
+	wixkey: string;
 };
 
 export interface DiscordConfig {

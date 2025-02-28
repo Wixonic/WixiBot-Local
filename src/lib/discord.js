@@ -1,6 +1,6 @@
 const { Client } = require("discord.js-selfbot-v13");
 
-const { clone } = require("./lib/utils.js");
+const { clone } = require("./utils.js");
 
 class ClientManager {
 	/**

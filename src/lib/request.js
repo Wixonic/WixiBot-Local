@@ -26,7 +26,7 @@ const request = (logger, options = {}) => {
 				auth: options.auth,
 				headers: options.headers,
 				method: options.method,
-				rejectUnauthorized: false,
+				rejectUnauthorized: options.rejectUnauthorized || false,
 				timeout: 10000
 			});
 

@@ -1,10 +1,11 @@
+const { RichPresence } = require("discord.js-selfbot-v13");
 const fs = require("fs");
 const path = require("path");
 const { log } = require("@wixonic/logger");
 
-// const Client = require("./client.js");
-const Server = require("./server.js");
-const DiscordClient = require("./discord.js");
+// const Client = require("./lib/client.js");
+const Server = require("./lib/server.js");
+const DiscordClient = require("./lib/discord.js");
 
 const { getCurrentTrackInfo } = require("./lib/music.js");
 const request = require("./lib/request.js");
@@ -23,7 +24,7 @@ const handlers = async (logger, client, discord, server, config) => {
 		date: 0
 	};
 
-	server.app.post("/blender", (req, res) => {
+	server.app.post("/rpc/blender", (req, res) => {
 		let body = "";
 
 		req.on("data", (chunk) => {
@@ -80,29 +81,29 @@ const handlers = async (logger, client, discord, server, config) => {
 		if (data.valid) {
 			if (!inWarThunderGameSince) inWarThunderGameSince = Date.now();
 			if (lastMapRefresh + 30 * 1000 < Date.now()) {
-				/* const getImage = async () => {
+				const getImage = async () => {
 					await request(logger, {
-						url: new URL("/warthunder/warthundermap.png", config.server.url),
+						url: new URL("/rpc/warthunder/map.png", "https://" + config.client.hostname),
 						method: "POST",
 						headers: {
-							authorization: `WixKey ${config.wixkey}`,
+							authorization: `WixKey ${config.client.wixkey}`,
 							"content-type": "image/png"
 						},
-						secure: false,
+						secure: true,
 						type: "raw",
 						body: data.map.toString("base64url")
 					});
 
-					return await RichPresence.getExternal(discord.client, config.discord.application.clientId, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, config.server.url));
+					return await RichPresence.getExternal(discord.client, config.discord.application.clientId, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, "https://" + config.client.hostname));
 				};
 
-				const mapImage = await getImage(); */
+				const mapImage = await getImage();
 
 				discord.addActivity("wt", {
 					level: 2,
 					applicationId: config.discord.application.clientId,
 					assets: {
-						// large_image: mapImage[0].external_asset_path,
+						large_image: mapImage[0].external_asset_path,
 						large_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.war_thunder}.png`,
 						large_text: data.vehicle,
 						small_image: `https://cdn.discordapp.com/app-assets/${config.discord.application.clientId}/${config.discord.application.assets.war_thunder}.png`,
@@ -181,6 +182,36 @@ const handlers = async (logger, client, discord, server, config) => {
 			if (currentSong == null || (currentSong?.state != song.state || currentSong?.track != song.track || currentSong?.artist != song.artist || currentSong?.album != song.album || currentSong?.startedAt != song.startedAt)) await update();
 		}
 	};
+
+	server.app.post("/rpc/youtube", (req, res) => {
+		const data = JSON.parse(req.body);
+
+		clientManager.addActivity("youtube", {
+			name: data?.name ?? "a video on YouTube",
+			details: data?.name ?? "Details not available",
+			state: data?.author ? `By ${data.author}` : "On YouTube",
+
+			assets: {
+				small_image: config.assets.logo_youtube,
+				small_text: data?.name
+			},
+
+			buttons: [
+				"Watch the video",
+				"Open my channel"
+			],
+			metadata: {
+				button_urls: [
+					data?.url,
+					"https://go.wixonic.fr/youtube"
+				]
+			},
+
+			type: 3 // WATCHING
+		});
+
+		res.status(204).end();
+	});
 
 	const update = async () => {
 		await processBlender();

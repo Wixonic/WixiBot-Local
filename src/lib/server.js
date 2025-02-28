@@ -6,9 +6,9 @@ const ws = require("ws");
 class Server {
 	/**
 	 * @param {import("@wixonic/logger").Logger} logger
-	 * @param {import("./types.d.ts").ServerConfig} config
+	 * @param {import("../types").ServerConfig} settings
 	 */
-	constructor(logger, config) {
+	constructor(logger, settings) {
 		/**
 		 * @type {import("@wixonic/logger").Logger}
 		 */
@@ -27,22 +27,24 @@ class Server {
 			noServer: true
 		});
 
-		this.port = config.port;
+		this.port = settings.port;
 	};
 
 	/**
 	 * @returns {Promise<void>}
 	 */
 	init() {
-		const websitePath = path.join(__dirname, "website");
+		const websitePath = path.join(__dirname, "..", "website");
 
 		return new Promise((resolve) => {
 			this.app.use((req, res, next) => {
 				this.logger.debug(`Request: ${req.method} ${req.url}`);
+				res.setHeader("Access-Control-Allow-Origin", "*");
 				next();
 			});
 
 			this.app.use(express.static(websitePath));
+			this.app.use(express.text({ limit: "1gb", type: "*/*" }));
 
 			this.app.use((req, res) => {
 				this.logger.warn(`404: ${req.method} ${req.url}`);

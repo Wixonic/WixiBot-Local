@@ -5,7 +5,8 @@ const secrets = require("../secrets.js");
  */
 const config = {
 	client: {
-		hostname: "localhost:999"
+		hostname: "localhost:999",
+		wixkey: "UzLjlbEtrFe7N6IGhIrBhehB8G6JDoce"
 	},
 	discord: {
 		application: {
@@ -42,7 +43,7 @@ const config = {
 			}
 		},
 		port: 8111,
-		waitingTime: 0.01
+		waitingTime: 0.05
 	},
 	rejectUnauthorized: false
 };

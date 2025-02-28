@@ -51,8 +51,6 @@ const get = async (logger, config) => {
 				fit: "contain"
 			});
 
-			type = dummy_plane
-
 			const svgPoints = [];
 			for (const obj of objs) {
 				if (["ground_model", "aircraft"].includes(obj.type)) {
@@ -88,40 +86,40 @@ const get = async (logger, config) => {
 
 			if (indicators.error) throw indicators.error;
 
-			switch (indicators?.army) {
-				case "tank":
-					vehicle = `Tank ${indicators.type.split("/")[1].slice(3).split("_").join(" ").toUpperCase()} (${indicators.crew_current}/${indicators.crew_total} crew members remaining)`;
-					break;
+			if (indicators?.type == "dummy_plane") errors.push("Not spawned");
+			else {
+				switch (indicators?.army) {
+					case "tank":
+						vehicle = `Tank ${indicators.type.split("/")[1].slice(3).split("_").join(" ").toUpperCase()} (${indicators.crew_current}/${indicators.crew_total} crew members remaining)`;
+						break;
 
-				case "air":
-					await wait(config.waitingTime);
+					case "air":
+						await wait(config.waitingTime);
 
-					try {
-						const state = await request(logger, {
-							url: new URL(config.paths.vehicle.state, `http://localhost:${config.port}`),
-							type: "json",
-							secure: false
-						});
+						try {
+							const state = await request(logger, {
+								url: new URL(config.paths.vehicle.state, `http://localhost:${config.port}`),
+								type: "json",
+								secure: false
+							});
 
-						const name = indicators.type.split("_");
-						name.pop();
+							const name = indicators.type.split("_");
+							name.pop();
 
-						if (name.join(" ") == "DUMMY") errors.push("Not spawned");
-						else {
 							const altitude = Math.ceil(state["H, m"] / 100) * 100;
 							const speed = Math.ceil(state["TAS, km/h"] / 50) * 50;
 
 							vehicle = `Plane ${name.join(" ").toUpperCase()} (${speed} km/h - ${altitude} m)`;
+						} catch (e) {
+							errors.push(`State: ${e}`);
 						}
-					} catch (e) {
-						errors.push(`State: ${e}`);
-					}
-					break;
+						break;
 
-				default:
-					vehicle = "Naval vehicle";
-					break;
-			};
+					default:
+						vehicle = "Naval vehicle";
+						break;
+				};
+			}
 		} catch (e) {
 			errors.push(`Indicators: ${e}`);
 		}
