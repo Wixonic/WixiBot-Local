@@ -52,6 +52,10 @@ export interface Config {
 };
 
 
+export interface ClientSecrets {
+	wixkey: string;
+};
+
 export interface DiscordSecrets {
 	token: string;
 };
@@ -62,6 +66,7 @@ export interface SpotifySecrets {
 };
 
 export interface Secrets {
+	client: ClientSecrets;
 	discord: DiscordSecrets;
 	spotify: SpotifySecrets;
 };
