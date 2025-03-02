@@ -1,7 +1,42 @@
+const { JSDOM } = require("jsdom");
 const sharp = require("sharp");
 
 const request = require("./request.js");
 const { wait } = require("./utils.js");
+
+/**
+ * @param {import("@wixonic/logger").Logger} logger
+ * @param {string} unit
+ */
+const getUnitData = async (logger, unit) => {
+	const html = await request(logger, {
+		url: "https://wiki.warthunder.com/unit/" + unit,
+		type: "text",
+		method: "GET"
+	});
+
+	const DOM = new JSDOM(html);
+	const document = DOM.window.document;
+
+	const name = document.querySelector(".game-unit_name").textContent.trim();
+	const rank = document.querySelector(".game-unit_card-info_item.game-unit_rank .game-unit_card-info_value").textContent.trim();
+
+	let role = null;
+	const infoItems = document.querySelectorAll(".game-unit_card-info_item");
+	infoItems.forEach(item => {
+		const title = item.querySelector(".game-unit_card-info_title");
+		if (title && title.textContent.trim() === "Main role") {
+			const roleElement = item.querySelector(".text-truncate");
+			if (roleElement) role = roleElement.textContent.trim();
+		}
+	});
+
+	return {
+		name,
+		rank,
+		role
+	};
+};
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
@@ -12,7 +47,8 @@ const get = async (logger, config) => {
 	let info = {};
 	let map = Buffer.from("");
 	let objs = {};
-	let vehicle = "unknown vehicle";
+	let details = "Unknown unit";
+	let unit = "Unknown unit";
 
 	try {
 		info = await request(logger, {
@@ -71,7 +107,7 @@ const get = async (logger, config) => {
 			map = await mapImage.toBuffer();
 		}
 	} catch (e) {
-		errors.push(`Image: ${e}`);
+		logger.warn(`Image: ${e}`);
 	}
 
 	await wait(config.waitingTime);
@@ -90,7 +126,9 @@ const get = async (logger, config) => {
 			else {
 				switch (indicators?.army) {
 					case "tank":
-						vehicle = `Tank ${indicators.type.split("/")[1].slice(3).split("_").join(" ").toUpperCase()} (${indicators.crew_current}/${indicators.crew_total} crew members remaining)`;
+						const unitData = await getUnitData(logger, indicators.type.split("/").at(-1));
+						unit = `${unitData.role} ${unitData.name}`;
+						details = `${unit} (Rank ${unitData.rank}) - ${indicators.crew_current}/${indicators.crew_total} crew members remaining`;
 						break;
 
 					case "air":
@@ -103,20 +141,21 @@ const get = async (logger, config) => {
 								secure: false
 							});
 
-							const name = indicators.type.split("_");
-							name.pop();
-
 							const altitude = Math.ceil(state["H, m"] / 100) * 100;
 							const speed = Math.ceil(state["TAS, km/h"] / 50) * 50;
 
-							vehicle = `Plane ${name.join(" ").toUpperCase()} (${speed} km/h - ${altitude} m)`;
+							const unitData = await getUnitData(logger, indicators.type.split("/").at(-1));
+
+							unit = `${unitData.role} ${unitData.name}`;
+							details = `${unit} (Rank ${unitData.rank}) - ${speed} km/h, ${altitude} m`;
 						} catch (e) {
 							errors.push(`State: ${e}`);
 						}
 						break;
 
 					default:
-						vehicle = "Naval vehicle";
+						details = "Naval unit";
+						unit = "Naval unit";
 						break;
 				};
 			}
@@ -131,7 +170,8 @@ const get = async (logger, config) => {
 		map,
 		objs,
 		valid: errors.length == 0,
-		vehicle
+		details,
+		unit
 	};
 };
 

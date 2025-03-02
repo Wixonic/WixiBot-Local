@@ -287,7 +287,7 @@ const handlers = async (logger, client, discord, server, config) => {
 				const response = (await request(logger, {
 					method: "GET",
 					type: "json",
-					url: `https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${config.steam.token}&steamid=${config.steam.id}&include_appinfo=true&include_played_free_games=true&appids_filter=${player.gameid}&include_free_sub=true`
+					url: `https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${config.steam.token}&steamid=${config.steam.id}&include_appinfo=true&include_played_free_games=true&include_free_sub=true`
 				})).response ?? {};
 
 				const game = response?.games?.find((game) => game.appid == player.gameid);
@@ -316,7 +316,29 @@ const handlers = async (logger, client, discord, server, config) => {
 						details: "Playing on Steam",
 						type: 0 // PLAYING
 					});
-				} else discord.removeActivity("steam");
+				} else {
+					discord.addActivity("steam", {
+						level: 4,
+						applicationId: config.discord.application.clients.steam.id,
+						assets: {
+							large_image: config.discord.application.clients.steam.assets.icon,
+							large_text: "Steam"
+						},
+						buttons: [
+							"Play",
+							"Open my profile"
+						],
+						metadata: {
+							button_urls: [
+								"https://store.steampowered.com/app/" + player.gameid,
+								player.profileurl
+							]
+						},
+						name: player.gameextrainfo,
+						details: "Playing on Steam",
+						type: 0 // PLAYING
+					});
+				}
 			} else discord.removeActivity("steam");
 
 			lastSteamRefresh = Date.now();
@@ -384,39 +406,33 @@ const handlers = async (logger, client, discord, server, config) => {
 	};
 
 
-	let lastMapRefresh = 0;
+	let lastWarThunderRefresh = 0;
 	let inWarThunderGameSince = null;
 
 	const processWarThunder = async () => {
-		const data = await wt(logger, config.warThunder);
+		if (lastWarThunderRefresh + 15 * 1000 < Date.now()) {
+			const data = await wt(logger, config.warThunder);
 
-		if (data.valid) {
-			if (!inWarThunderGameSince) inWarThunderGameSince = Date.now();
-			if (lastMapRefresh + 30 * 1000 < Date.now()) {
-				const getImage = async () => {
-					await request(logger, {
-						url: new URL("/rpc/warthunder/map.png", "https://" + config.client.hostname),
-						method: "POST",
-						headers: {
-							authorization: `WixKey ${config.client.wixkey}`,
-							"content-type": "image/png"
-						},
-						secure: true,
-						type: "raw",
-						body: data.map.toString("base64url")
-					});
-
-					return await RichPresence.getExternal(discord.client, config.discord.application.clients.war_thunder.id, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, "https://" + config.client.hostname));
-				};
-
-				const mapImage = await getImage();
+			if (data.valid) {
+				if (!inWarThunderGameSince) inWarThunderGameSince = Date.now();
+				await request(logger, {
+					url: new URL("/rpc/warthunder/map.png", "https://" + config.client.hostname),
+					method: "POST",
+					headers: {
+						authorization: `WixKey ${config.client.wixkey}`,
+						"content-type": "image/png"
+					},
+					secure: true,
+					type: "raw",
+					body: data.map.toString("base64url")
+				});
 
 				discord.addActivity("wt", {
 					level: 4,
 					applicationId: config.discord.application.clients.war_thunder.id,
 					assets: {
-						large_image: mapImage[0].external_asset_path,
-						large_text: data.vehicle,
+						large_image: (await RichPresence.getExternal(discord.client, config.discord.application.clients.war_thunder.id, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, "https://" + config.client.hostname)))[0].external_asset_path,
+						large_text: data.unit,
 						small_image: config.discord.application.clients.war_thunder.assets.icon,
 						small_text: "War Thunder"
 					},
@@ -424,15 +440,17 @@ const handlers = async (logger, client, discord, server, config) => {
 						start: inWarThunderGameSince
 					},
 					name: "War Thunder",
-					details: data.vehicle,
+					details: data.details,
 					type: 0 // PLAYING
 				});
+			} else {
+				discord.removeActivity("wt");
+				inWarThunderGameSince = null;
 
-				lastMapRefresh = Date.now();
+				logger.warn(data.errors.join(", "));
 			}
-		} else {
-			discord.removeActivity("wt");
-			inWarThunderGameSince = null;
+
+			lastWarThunderRefresh = Date.now();
 		}
 	};
 

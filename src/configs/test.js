@@ -99,7 +99,7 @@ const config = {
 			}
 		},
 		port: 8111,
-		waitingTime: 0.05
+		waitingTime: 0.1
 	},
 	rejectUnauthorized: false
 };
