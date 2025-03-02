@@ -23,7 +23,7 @@
 		"discord.js-selfbot-v13": "3.6.0",
 		"express": "5.0.1",
 		"jsdom": "26.0.0",
-		"@wixonic/logger": "1.0.2",
+		"@wixonic/logger": "1.1.0",
 		"sharp": "0.33.5",
 		"ws": "8.18.1"
 	},
