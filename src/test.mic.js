@@ -1,14 +1,11 @@
 const { spawn } = require("child_process");
-const fs = require("fs");
 const WebSocket = require("ws");
-
-const secrets = require("./secrets.js");
 
 const url = "wss://localhost:999/";
 
 const startMicProcess = () => {
 	const sox = spawn("sox", [
-		"-t", "coreaudio", "BlackHole 2ch",
+		"-t", "coreaudio", "Wave Link Stream",
 		"-b", "16",
 		"-c", "2",
 		"-r", "48000",
@@ -25,14 +22,12 @@ const connectWebSocket = (micProcess) => {
 	/**
 	 * @type {import("ws").WebSocket?}
 	 */
-	let ws = null
+	let ws = null;
 
 	const connect = () => {
 		console.log("Connecting WebSocket...");
-		if (!fs.existsSync(secrets.server.cert)) throw new Error("SSL certificate is missing.");
 
 		ws = new WebSocket(url, {
-			cert: fs.readFileSync(secrets.server.cert),
 			rejectUnauthorized: false // config.rejectUnauthorized
 		});
 

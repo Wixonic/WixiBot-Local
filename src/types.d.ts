@@ -1,3 +1,5 @@
+import { ActivitiesOptions, CustomStatus, RichPresence, SpotifyRPC } from "discord.js-selfbot-v13";
+
 export interface ClientConfig {
 	host: string;
 	wixkey: string;
@@ -98,4 +100,6 @@ export interface Song {
 	spotifyId?: string;
 	color?: string;
 	path?: string;
-};  
+};
+
+export type Activity = ActivitiesOptions | RichPresence | SpotifyRPC | CustomStatus;

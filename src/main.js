@@ -48,7 +48,6 @@ const handlers = async (logger, client, discord, server, config) => {
 		if (!blenderData) discord.removeActivity("blender");
 		else {
 			discord.addActivity("blender", {
-				level: 3,
 				applicationId: config.discord.application.clients.blender.id,
 				assets: {
 					small_image: blenderData.small_image ? config.discord.application.clients.blender.assets[blenderData.small_image] : null,
@@ -56,13 +55,23 @@ const handlers = async (logger, client, discord, server, config) => {
 					large_image: blenderData.large_image ? config.discord.application.clients.blender.assets[blenderData.large_image] : null,
 					large_text: blenderData.large_text
 				},
+				buttons: [
+					"View my renders",
+					"My website"
+				],
+				metadata: {
+					button_urls: [
+						"https://go.wixonic.fr/youtube",
+						"https://wixonic.fr"
+					]
+				},
 				timestamps: {
 					start: blenderData.startDate
 				},
 				name: "Blender",
 				details: blenderData.details,
 				state: blenderData.state,
-				type: 0 // PLAYING
+				type: "PLAYING"
 			});
 			logger.debug("[Blender RPC]", "RPC updated");
 		}
@@ -128,6 +137,9 @@ const handlers = async (logger, client, discord, server, config) => {
 
 		if (!githubData) discord.removeActivity("github");
 		else {
+			/**
+			 * @type {import("./types.d.ts").Activity}
+			 */
 			let data = null;
 			const type = githubData.type;
 
@@ -137,7 +149,6 @@ const handlers = async (logger, client, discord, server, config) => {
 					const repo = githubData.repository ?? "repository";
 
 					data = {
-						level: 1,
 						applicationId: config.discord.application.clients.github.id,
 						assets: {
 							small_image: config.discord.application.clients.github.assets.icon,
@@ -145,10 +156,20 @@ const handlers = async (logger, client, discord, server, config) => {
 							large_image: githubData.large_image,
 							large_text: owner
 						},
+						buttons: [
+							"Open repo on GitHub",
+							"My profile"
+						],
+						metadata: {
+							button_urls: [
+								`https://github.com/${owner}/${repo}`,
+								"https://go.wixonic.fr/github"
+							]
+						},
 						name: `${owner}/${repo}`,
 						details: `Watching ${githubData.details ?? "the repository"}`,
 						state: "On GitHub",
-						type: 3 // WATCHING
+						type: "WATCHING"
 					};
 					break;
 
@@ -156,7 +177,6 @@ const handlers = async (logger, client, discord, server, config) => {
 					const profile = githubData.profile ?? "someone";
 
 					data = {
-						level: 1,
 						applicationId: config.discord.application.clients.github.id,
 						assets: {
 							small_image: config.discord.application.clients.github.assets.icon,
@@ -164,10 +184,20 @@ const handlers = async (logger, client, discord, server, config) => {
 							large_image: githubData.large_image,
 							large_text: profile
 						},
+						buttons: [
+							"Open profile on GitHub",
+							"My profile"
+						],
+						metadata: {
+							button_urls: [
+								`https://github.com/${profile}`,
+								"https://go.wixonic.fr/github"
+							]
+						},
 						name: `${profile}'${profile.endsWith("s") ? "" : "s"} profile`,
 						details: `Watching ${githubData.details ?? "the profile"}`,
 						state: "On GitHub",
-						type: 3 // WATCHING
+						type: "WATCHING"
 					};
 					break;
 			};
@@ -209,7 +239,6 @@ const handlers = async (logger, client, discord, server, config) => {
 					});
 
 					discord.addActivity("roblox", {
-						level: 4,
 						applicationId: config.discord.application.clients.roblox.id,
 						assets: {
 							large_image: (await RichPresence.getExternal(discord.client, config.discord.application.clients.roblox.id, icon.data[0].imageUrl))[0].external_asset_path,
@@ -217,12 +246,9 @@ const handlers = async (logger, client, discord, server, config) => {
 							small_image: config.discord.application.clients.roblox.assets.icon,
 							small_text: "Roblox"
 						},
-						timestamps: {
-							start: new Date(presence.lastOnline).getTime()
-						},
 						buttons: [
-							"Play",
-							"Open my profile"
+							"Open place on Roblox",
+							"My profile"
 						],
 						metadata: {
 							button_urls: [
@@ -230,34 +256,36 @@ const handlers = async (logger, client, discord, server, config) => {
 								"https://www.roblox.com/users/" + config.roblox.id
 							]
 						},
+						timestamps: {
+							start: new Date(presence.lastOnline).getTime()
+						},
 						name: presence.lastLocation,
 						details: "Playing on Roblox",
-						type: 0 // PLAYING
+						type: "PLAYING"
 					});
 					break;
 
 				case 3: // InStudio
 					discord.addActivity("roblox", {
-						level: 3,
 						applicationId: config.discord.application.clients.roblox.id,
 						assets: {
 							large_image: config.discord.application.clients.roblox.assets.studio_icon,
 							large_text: "Roblox Studio"
 						},
-						timestamps: {
-							start: new Date(presence.lastOnline).getTime()
-						},
 						buttons: [
-							"Open my profile"
+							"My profile"
 						],
 						metadata: {
 							button_urls: [
 								"https://www.roblox.com/users/" + config.roblox.id
 							]
 						},
+						timestamps: {
+							start: new Date(presence.lastOnline).getTime()
+						},
 						name: "Roblox Studio",
 						details: "Creating in Roblox",
-						type: 0 // PLAYING
+						type: "PLAYING"
 					});
 					break;
 
@@ -294,7 +322,6 @@ const handlers = async (logger, client, discord, server, config) => {
 
 				if (game) {
 					discord.addActivity("steam", {
-						level: 4,
 						applicationId: config.discord.application.clients.steam.id,
 						assets: {
 							large_image: (await RichPresence.getExternal(discord.client, config.discord.application.clients.steam.id, `https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/${player.gameid}/${game.img_icon_url}.jpg`))[0].external_asset_path,
@@ -303,8 +330,8 @@ const handlers = async (logger, client, discord, server, config) => {
 							small_text: "Steam"
 						},
 						buttons: [
-							"Play",
-							"Open my profile"
+							"Open game on Steam",
+							"My profile"
 						],
 						metadata: {
 							button_urls: [
@@ -314,19 +341,18 @@ const handlers = async (logger, client, discord, server, config) => {
 						},
 						name: game.name,
 						details: "Playing on Steam",
-						type: 0 // PLAYING
+						type: "PLAYING"
 					});
 				} else {
 					discord.addActivity("steam", {
-						level: 4,
 						applicationId: config.discord.application.clients.steam.id,
 						assets: {
 							large_image: config.discord.application.clients.steam.assets.icon,
 							large_text: "Steam"
 						},
 						buttons: [
-							"Play",
-							"Open my profile"
+							"Open game on Steam",
+							"My profile"
 						],
 						metadata: {
 							button_urls: [
@@ -336,7 +362,7 @@ const handlers = async (logger, client, discord, server, config) => {
 						},
 						name: player.gameextrainfo,
 						details: "Playing on Steam",
-						type: 0 // PLAYING
+						type: "PLAYING"
 					});
 				}
 			} else discord.removeActivity("steam");
@@ -374,13 +400,22 @@ const handlers = async (logger, client, discord, server, config) => {
 
 				if (song.state == "PLAYING") {
 					discord.addActivity("music", {
-						level: 0,
 						applicationId: config.discord.application.clients.apple_music.id,
 						assets: {
 							large_image: `spotify:${song.spotifyArtwork}`,
 							large_text: song.album,
 							small_image: config.discord.application.clients.apple_music.assets.icon,
 							small_text: "Apple Music"
+						},
+						buttons: [
+							"My profile",
+							"My website"
+						],
+						metadata: {
+							button_urls: [
+								"https://music.apple.com/profile/wixonic",
+								"https://wixonic.fr"
+							]
 						},
 						timestamps: {
 							start: song.startedAt,
@@ -389,7 +424,7 @@ const handlers = async (logger, client, discord, server, config) => {
 						name: song.track,
 						details: song.track,
 						state: song.artist,
-						type: 2 // LISTENING
+						type: "LISTENING"
 					});
 				} else discord.removeActivity("music");
 
@@ -428,7 +463,6 @@ const handlers = async (logger, client, discord, server, config) => {
 				});
 
 				discord.addActivity("wt", {
-					level: 4,
 					applicationId: config.discord.application.clients.war_thunder.id,
 					assets: {
 						large_image: (await RichPresence.getExternal(discord.client, config.discord.application.clients.war_thunder.id, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, "https://" + config.client.hostname)))[0].external_asset_path,
@@ -436,12 +470,22 @@ const handlers = async (logger, client, discord, server, config) => {
 						small_image: config.discord.application.clients.war_thunder.assets.icon,
 						small_text: "War Thunder"
 					},
+					buttons: [
+						"My profile",
+						"My website"
+					],
+					metadata: {
+						button_urls: [
+							"https://warthunder.com/community/userinfo/?nick=Wixonic%40psn",
+							"https://wixonic.fr"
+						]
+					},
 					timestamps: {
 						start: inWarThunderGameSince
 					},
 					name: "War Thunder",
 					details: data.details,
-					type: 0 // PLAYING
+					type: "PLAYING"
 				});
 			} else {
 				discord.removeActivity("wt");
@@ -494,7 +538,6 @@ const handlers = async (logger, client, discord, server, config) => {
 		if (!youtubeData) discord.removeActivity("youtube");
 		else {
 			discord.addActivity("youtube", {
-				level: 3,
 				applicationId: config.discord.application.clients.youtube.id,
 				assets: {
 					small_image: config.discord.application.clients.youtube.assets.icon,
@@ -502,13 +545,23 @@ const handlers = async (logger, client, discord, server, config) => {
 					large_image: youtubeData.thumbnail,
 					large_text: youtubeData.name
 				},
+				buttons: [
+					"Open video",
+					"My channel"
+				],
+				metadata: {
+					button_urls: [
+						youtubeData.url,
+						"https://go.wixonic.fr/youtube"
+					]
+				},
 				timestamps: {
 					start: youtubeData.startedAt
 				},
 				name: youtubeData.name,
 				details: youtubeData.name,
 				state: `By ${youtubeData.author}`,
-				type: 3 // WATCHING
+				type: "WATCHING"
 			});
 
 			logger.debug("[YouTube RPC]", "RPC updated");

@@ -33,7 +33,6 @@ class ClientManager {
 		const previousActivity = this.activities[id];
 		let changed = false;
 
-		changed ||= activity.level != previousActivity?.level;
 		changed ||= activity.applicationId != previousActivity?.applicationId;
 		changed ||= activity.assets?.small_image != previousActivity?.assets?.small_image;
 		changed ||= activity.assets?.small_text != previousActivity?.assets?.small_text;
