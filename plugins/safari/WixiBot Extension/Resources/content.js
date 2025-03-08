@@ -1,3 +1,55 @@
+const chess = {
+	generateFEN: (board) => {
+		const emptyBoard = Array.from({ length: 8 }, () => Array(8).fill(null));
+
+		for (const { column, line, color, type } of board) {
+			const symbol = color === "w" ? type.toUpperCase() : type.toLowerCase();
+			emptyBoard[8 - parseInt(line)][parseInt(column) - 1] = symbol;
+		}
+
+		const boardFEN = emptyBoard.map((row) => {
+			let emptyCount = 0;
+			return row.map((cell) => {
+				if (cell === null) {
+					emptyCount++;
+					return "";
+				} else {
+					const res = (emptyCount > 0 ? emptyCount : "") + cell;
+					emptyCount = 0;
+					return res;
+				}
+			}).join("") + (emptyCount > 0 ? emptyCount : "");
+		}).join("/");
+
+		return `${boardFEN} w KQkq - 0 1`;
+	},
+	fetchBoard: () => {
+		const boardEl = document.querySelector("wc-chess-board");
+		const pieceEls = boardEl.querySelectorAll(".piece");
+
+		const board = [];
+
+		for (const pieceEl of pieceEls) {
+			const piece = {};
+
+			for (const value of pieceEl.classList.values()) {
+				const pre = "square-";
+				if (value.startsWith(pre)) {
+					piece.column = value.at(pre.length);
+					piece.line = value.at(pre.length + 1);
+				} else if (value.length == 2) {
+					piece.color = value[0];
+					piece.type = value[1];
+				}
+			}
+
+			board.push(piece);
+		}
+
+		return board;
+	}
+};
+
 const onUnload = {
 	data: null,
 	path: null
@@ -9,7 +61,7 @@ const extensions = [
 			/^https:\/\/github\.com\/([\w-]+)\/([\w-]+)/m
 		],
 		run: (_, owner, repository) => {
-			sendStatus("POST", "/rpc/github/", {
+			send("POST", "/rpc/github/", {
 				type: "repository",
 				owner,
 				repository
@@ -25,7 +77,7 @@ const extensions = [
 			/^https:\/\/github\.com\/([\w-]+)/m
 		],
 		run: (_, profile) => {
-			sendStatus("POST", "/rpc/github/", {
+			send("POST", "/rpc/github/", {
 				type: "profile",
 				profile
 			});
@@ -54,7 +106,7 @@ const extensions = [
 				} catch { }
 			}
 
-			sendStatus("POST", "/rpc/youtube/", {
+			send("POST", "/rpc/youtube/", {
 				type: "video",
 				author: data.author,
 				name: data.name,
@@ -67,21 +119,44 @@ const extensions = [
 				type: "video"
 			};
 		}
+	}, {
+		// https://www.chess.com/game/:id
+		matches: [
+			/^https:\/\/www\.chess\.com\/game\/(\d+)$/
+		],
+
+		run: (_, id) => {
+			const board = chess.fetchBoard();
+
+			send("POST", "/rpc/chess/", {
+				board,
+				url: `https://www.chess.com/game/${id}`
+			});
+
+			onUnload.path = "/rpc/chess/";
+			onUnload.data = {};
+
+			const FEN = chess.generateFEN(board);
+
+			console.log("Chess FEN:", FEN);
+
+			send("POST", "/chess/", {
+				FEN,
+				url: `https://www.chess.com/game/${id}`
+			});
+		}
 	}
 ];
 
-const sendStatus = (method = "POST", path = "/", data = {}) => {
+const send = (method = "POST", path = "/", data = {}) => {
 	browser.runtime.sendMessage({
-		action: "sendStatus",
+		action: "send",
 		method,
 		url: new URL(path, "http://localhost:1000").toString(),
 		data
 	}, (response) => {
-		if (response && response.error) {
-			console.error("Error:", response.error);
-		} else {
-			console.log("Response:", response.data);
-		}
+		if (response && response.error) console.error("Error:", response.error);
+		else console.log("Response:", response.data);
 	});
 };
 
@@ -109,7 +184,7 @@ setInterval(check, 10000);
 window.addEventListener("beforeunload", () => {
 	if (onUnload.path) {
 		browser.runtime.sendMessage({
-			action: "sendStatus",
+			action: "send",
 			method: "DELETE",
 			url: new URL(onUnload.path, "http://localhost:1000").toString(),
 			data: onUnload.data
