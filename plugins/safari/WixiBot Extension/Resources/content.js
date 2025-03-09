@@ -67,7 +67,6 @@ const chess = {
 					url: `https://www.chess.com/game/${regexpResults[1]}`
 				});
 
-				console.log("Chess FEN:", FEN);
 				chess.previousBoard = board;
 			}
 		}

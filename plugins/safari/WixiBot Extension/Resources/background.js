@@ -1,5 +1,5 @@
 browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	if (request.action === "sendStatus") {
+	if (request.action === "send") {
 		const xhr = new XMLHttpRequest();
 
 		xhr.open(request.method, request.url, true);
