@@ -22,7 +22,9 @@ const init = async (logger, client, discord, server, config) => {
 				const youtubeResponse = JSON.parse(body);
 				if (youtubeResponse.name != youtubeData?.name || youtubeResponse.author != youtubeData?.author) {
 					youtubeData = youtubeResponse;
-					youtubeData.thumbnail = (await RichPresence.getExternal(discord.client, config.discord.application.clients.youtube.id, youtubeData.thumbnail))[0].external_asset_path;
+					console.log(youtubeData.thumbnail);
+					if (URL.canParse(youtubeData.thumbnail)) youtubeData.thumbnail = (await RichPresence.getExternal(discord.client, config.discord.application.clients.youtube.id, youtubeData.thumbnail))[0].external_asset_path;
+					else delete youtubeData.thumbnail;
 					youtubeData.startedAt = Date.now();
 					youtubeData.updatedAt = Date.now();
 					logger.info("Data updated");
@@ -55,7 +57,10 @@ const process = async (logger, client, discord, server, config) => {
 
 	if (!youtubeData) discord.removeActivity("youtube");
 	else {
-		discord.addActivity("youtube", {
+		/**
+		 * @type {import("../types.d.ts").Activity}
+		 */
+		const activity = {
 			applicationId: config.discord.application.clients.youtube.id,
 			assets: {
 				small_image: config.discord.application.clients.youtube.assets.icon,
@@ -80,7 +85,16 @@ const process = async (logger, client, discord, server, config) => {
 			details: youtubeData.name,
 			state: `By ${youtubeData.author}`,
 			type: "WATCHING"
-		});
+		};
+
+		if (!activity.assets.large_image) {
+			activity.assets.large_image = activity.assets.small_image;
+			activity.assets.large_text = activity.assets.small_text;
+			delete activity.assets.small_image;
+			delete activity.assets.small_text;
+		}
+
+		discord.addActivity("youtube", activity);
 
 		logger.debug("RPC updated");
 	}

@@ -1,3 +1,4 @@
+let currentPlayer = "w";
 const url = "ws://localhost:1000/";
 
 const connectWebSocket = () => {
@@ -33,14 +34,52 @@ const connectWebSocket = () => {
 										boardEl.append(pieceEl);
 									}
 
+									document.querySelector("#best").innerHTML = document.querySelector("#depth").innerHTML = document.querySelector("#score-value").innerHTML = "";
+									document.querySelector("#score-bar .bar").style.height = "50%";
+									document.querySelector("#progress .bar").style.width = "0%";
+
 									ws.send(JSON.stringify({
 										type: "predict"
 									}));
 								}
+
+								if (message.data?.FEN) currentPlayer = message.data.FEN.split(" ")[1];
 								break;
 
 							default:
-								console.log(message);
+								for (const entry of Object.entries(message)) {
+									switch (entry[0]) {
+										case "best":
+											document.querySelector("#best").innerHTML = entry[1];
+											break;
+
+										case "depth":
+											document.querySelector("#depth").innerHTML = `Depth: ${entry[1]}`;
+											break;
+
+										case "score":
+											let score = 0;
+
+											if (currentPlayer == "w") score = Number(entry[1]);
+											else score = -Number(entry[1]);
+											score /= 100;
+
+
+											document.querySelector("#score-value").innerHTML = `Score: ${Math.abs(score)}${score == 0 ? "" : ` for ${score > 0 ? "whites" : "blacks"}`}`;
+
+											document.querySelector("#score-bar .bar").style.height = `${Math.min(100, Math.max(0, 50 + score * 10))}%`;
+											break;
+
+										case "time":
+											const progress = Math.min(1000, Number(entry[1])) / 1000;
+											document.querySelector("#progress .bar").style.width = `${progress * 100}%`;
+											break;
+
+										default:
+											console.log(entry[0]);
+											break;
+									}
+								}
 								break;
 						}
 					});
