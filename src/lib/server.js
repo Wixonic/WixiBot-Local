@@ -6,7 +6,7 @@ const ws = require("ws");
 class Server {
 	/**
 	 * @param {import("@wixonic/logger").Logger} logger
-	 * @param {import("../types").ServerConfig} settings
+	 * @param {import("../types.d.ts").ServerConfig} settings
 	 */
 	constructor(logger, settings) {
 		/**
@@ -67,7 +67,7 @@ class Server {
 			this.ws.on("close", () => this.logger.warn("[WebSocket]", "Server closed"));
 
 			this.ws.on("connection", (ws) => {
-				this.logger.debug("[WebSocket]", "Connection open")
+				this.logger.debug("[WebSocket]", "Connection open");
 
 				ws.on("close", () => this.logger.debug("[WebSocket]", "Connection closed"));
 				ws.on("error", (e) => this.logger.warn("[WebSocket]", "Client error:", e));

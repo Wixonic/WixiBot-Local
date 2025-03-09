@@ -50,7 +50,7 @@ const chess = {
 			}).join("") + (emptyCount > 0 ? emptyCount : "");
 		}).join("/");
 
-		return `${boardFEN} w KQkq - 0 1`;
+		return `${boardFEN} ${document.querySelector(".clock-black").classList.contains("clock-player-turn") ? "b" : "w"} KQkq - 0 1`;
 	},
 
 	update: () => {
@@ -62,7 +62,10 @@ const chess = {
 			if (JSON.stringify(board) != JSON.stringify(chess.previousBoard)) {
 				const FEN = chess.generateFEN(board);
 
+				console.log(FEN);
+
 				send("POST", "/chess/", {
+					board,
 					FEN,
 					url: `https://www.chess.com/game/${regexpResults[1]}`
 				});
@@ -70,6 +73,8 @@ const chess = {
 				chess.previousBoard = board;
 			}
 		}
+
+		setTimeout(() => chess.update(), 250);
 	}
 };
 
@@ -149,10 +154,7 @@ const extensions = [
 		matches: [chess.regexp],
 
 		run: (_, id) => {
-			const board = chess.fetchBoard();
-
 			send("POST", "/rpc/chess/", {
-				board,
 				url: `https://www.chess.com/game/${id}`
 			});
 
@@ -161,16 +163,18 @@ const extensions = [
 	}
 ];
 
-const send = (method = "POST", path = "/", data = {}) => {
-	browser.runtime.sendMessage({
+const send = async (method = "POST", path = "/", data = {}) => {
+	const response = await browser.runtime.sendMessage({
 		action: "send",
 		method,
 		url: new URL(path, "http://localhost:1000").toString(),
 		data
-	}, (response) => {
-		if (response && response.error) console.error("Error:", response.error);
-		else console.log("Response:", response.data);
 	});
+
+	if (response) {
+		if (response.error) console.error("Error:", response.error);
+		else console.log("Response:", response.data);
+	}
 };
 
 const check = () => {
@@ -190,28 +194,27 @@ const check = () => {
 			}
 		}
 	}
+
+	setTimeout(check, 10000);
 };
 
 window.addEventListener("load", () => {
 	check();
-	setInterval(check, 10000);
 	chess.update();
-	setInterval(() => chess.update(), 250);
 });
 
-window.addEventListener("beforeunload", () => {
+window.addEventListener("beforeunload", async () => {
 	if (onUnload.path) {
-		browser.runtime.sendMessage({
+		const response = await browser.runtime.sendMessage({
 			action: "send",
 			method: "DELETE",
 			url: new URL(onUnload.path, "http://localhost:1000").toString(),
 			data: onUnload.data
-		}, (response) => {
-			if (response && response.error) {
-				console.error("Error:", response.error);
-			} else {
-				console.log("Response:", response.data);
-			}
 		});
+
+		if (response) {
+			if (response.error) console.error("Error:", response.error);
+			else console.log("Response:", response.data);
+		}
 	}
 });
