@@ -1,5 +1,5 @@
 const chess = {
-	regexp: /^https:\/\/www\.chess\.com\/game\/(\d+)$/, // https://www.chess.com/game/:id
+	regexp: /^https:\/\/www\.chess\.com\/game\/(\d+)/m, // https://www.chess.com/game/:id
 	previousBoard: null,
 
 	fetchBoard: () => {
@@ -190,7 +190,8 @@ const check = () => {
 				} catch (e) {
 					console.warn(e);
 				}
-				return;
+
+				break;
 			}
 		}
 	}
