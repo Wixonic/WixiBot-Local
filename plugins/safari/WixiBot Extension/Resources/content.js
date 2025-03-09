@@ -1,4 +1,33 @@
 const chess = {
+	regexp: /^https:\/\/www\.chess\.com\/game\/(\d+)$/, // https://www.chess.com/game/:id
+	previousBoard: null,
+
+	fetchBoard: () => {
+		const boardEl = document.querySelector("wc-chess-board");
+		const pieceEls = boardEl?.querySelectorAll(".piece");
+
+		const board = [];
+
+		for (const pieceEl of (pieceEls ?? [])) {
+			const piece = {};
+
+			for (const value of pieceEl.classList.values()) {
+				const pre = "square-";
+				if (value.startsWith(pre)) {
+					piece.column = value.at(pre.length);
+					piece.line = value.at(pre.length + 1);
+				} else if (value.length == 2) {
+					piece.color = value[0];
+					piece.type = value[1];
+				}
+			}
+
+			board.push(piece);
+		}
+
+		return board;
+	},
+
 	generateFEN: (board) => {
 		const emptyBoard = Array.from({ length: 8 }, () => Array(8).fill(null));
 
@@ -23,30 +52,25 @@ const chess = {
 
 		return `${boardFEN} w KQkq - 0 1`;
 	},
-	fetchBoard: () => {
-		const boardEl = document.querySelector("wc-chess-board");
-		const pieceEls = boardEl.querySelectorAll(".piece");
 
-		const board = [];
+	update: () => {
+		const regexpResults = chess.regexp.exec(location.href);
 
-		for (const pieceEl of pieceEls) {
-			const piece = {};
+		if (regexpResults?.length > 0) {
+			const board = chess.fetchBoard();
 
-			for (const value of pieceEl.classList.values()) {
-				const pre = "square-";
-				if (value.startsWith(pre)) {
-					piece.column = value.at(pre.length);
-					piece.line = value.at(pre.length + 1);
-				} else if (value.length == 2) {
-					piece.color = value[0];
-					piece.type = value[1];
-				}
+			if (JSON.stringify(board) != JSON.stringify(chess.previousBoard)) {
+				const FEN = chess.generateFEN(board);
+
+				send("POST", "/chess/", {
+					FEN,
+					url: `https://www.chess.com/game/${regexpResults[1]}`
+				});
+
+				console.log("Chess FEN:", FEN);
+				chess.previousBoard = board;
 			}
-
-			board.push(piece);
 		}
-
-		return board;
 	}
 };
 
@@ -95,7 +119,7 @@ const extensions = [
 			const dataScripts = document.querySelectorAll(`script[type="application/ld+json"]`);
 			let data = {};
 
-			for (let x = 0; x < dataScripts.length; ++x) {
+			for (let x = 0; x < (dataScripts ?? []).length; ++x) {
 				try {
 					const dataScript = JSON.parse(dataScripts[x].innerHTML);
 
@@ -106,24 +130,24 @@ const extensions = [
 				} catch { }
 			}
 
-			send("POST", "/rpc/youtube/", {
-				type: "video",
-				author: data.author,
-				name: data.name,
-				thumbnail: (data.thumbnailUrl ?? [])[0],
-				url: `https://www.youtube.com/watch?v=${data.embedUrl.slice("https://www.youtube.com/embed/".length)}`
-			});
+			if (data != {}) {
+				send("POST", "/rpc/youtube/", {
+					type: "video",
+					author: data.author,
+					name: data.name,
+					thumbnail: (data.thumbnailUrl ?? [])[0],
+					url: `https://www.youtube.com/watch?v=${data.embedUrl.slice("https://www.youtube.com/embed/".length)}`
+				});
 
-			onUnload.path = "/rpc/youtube/";
-			onUnload.data = {
-				type: "video"
-			};
+				onUnload.path = "/rpc/youtube/";
+				onUnload.data = {
+					type: "video"
+				};
+			}
 		}
 	}, {
 		// https://www.chess.com/game/:id
-		matches: [
-			/^https:\/\/www\.chess\.com\/game\/(\d+)$/
-		],
+		matches: [chess.regexp],
 
 		run: (_, id) => {
 			const board = chess.fetchBoard();
@@ -134,16 +158,6 @@ const extensions = [
 			});
 
 			onUnload.path = "/rpc/chess/";
-			onUnload.data = {};
-
-			const FEN = chess.generateFEN(board);
-
-			console.log("Chess FEN:", FEN);
-
-			send("POST", "/chess/", {
-				FEN,
-				url: `https://www.chess.com/game/${id}`
-			});
 		}
 	}
 ];
@@ -179,8 +193,13 @@ const check = () => {
 	}
 };
 
-check();
-setInterval(check, 10000);
+window.addEventListener("load", () => {
+	check();
+	setInterval(check, 10000);
+	chess.update();
+	setInterval(() => chess.update(), 250);
+});
+
 window.addEventListener("beforeunload", () => {
 	if (onUnload.path) {
 		browser.runtime.sendMessage({
