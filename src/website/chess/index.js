@@ -1,0 +1,1 @@
+// Connect to server websocket, and listen for suggestion, board changes, etc

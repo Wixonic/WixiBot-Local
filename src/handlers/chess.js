@@ -10,8 +10,6 @@ let previousChessUrl = null;
  */
 const init = async (logger, client, discord, server, config) => {
 	server.app.post("/chess/", (req, res) => {
-		logger.debug("Engine input");
-
 		let body = "";
 
 		req.on("data", (chunk) => {
@@ -19,15 +17,13 @@ const init = async (logger, client, discord, server, config) => {
 		});
 
 		req.on("end", () => {
-			console.log(logger);
+			console.log(body);
 		});
 
 		// Chess engine
 	});
 
 	server.app.post("/rpc/chess/", (req, res) => {
-		logger.debug("RPC input");
-
 		let body = "";
 
 		req.on("data", (chunk) => {
