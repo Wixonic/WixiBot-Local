@@ -1,3 +1,5 @@
+const { RichPresence } = require("discord.js-selfbot-v13");
+
 const request = require("../lib/request.js");
 
 let lastRobloxRefresh = 0;
