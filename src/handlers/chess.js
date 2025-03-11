@@ -35,7 +35,10 @@ const init = async (logger, client, discord, server, config) => {
 				data: boardData
 			}));
 
-			if (stockfish && !stockfish.killed) stockfish.stdin.write(`stop\nposition fen ${boardData.FEN}\n`);
+			if (stockfish && !stockfish.killed) {
+				stockfish.stdin.write(`stop\nposition fen "${boardData.FEN}"\n`);
+				logger.debug("[Stockfish]", "New position:", boardData.FEN);
+			}
 			currentBoardData = boardData;
 
 			res.sendStatus(204).end();
@@ -60,13 +63,15 @@ const init = async (logger, client, discord, server, config) => {
 
 						const lines = buffer.split("\n");
 						while (cursor < lines.length) {
-							const line = lines[cursor - 1] ?? "";
+							const line = lines[cursor] ?? "";
 							if (line == "uciok") {
 								stockfish.stdout.off("data", waitUntilReady);
+								logger.debug("[Stockfish]", "Initialized and ready.");
 								resolve();
 							}
 							cursor++;
 						}
+						buffer = lines.at(-1);
 					};
 					stockfish.stdout.on("data", waitUntilReady);
 				});
@@ -113,7 +118,7 @@ const init = async (logger, client, discord, server, config) => {
 											break;
 
 										case "mate":
-											data.mate = line[x + 1];
+											data.mate = parseInt(line[x + 1]);
 											x++;
 											break;
 									};
@@ -136,20 +141,24 @@ const init = async (logger, client, discord, server, config) => {
 
 					const lines = buffer.split("\n");
 					while (cursor < lines.length) {
-						const line = lines[cursor - 1] ?? "";
+						const line = lines[cursor] ?? "";
+						logger.debug("[Stockfish]", line);
 						processLine(line);
 						cursor++;
 					}
+					buffer = lines.at(-1);
 				});
 				stockfish.stderr.on("data", (data) => {
 					buffer += data.toString();
 
 					const lines = buffer.split("\n");
 					while (cursor < lines.length) {
-						const line = lines[cursor - 1] ?? "";
+						const line = lines[cursor] ?? "";
+						logger.debug("[Stockfish]", line);
 						processLine(line);
 						cursor++;
 					}
+					buffer = lines.at(-1);
 				});
 
 				ws.on("message", (data) => {
@@ -159,7 +168,22 @@ const init = async (logger, client, discord, server, config) => {
 						switch (message.type) {
 							case "predict":
 								logger.debug("Predicting...");
-								stockfish.stdin.write("go movetime 1000\n");
+
+								const timeout = setTimeout(() => {
+									logger.warn("[Stockfish] No response received within 5 seconds.");
+									stockfish.stdin.write("stop\nisready\n");
+								}, 5000);
+
+								const clear = () => {
+									clearTimeout(timeout);
+									stockfish.stderr.off("data", clear);
+									stockfish.stdout.off("data", clear);
+								};
+
+								stockfish.stderr.on("data", clear);
+								stockfish.stdout.on("data", clear);
+
+								if (stockfish && !stockfish.killed) stockfish.stdin.write("go movetime 3000\n");
 								break;
 
 							default:
@@ -173,7 +197,12 @@ const init = async (logger, client, discord, server, config) => {
 
 				ws.on("close", () => {
 					currentWs = null;
-					if (stockfish && !stockfish.killed) stockfish.kill(0);
+
+					if (stockfish && !stockfish.killed) {
+						stockfish.kill(0);
+						logger.debug("Stockfish process killed.");
+					}
+
 					logger.debug("WebSocket closed");
 				});
 			}
