@@ -71,12 +71,16 @@ const connectWebSocket = () => {
 											break;
 
 										case "time":
-											const progress = Math.min(1000, Number(entry[1])) / 1000;
+											const progress = Math.min(1000, Number(entry[1])) / 3000;
 											document.querySelector("#progress .bar").style.width = `${progress * 100}%`;
 											break;
 
+										case "mate":
+											document.querySelector("#mate").textContent = `Mate in ${entry[1]}`;
+											break;
+
 										default:
-											console.log(entry[0]);
+											console.log("Unhandled message key:", entry[0], entry[1]);
 											break;
 									}
 								}
