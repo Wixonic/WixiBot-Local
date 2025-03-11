@@ -50,7 +50,7 @@ const chess = {
 			}).join("") + (emptyCount > 0 ? emptyCount : "");
 		}).join("/");
 
-		return `${boardFEN} ${document.querySelector(".clock-black").classList.contains("clock-player-turn") ? "b" : "w"} KQkq - 0 1`;
+		return `${boardFEN} ${document.querySelector(".clock-black").classList.contains("clock-player-turn") ? "b" : "w"} - - 0 1`;
 	},
 
 	update: () => {
