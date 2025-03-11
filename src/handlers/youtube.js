@@ -22,9 +22,17 @@ const init = async (logger, client, discord, server, config) => {
 				const youtubeResponse = JSON.parse(body);
 				if (youtubeResponse.name != youtubeData?.name || youtubeResponse.author != youtubeData?.author) {
 					youtubeData = youtubeResponse;
-					console.log(youtubeData.thumbnail);
-					if (URL.canParse(youtubeData.thumbnail)) youtubeData.thumbnail = (await RichPresence.getExternal(discord.client, config.discord.application.clients.youtube.id, youtubeData.thumbnail))[0].external_asset_path;
-					else delete youtubeData.thumbnail;
+					if (youtubeData.thumbnail) {
+						const url = new URL(youtubeData.thumbnail);
+						if (url.protocol && url.hostname) {
+							try {
+								youtubeData.thumbnail = (await RichPresence.getExternal(discord.client, config.discord.application.clients.youtube.id, youtubeData.thumbnail))[0].external_asset_path;
+							} catch (e) {
+								logger.error("Failed to get external URL:", error);
+								delete youtubeData.thumbnail;
+							}
+						} else delete youtubeData.thumbnail;
+					} else delete youtubeData.thumbnail;
 					youtubeData.startedAt = Date.now();
 					youtubeData.updatedAt = Date.now();
 					logger.info("Data updated");
@@ -87,11 +95,18 @@ const process = async (logger, client, discord, server, config) => {
 			type: "WATCHING"
 		};
 
+		const isValidURL = (string) => {
+			try {
+				const url = new URL(string);
+				return url.protocol != "" && url.hostname != "";
+			} catch { return false; }
+		};
+
 		if (!activity.assets.large_image) {
-			activity.assets.large_image = activity.assets.small_image;
-			activity.assets.large_text = activity.assets.small_text;
-			delete activity.assets.small_image;
-			delete activity.assets.small_text;
+			if (activity.assets.small_image && isValidURL(activity.assets.small_image)) {
+				activity.assets.large_image = activity.assets.small_image;
+				delete activity.assets.small_image;
+			} else delete activity.assets.large_image;
 		}
 
 		discord.addActivity("youtube", activity);
