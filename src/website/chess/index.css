@@ -43,7 +43,7 @@ body {
 
 #container {
 	display: grid;
-	grid-template-columns: 1.5rem min(100vw - 20rem, 100vh) 100%;
+	grid-template-columns: 1.5rem min(100vw - 20rem, 100vh) auto;
 	grid-template-rows: 100%;
 	gap: 0.5rem;
 
@@ -87,8 +87,7 @@ body {
 	grid-column: 3;
 
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 0.5rem 3rem 2rem 2rem;
+	grid-template-rows: 0.5rem 2rem 2rem 2rem;
 
 	width: 100%;
 	min-width: 20rem;
@@ -101,36 +100,20 @@ body {
 	padding: 0.4rem;
 }
 
-#progress {
+#best {
 	grid-column: 1 / 3;
 	grid-row: 1;
 
-	background: var(--background);
+	font-weight: 600;
 
-	width: 100%;
-
-	border-radius: 0.5rem;
-
-	overflow: hidden;
-}
-
-#progress .bar {
-	background: #FFF;
-
-	width: 0;
-	height: 100%;
-
-	transition: width 0.2s ease-out;
-}
-
-#best {
-	grid-column: 1 / 3;
-	grid-row: 2;
+	margin: auto;
 }
 
 #score-value {
 	grid-column: 1;
 	grid-row: 3;
+
+	margin: auto auto auto 0;
 }
 
 #depth {
@@ -138,11 +121,17 @@ body {
 	grid-row: 3;
 
 	text-align: right;
+
+	margin: auto 0 auto auto;
 }
 
 #mate {
 	grid-column: 1 / 3;
-	grid-row: 4;
+	grid-row: 2;
+
+	font-weight: 800;
+
+	margin: auto;
 }
 
 #board {

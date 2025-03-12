@@ -35,11 +35,9 @@ const init = async (logger, client, discord, server, config) => {
 				data: boardData
 			}));
 
-			if (stockfish && !stockfish.killed) {
-				stockfish.stdin.write(`stop\nposition fen "${boardData.FEN}"\n`);
-				logger.debug("[Stockfish]", "New position:", boardData.FEN);
-			}
+			logger.info("[Stockfish]", "New position:", boardData.FEN);
 			currentBoardData = boardData;
+			if (stockfish && !stockfish.killed) stockfish.stdin.write("stop\n");
 
 			res.sendStatus(204).end();
 
@@ -53,7 +51,7 @@ const init = async (logger, client, discord, server, config) => {
 				currentWs = ws;
 
 				stockfish = spawn("stockfish");
-				stockfish.stdin.write("uci\nsetoption name Threads value 15\nsetoption name Hash value 2048");
+				stockfish.stdin.write("uci\nsetoption name Threads value 16\nsetoption name Hash value 4096");
 
 				await new Promise((resolve) => {
 					let buffer = "";
@@ -71,7 +69,6 @@ const init = async (logger, client, discord, server, config) => {
 							}
 							cursor++;
 						}
-						buffer = lines.at(-1);
 					};
 					stockfish.stdout.on("data", waitUntilReady);
 				});
@@ -85,52 +82,56 @@ const init = async (logger, client, discord, server, config) => {
 				}
 
 				const processLine = (line) => {
-					line = line.split(" ");
-					const command = line[0];
+					line = line.trim();
 
-					if (ws.readyState === WebSocket.OPEN) {
-						let data = {};
+					if (line.length > 0) {
+						line = line.split(" ");
+						const command = line[0];
 
-						switch (command) {
-							case "info":
-								for (let x = 1; x < line.length; x++) {
-									const lineData = line[x];
+						if (ws.readyState === WebSocket.OPEN) {
+							let data = {};
 
-									switch (lineData) {
-										case "seldepth":
-											data.depth = line[x + 1];
-											x++;
-											break;
+							switch (command) {
+								case "info":
+									for (let x = 1; x < line.length; x++) {
+										const lineData = line[x];
 
-										case "time":
-											data.time = line[x + 1];
-											x++;
-											break;
+										switch (lineData) {
+											case "seldepth":
+												data.depth = line[x + 1];
+												x++;
+												break;
 
-										case "pv":
-											data.best = line[x + 1];
-											x++;
-											break;
+											case "pv":
+												data.best = line[x + 1];
+												x++;
+												break;
 
-										case "cp":
-											data.score = line[x + 1];
-											x++;
-											break;
+											case "cp":
+												data.score = line[x + 1];
+												x++;
+												break;
 
-										case "mate":
-											data.mate = parseInt(line[x + 1]);
-											x++;
-											break;
-									};
-								}
-								break;
+											case "mate":
+												data.mate = parseInt(line[x + 1]);
+												x++;
+												break;
+										};
+									}
+									break;
 
-							default:
-								logger.debug("[Stockfish]", line.join(" "));
-								break;
-						};
+								case "bestmove":
+									data.best = line[1];
+									logger.info("[Stockfish]", "Best move:", data.best);
+									break;
 
-						if (Object.keys(data).length > 0) ws.send(JSON.stringify(data));
+								default:
+									logger.debug("[Stockfish]", line.join(" "));
+									break;
+							};
+
+							if (Object.keys(data).length > 0) ws.send(JSON.stringify(data));
+						}
 					}
 				};
 
@@ -142,11 +143,9 @@ const init = async (logger, client, discord, server, config) => {
 					const lines = buffer.split("\n");
 					while (cursor < lines.length) {
 						const line = lines[cursor] ?? "";
-						logger.debug("[Stockfish]", line);
 						processLine(line);
 						cursor++;
 					}
-					buffer = lines.at(-1);
 				});
 				stockfish.stderr.on("data", (data) => {
 					buffer += data.toString();
@@ -154,11 +153,9 @@ const init = async (logger, client, discord, server, config) => {
 					const lines = buffer.split("\n");
 					while (cursor < lines.length) {
 						const line = lines[cursor] ?? "";
-						logger.debug("[Stockfish]", line);
 						processLine(line);
 						cursor++;
 					}
-					buffer = lines.at(-1);
 				});
 
 				ws.on("message", (data) => {
@@ -170,9 +167,9 @@ const init = async (logger, client, discord, server, config) => {
 								logger.debug("Predicting...");
 
 								const timeout = setTimeout(() => {
-									logger.warn("[Stockfish] No response received within 5 seconds.");
-									stockfish.stdin.write("stop\nisready\n");
-								}, 5000);
+									logger.warn("[Stockfish] No response received within one second.");
+									stockfish.stdin.write("stop\n");
+								}, 1000);
 
 								const clear = () => {
 									clearTimeout(timeout);
@@ -183,7 +180,7 @@ const init = async (logger, client, discord, server, config) => {
 								stockfish.stderr.on("data", clear);
 								stockfish.stdout.on("data", clear);
 
-								if (stockfish && !stockfish.killed) stockfish.stdin.write("go movetime 3000\n");
+								if (stockfish && !stockfish.killed) stockfish.stdin.write(`position fen ${currentBoardData.FEN}\ngo movetime 500\n`);
 								break;
 
 							default:
@@ -199,13 +196,13 @@ const init = async (logger, client, discord, server, config) => {
 					currentWs = null;
 
 					if (stockfish && !stockfish.killed) {
-						stockfish.kill(0);
+						stockfish.stdin.write("quit\n");
 						logger.debug("Stockfish process killed.");
 					}
 
 					logger.debug("WebSocket closed");
 				});
-			}
+			};
 		});
 	});
 

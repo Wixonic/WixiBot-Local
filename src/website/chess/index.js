@@ -1,5 +1,10 @@
-let currentPlayer = "w";
 const url = "ws://localhost:1000/";
+
+let currentPlayer = "w";
+let best = {
+	from: null,
+	to: null
+};
 
 const connectWebSocket = () => {
 	/** @type {WebSocket?} */
@@ -17,7 +22,7 @@ const connectWebSocket = () => {
 				if (event.data == "0x00") {
 					console.log("Server answered");
 
-					ws.addEventListener("message", (event) => {
+					ws.addEventListener("message", async (event) => {
 						const message = JSON.parse(event.data);
 
 						switch (message.type) {
@@ -36,7 +41,8 @@ const connectWebSocket = () => {
 
 									document.querySelector("#best").innerHTML = document.querySelector("#depth").innerHTML = document.querySelector("#score-value").innerHTML = "";
 									document.querySelector("#score-bar .bar").style.height = "50%";
-									document.querySelector("#progress .bar").style.width = "0%";
+
+									await wait(100);
 
 									ws.send(JSON.stringify({
 										type: "predict"
@@ -50,7 +56,11 @@ const connectWebSocket = () => {
 								for (const entry of Object.entries(message)) {
 									switch (entry[0]) {
 										case "best":
-											document.querySelector("#best").innerHTML = entry[1];
+											best = {
+												from: entry[1].slice(0, 2),
+												to: entry[1].slice(2, 4)
+											};
+											document.querySelector("#best").innerHTML = `${best.from} &rarr; ${best.to}`;
 											break;
 
 										case "depth":
@@ -67,16 +77,12 @@ const connectWebSocket = () => {
 
 											document.querySelector("#score-value").innerHTML = `Score: ${Math.abs(score)}${score == 0 ? "" : ` for ${score > 0 ? "whites" : "blacks"}`}`;
 
-											document.querySelector("#score-bar .bar").style.height = `${Math.min(100, Math.max(0, 50 + score * 10))}%`;
-											break;
-
-										case "time":
-											const progress = Math.min(1000, Number(entry[1])) / 3000;
-											document.querySelector("#progress .bar").style.width = `${progress * 100}%`;
+											document.querySelector("#score-bar .bar").style.height = `${Math.min(100, Math.max(0, 50 + score * 7))}%`;
 											break;
 
 										case "mate":
-											document.querySelector("#mate").textContent = `Mate in ${entry[1]}`;
+											document.querySelector("#mate").innerHTML = `Mate in ${Math.abs(entry[1])}`;
+											document.querySelector("#score-bar .bar").style.height = `${Math.min(100, Math.max(0, 50 + Math.sign(entry[1]) * 50))}%`;
 											break;
 
 										default:
@@ -109,5 +115,7 @@ const connectWebSocket = () => {
 	connect();
 	return ws;
 };
+
+const wait = (milliseconds) => new Promise((resolve) => setTimeout(() => resolve(), milliseconds));
 
 connectWebSocket();
