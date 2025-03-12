@@ -68,8 +68,6 @@ const process = async (logger, client, discord, server, config) => {
 			state: blenderData.state,
 			type: "PLAYING"
 		});
-
-		logger.debug("RPC updated");
 	}
 };
 

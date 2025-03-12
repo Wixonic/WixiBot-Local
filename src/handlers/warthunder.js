@@ -7,6 +7,16 @@ let lastWarThunderRefresh = 0;
 let inWarThunderGameSince = null;
 
 /**
+ * @type {import("@wixonic/logger").Logger}
+ */
+const emptyLogger = {
+	debug: () => null,
+	error: () => null,
+	info: () => null,
+	warn: () => null
+};
+
+/**
  * @param {import("@wixonic/logger").Logger} logger
  * @param {Client} client
  * @param {DiscordClient} discord
@@ -19,7 +29,7 @@ const process = async (logger, client, discord, server, config) => {
 
 		if (data.valid) {
 			if (!inWarThunderGameSince) inWarThunderGameSince = Date.now();
-			await request(logger, {
+			await request(emptyLogger, {
 				url: new URL("/rpc/warthunder/map.png", "https://" + config.client.hostname),
 				method: "POST",
 				headers: {
@@ -59,8 +69,6 @@ const process = async (logger, client, discord, server, config) => {
 		} else {
 			discord.removeActivity("wt");
 			inWarThunderGameSince = null;
-
-			logger.warn(data.errors.join(", "));
 		}
 
 		lastWarThunderRefresh = Date.now();

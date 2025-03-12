@@ -110,8 +110,6 @@ const process = async (logger, client, discord, server, config) => {
 		}
 
 		discord.addActivity("youtube", activity);
-
-		logger.debug("RPC updated");
 	}
 };
 

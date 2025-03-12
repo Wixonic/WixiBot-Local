@@ -5,6 +5,16 @@ const request = require("../lib/request.js");
 let lastSteamRefresh = 0;
 
 /**
+ * @type {import("@wixonic/logger").Logger}
+ */
+const emptyLogger = {
+	debug: () => null,
+	error: () => null,
+	info: () => null,
+	warn: () => null
+};
+
+/**
  * @param {import("@wixonic/logger").Logger} logger
  * @param {Client} client
  * @param {DiscordClient} discord
@@ -13,7 +23,7 @@ let lastSteamRefresh = 0;
  */
 const process = async (logger, client, discord, server, config) => {
 	if (lastSteamRefresh + 15 * 1000 < Date.now()) {
-		const response = (await request(logger, {
+		const response = (await request(emptyLogger, {
 			method: "GET",
 			type: "json",
 			url: `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002?key=${config.steam.token}&steamids=${config.steam.id}`
@@ -22,7 +32,7 @@ const process = async (logger, client, discord, server, config) => {
 		const player = response?.players?.at(0) ?? {};
 
 		if (player.gameid) {
-			const response = (await request(logger, {
+			const response = (await request(emptyLogger, {
 				method: "GET",
 				type: "json",
 				url: `https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${config.steam.token}&steamid=${config.steam.id}&include_appinfo=true&include_played_free_games=true&include_free_sub=true`

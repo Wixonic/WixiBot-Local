@@ -5,11 +5,21 @@ const request = require("./request.js");
 const { wait } = require("./utils.js");
 
 /**
+ * @type {import("@wixonic/logger").Logger}
+ */
+const emptyLogger = {
+	debug: () => null,
+	error: () => null,
+	info: () => null,
+	warn: () => null
+};
+
+/**
  * @param {import("@wixonic/logger").Logger} logger
  * @param {string} unit
  */
 const getUnitData = async (logger, unit) => {
-	const html = await request(logger, {
+	const html = await request(emptyLogger, {
 		url: "https://wiki.warthunder.com/unit/" + unit,
 		type: "text",
 		method: "GET"
@@ -51,7 +61,7 @@ const get = async (logger, config) => {
 	let unit = "Unknown unit";
 
 	try {
-		info = await request(logger, {
+		info = await request(emptyLogger, {
 			url: new URL(config.paths.map.info, `http://localhost:${config.port}`),
 			type: "json",
 			secure: false
@@ -59,7 +69,7 @@ const get = async (logger, config) => {
 
 		await wait(config.waitingTime);
 
-		objs = await request(logger, {
+		objs = await request(emptyLogger, {
 			url: new URL(config.paths.map.objects, `http://localhost:${config.port}`),
 			type: "json",
 			secure: false
@@ -67,7 +77,7 @@ const get = async (logger, config) => {
 
 		await wait(config.waitingTime);
 
-		const imageResponse = await request(logger, {
+		const imageResponse = await request(emptyLogger, {
 			url: new URL(config.paths.map.image, `http://localhost:${config.port}`),
 			type: "raw",
 			secure: false
@@ -114,7 +124,7 @@ const get = async (logger, config) => {
 
 	if (errors.length == 0) {
 		try {
-			const indicators = await request(logger, {
+			const indicators = await request(emptyLogger, {
 				url: new URL(config.paths.vehicle.indicators, `http://localhost:${config.port}`),
 				type: "json",
 				secure: false
@@ -135,7 +145,7 @@ const get = async (logger, config) => {
 						await wait(config.waitingTime);
 
 						try {
-							const state = await request(logger, {
+							const state = await request(emptyLogger, {
 								url: new URL(config.paths.vehicle.state, `http://localhost:${config.port}`),
 								type: "json",
 								secure: false

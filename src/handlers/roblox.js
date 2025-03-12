@@ -5,6 +5,16 @@ const request = require("../lib/request.js");
 let lastRobloxRefresh = 0;
 
 /**
+ * @type {import("@wixonic/logger").Logger}
+ */
+const emptyLogger = {
+	debug: () => null,
+	error: () => null,
+	info: () => null,
+	warn: () => null
+};
+
+/**
  * @param {import("@wixonic/logger").Logger} logger
  * @param {Client} client
  * @param {DiscordClient} discord
@@ -13,7 +23,7 @@ let lastRobloxRefresh = 0;
  */
 const process = async (logger, client, discord, server, config) => {
 	if (lastRobloxRefresh + 15 * 1000 < Date.now()) {
-		const response = await request(logger, {
+		const response = await request(emptyLogger, {
 			body: JSON.stringify({
 				userIds: [
 					config.roblox.id
@@ -33,7 +43,7 @@ const process = async (logger, client, discord, server, config) => {
 
 		switch (presence.userPresenceType) {
 			case 2: // InGame
-				const icon = await request(logger, {
+				const icon = await request(emptyLogger, {
 					url: `https://thumbnails.roblox.com/v1/games/icons?universeIds=${presence.universeId}&size=512x512&format=Png`,
 					type: "json"
 				});

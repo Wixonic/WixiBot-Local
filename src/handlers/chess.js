@@ -270,8 +270,6 @@ const process = async (logger, client, discord, server, config) => {
 			name: "Chess",
 			type: "PLAYING"
 		});
-
-		logger.debug("RPC updated");
 	}
 };
 

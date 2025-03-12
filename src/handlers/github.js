@@ -140,10 +140,8 @@ const process = async (logger, client, discord, server, config) => {
 				break;
 		};
 
-		if (data) {
-			discord.addActivity("github", data);
-			logger.debug("RPC updated");
-		} else discord.removeActivity("github");
+		if (data) discord.addActivity("github", data);
+		else discord.removeActivity("github");
 	}
 };
 
