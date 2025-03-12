@@ -71,7 +71,7 @@ const chess = {
 				chess.previousBoard = board;
 			}
 
-			setTimeout(() => chess.update(), 50);
+			setTimeout(() => chess.update(), 100);
 		} else setTimeout(() => chess.update(), 2000);
 	}
 };
