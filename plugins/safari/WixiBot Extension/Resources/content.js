@@ -62,8 +62,6 @@ const chess = {
 			if (JSON.stringify(board) != JSON.stringify(chess.previousBoard)) {
 				const FEN = chess.generateFEN(board);
 
-				console.log(FEN);
-
 				send("POST", "/chess/", {
 					board,
 					FEN,
@@ -72,9 +70,9 @@ const chess = {
 
 				chess.previousBoard = board;
 			}
-		}
 
-		setTimeout(() => chess.update(), 250);
+			setTimeout(() => chess.update(), 50);
+		} else setTimeout(() => chess.update(), 2000);
 	}
 };
 
