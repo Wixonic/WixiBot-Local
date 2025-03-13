@@ -77,9 +77,9 @@ class ClientManager {
 	 */
 	async getExternalAsset(applicationId, url) {
 		try {
-			return await RichPresence.getExternal(discord.client, applicationId, url)[0].external_asset_path;
-		} catch {
-			this.logger.warn("Failed to get external url for:", url);
+			return (await RichPresence.getExternal(this.client, applicationId, url))[0].external_asset_path;
+		} catch (e) {
+			this.logger.warn("Failed to get external url for:", url, "-", e);
 			return null;
 		}
 	};
