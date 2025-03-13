@@ -1,10 +1,10 @@
-const { Client } = require("discord.js-selfbot-v13");
+const { Client, RichPresence } = require("discord.js-selfbot-v13");
 
 const { clone } = require("./utils.js");
 
 class ClientManager {
 	/**
-	 * @type {Object<string, import("./types.d.ts").Activity>}
+	 * @type {Object<string, import("../types.d.ts").Activity>}
 	 */
 	activities = {};
 
@@ -58,7 +58,7 @@ class ClientManager {
 
 	async updateActivities() {
 		/**
-		* @type {import("./types.d.ts").Activity[]}
+		* @type {import("../types.d.ts").Activity[]}
 		*/
 		const activities = Object.values(clone(this.activities));
 		activities.sort((activityA, activityB) => (activityA.level ?? 0) - (activityB.level ?? 0));
@@ -68,6 +68,21 @@ class ClientManager {
 			afk: true,
 			status: Object.values(this.activities).length > 0 ? "idle" : "invisible"
 		});
+	};
+
+	/**
+	 * @param {import("discord.js-selfbot-v13").Snowflake} applicationId
+	 * @param {string} url
+	 * @returns {Promise<string | null>}
+	 */
+	async getExternalAsset(applicationId, url) {
+		try {
+			throw "";
+			return await RichPresence.getExternal(discord.client, applicationId, url)[0].external_asset_path;
+		} catch {
+			return null;
+			this.logger.warn("Failed to get external url for:", url);
+		}
 	};
 
 	/**
@@ -101,7 +116,7 @@ class ClientManager {
 		this.client.on("error", (error) => this.logger.error(`An error occured: ${error}`));
 
 		this.destroyed = false;
-		/* for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
+		for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
 			process.on(signal, async (reason, code) => {
 				if (!this.destroyed) {
 					this.destroyed = true;
@@ -115,7 +130,7 @@ class ClientManager {
 					}
 				}
 			});
-		} */
+		}
 	};
 
 	/**

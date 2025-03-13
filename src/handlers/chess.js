@@ -15,10 +15,10 @@ let stockfish = null;
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {Client} client
+ * @param {import("../lib/client.js")} client
  * @param {import("../lib/discord.js")} discord
  * @param {import("../lib/server.js")} server
- * @param {import("./types.d.ts").Config} config
+ * @param {import("../types.d.ts").Config} config
  */
 const init = async (logger, client, discord, server, config) => {
 	server.app.post("/chess/", (req, res) => {
@@ -169,7 +169,7 @@ const init = async (logger, client, discord, server, config) => {
 								const timeout = setTimeout(() => {
 									logger.warn("[Stockfish] No response received within one second.");
 									stockfish.stdin.write("stop\n");
-								}, 1000);
+								}, 1500);
 
 								const clear = () => {
 									clearTimeout(timeout);
@@ -180,7 +180,7 @@ const init = async (logger, client, discord, server, config) => {
 								stockfish.stderr.on("data", clear);
 								stockfish.stdout.on("data", clear);
 
-								if (stockfish && !stockfish.killed) stockfish.stdin.write(`position fen ${currentBoardData.FEN}\ngo movetime 500\n`);
+								if (stockfish && !stockfish.killed) stockfish.stdin.write(`position fen ${currentBoardData.FEN}\ngo movetime 1000\n`);
 								break;
 
 							default:
@@ -242,10 +242,10 @@ const init = async (logger, client, discord, server, config) => {
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {Client} client
- * @param {DiscordClient} discord
- * @param {Server} server
- * @param {import("./types.d.ts").Config} config
+ * @param {import("../lib/client.js")} client
+ * @param {import("../lib/discord.js")} discord
+ * @param {import("../lib/server.js")} server
+ * @param {import("../types.d.ts").Config} config
  */
 const process = async (logger, client, discord, server, config) => {
 	if (chessData && chessData.date + 30 * 1000 < Date.now()) chessData = null;

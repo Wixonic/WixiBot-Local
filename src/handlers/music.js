@@ -2,16 +2,16 @@ const { getCurrentTrackInfo } = require("../lib/music.js");
 const spotify = require("../lib/spotify.js");
 
 /**
- * @type {import("./types.d.ts").Song?}
+ * @type {import("../types.d.ts").Song?}
  */
 let currentSong = null;
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {Client} client
- * @param {DiscordClient} discord
- * @param {Server} server
- * @param {import("./types.d.ts").Config} config
+ * @param {import("../lib/client.js")} client
+ * @param {import("../lib/discord.js")} discord
+ * @param {import("../lib/server.js")} server
+ * @param {import("../types.d.ts").Config} config
  */
 const process = async (logger, client, discord, server, config) => {
 	let song = await getCurrentTrackInfo();

@@ -1,13 +1,11 @@
-const { RichPresence } = require("discord.js-selfbot-v13");
-
 let githubData = null;
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {Client} client
- * @param {DiscordClient} discord
- * @param {Server} server
- * @param {import("./types.d.ts").Config} config
+ * @param {import("../lib/client.js")} client
+ * @param {import("../lib/discord.js")} discord
+ * @param {import("../lib/server.js")} server
+ * @param {import("../types.d.ts").Config} config
  */
 const init = async (logger, client, discord, server, config) => {
 	server.app.post("/rpc/github/", (req, res) => {
@@ -38,11 +36,11 @@ const init = async (logger, client, discord, server, config) => {
 
 					switch (githubResponse.type) {
 						case "repository":
-							githubData.large_image = (await RichPresence.getExternal(discord.client, config.discord.application.clients.github.id, `https://github.com/${githubData.owner}.png`))[0].external_asset_path;
+							githubData.large_image = await discord.getExternalAsset(config.discord.application.clients.github.id, `https://github.com/${githubData.owner}.png`);
 							break;
 
 						case "profile":
-							githubData.large_image = (await RichPresence.getExternal(discord.client, config.discord.application.clients.github.id, `https://github.com/${githubData.profile}.png`))[0].external_asset_path;
+							githubData.large_image = await discord.getExternalAsset(config.discord.application.clients.github.id, `https://github.com/${githubData.profile}.png`);
 							break;
 					}
 
@@ -65,10 +63,10 @@ const init = async (logger, client, discord, server, config) => {
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {Client} client
- * @param {DiscordClient} discord
- * @param {Server} server
- * @param {import("./types.d.ts").Config} config
+ * @param {import("../lib/client.js")} client
+ * @param {import("../lib/discord.js")} discord
+ * @param {import("../lib/server.js")} server
+ * @param {import("../types.d.ts").Config} config
  */
 const process = async (logger, client, discord, server, config) => {
 	if (githubData && githubData.updatedAt + 30 * 1000 < Date.now()) githubData = null;
@@ -76,7 +74,7 @@ const process = async (logger, client, discord, server, config) => {
 	if (!githubData) discord.removeActivity("github");
 	else {
 		/**
-		 * @type {import("./types.d.ts").Activity}
+		 * @type {import("../types.d.ts").Activity}
 		 */
 		let data = null;
 		const type = githubData.type;

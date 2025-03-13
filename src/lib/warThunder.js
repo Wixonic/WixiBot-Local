@@ -50,7 +50,7 @@ const getUnitData = async (logger, unit) => {
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {import("../types").WarThunderConfig} config
+ * @param {import("../types.d.ts").WarThunderConfig} config
  */
 const get = async (logger, config) => {
 	const errors = [];

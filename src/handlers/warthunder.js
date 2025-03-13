@@ -1,5 +1,3 @@
-const { RichPresence } = require("discord.js-selfbot-v13");
-
 const request = require("../lib/request.js");
 const wt = require("../lib/warThunder.js");
 
@@ -18,10 +16,10 @@ const emptyLogger = {
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {Client} client
- * @param {DiscordClient} discord
- * @param {Server} server
- * @param {import("./types.d.ts").Config} config
+ * @param {import("../lib/client.js")} client
+ * @param {import("../lib/discord.js")} discord
+ * @param {import("../lib/server.js")} server
+ * @param {import("../types.d.ts").Config} config
  */
 const process = async (logger, client, discord, server, config) => {
 	if (lastWarThunderRefresh + 15 * 1000 < Date.now()) {
@@ -44,7 +42,7 @@ const process = async (logger, client, discord, server, config) => {
 			discord.addActivity("wt", {
 				applicationId: config.discord.application.clients.war_thunder.id,
 				assets: {
-					large_image: (await RichPresence.getExternal(discord.client, config.discord.application.clients.war_thunder.id, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, "https://" + config.client.hostname)))[0].external_asset_path,
+					large_image: await discord.getExternalAsset(config.discord.application.clients.war_thunder.id, new URL(`/warthunder/warthundermap.png?t=${Date.now()}`, "https://" + config.client.hostname)),
 					large_text: data.unit,
 					small_image: config.discord.application.clients.war_thunder.assets.icon,
 					small_text: "War Thunder"

@@ -1,13 +1,11 @@
-const { RichPresence } = require("discord.js-selfbot-v13");
-
 let youtubeData = null;
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {Client} client
- * @param {DiscordClient} discord
- * @param {Server} server
- * @param {import("./types.d.ts").Config} config
+ * @param {import("../lib/client.js")} client
+ * @param {import("../lib/discord.js")} discord
+ * @param {import("../lib/server.js")} server
+ * @param {import("../types.d.ts").Config} config
  */
 const init = async (logger, client, discord, server, config) => {
 	server.app.post("/rpc/youtube/", (req, res) => {
@@ -22,17 +20,7 @@ const init = async (logger, client, discord, server, config) => {
 				const youtubeResponse = JSON.parse(body);
 				if (youtubeResponse.name != youtubeData?.name || youtubeResponse.author != youtubeData?.author) {
 					youtubeData = youtubeResponse;
-					if (youtubeData.thumbnail) {
-						const url = new URL(youtubeData.thumbnail);
-						if (url.protocol && url.hostname) {
-							try {
-								youtubeData.thumbnail = (await RichPresence.getExternal(discord.client, config.discord.application.clients.youtube.id, youtubeData.thumbnail))[0].external_asset_path;
-							} catch (e) {
-								logger.error("Failed to get external URL:", error);
-								delete youtubeData.thumbnail;
-							}
-						} else delete youtubeData.thumbnail;
-					} else delete youtubeData.thumbnail;
+					youtubeData.thumbnail = await discord.getExternalAsset(config.discord.application.clients.youtube.id, youtubeData.thumbnail);
 					youtubeData.startedAt = Date.now();
 					youtubeData.updatedAt = Date.now();
 					logger.info("Data updated");
@@ -55,10 +43,10 @@ const init = async (logger, client, discord, server, config) => {
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {Client} client
- * @param {DiscordClient} discord
- * @param {Server} server
- * @param {import("./types.d.ts").Config} config
+ * @param {import("../lib/client.js")} client
+ * @param {import("../lib/discord.js")} discord
+ * @param {import("../lib/server.js")} server
+ * @param {import("../types.d.ts").Config} config
  */
 const process = async (logger, client, discord, server, config) => {
 	if (youtubeData && youtubeData.updatedAt + 30 * 1000 < Date.now()) youtubeData = null;

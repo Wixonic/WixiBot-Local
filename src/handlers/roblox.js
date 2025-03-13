@@ -1,5 +1,3 @@
-const { RichPresence } = require("discord.js-selfbot-v13");
-
 const request = require("../lib/request.js");
 
 let lastRobloxRefresh = 0;
@@ -16,10 +14,10 @@ const emptyLogger = {
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {Client} client
- * @param {DiscordClient} discord
- * @param {Server} server
- * @param {import("./types.d.ts").Config} config
+ * @param {import("../lib/client.js")} client
+ * @param {import("../lib/discord.js")} discord
+ * @param {import("../lib/server.js")} server
+ * @param {import("../types.d.ts").Config} config
  */
 const process = async (logger, client, discord, server, config) => {
 	if (lastRobloxRefresh + 15 * 1000 < Date.now()) {
@@ -51,7 +49,7 @@ const process = async (logger, client, discord, server, config) => {
 				discord.addActivity("roblox", {
 					applicationId: config.discord.application.clients.roblox.id,
 					assets: {
-						large_image: (await RichPresence.getExternal(discord.client, config.discord.application.clients.roblox.id, icon.data[0].imageUrl))[0].external_asset_path,
+						large_image: await discord.getExternalAsset(config.discord.application.clients.roblox.id, icon.data[0].imageUrl),
 						large_text: presence.lastLocation,
 						small_image: config.discord.application.clients.roblox.assets.icon,
 						small_text: "Roblox"
