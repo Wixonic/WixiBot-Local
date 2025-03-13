@@ -132,8 +132,13 @@ const connectWebSocket = () => {
 											break;
 
 										case "mate":
-											document.querySelector("#mate").innerHTML = `Mate in ${Math.abs(entry[1])}`;
-											document.querySelector("#score-bar .bar").style.height = `${Math.min(100, Math.max(0, 50 + Math.sign(entry[1]) * 50))}%`;
+											let mate = 0;
+
+											if (currentPlayer == "w") mate = Number(entry[1]);
+											else mate = -Number(entry[1]);
+
+											document.querySelector("#mate").innerHTML = `Mate in ${Math.abs(mate)}`;
+											document.querySelector("#score-bar .bar").style.height = `${Math.min(100, Math.max(0, 50 + Math.sign(mate) * 50))}%`;
 											break;
 
 										default:

@@ -85,6 +85,7 @@ const init = async (logger, client, discord, server, config) => {
 					line = line.trim();
 
 					if (line.length > 0) {
+						logger.debug("[Stockfish]", line);
 						line = line.split(" ");
 						const command = line[0];
 
@@ -140,7 +141,7 @@ const init = async (logger, client, discord, server, config) => {
 				stockfish.stdout.on("data", (data) => {
 					buffer += data.toString();
 
-					const lines = buffer.split("\n");
+					const lines = buffer.split(/\r\n|\r|\n/);
 					while (cursor < lines.length) {
 						const line = lines[cursor] ?? "";
 						processLine(line);
@@ -150,7 +151,7 @@ const init = async (logger, client, discord, server, config) => {
 				stockfish.stderr.on("data", (data) => {
 					buffer += data.toString();
 
-					const lines = buffer.split("\n");
+					const lines = buffer.split(/\r\n|\r|\n/);
 					while (cursor < lines.length) {
 						const line = lines[cursor] ?? "";
 						processLine(line);
