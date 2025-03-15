@@ -113,23 +113,6 @@ class ClientManager {
 		});
 
 		this.client.on("error", (error) => this.logger.error(`An error occured: ${error}`));
-
-		this.destroyed = false;
-		for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
-			process.on(signal, async (reason, code) => {
-				if (!this.destroyed) {
-					this.destroyed = true;
-					this.logger.warn("Destroying... | Reason:", reason ?? "Unknown", "| Code:", code ?? "None");
-
-					try {
-						this.client.destroy();
-						process.exit(0);
-					} catch (e) {
-						this.logger.error("Failed to exit:", e);
-					}
-				}
-			});
-		}
 	};
 
 	/**

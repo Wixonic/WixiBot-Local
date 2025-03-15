@@ -1,99 +1,130 @@
-const fs = require("fs");
-const path = require("path");
+const { spawn } = require("child_process");
 const { log } = require("@wixonic/logger");
+const process = require("process");
 
-// const Client = require("./lib/client.js");
-const Server = require("./lib/server.js");
-const DiscordClient = require("./lib/discord.js");
-
-/**
- * @param {import("@wixonic/logger").Logger} logger
- * @param {Client} client
- * @param {DiscordClient} discord
- * @param {Server} server
- * @param {import("./types.d.ts").Config} config
- */
-const handlers = async (logger, client, discord, server, config) => {
-	const folder = path.join(__dirname, "handlers");
-
-	if (fs.existsSync(folder)) {
-		for (const file of fs.readdirSync(folder)) {
-			if (file.endsWith(".js")) {
-				const hanlderPath = path.join(folder, file);
-				const handlerName = file.slice(0, -3);
-
-				const handlerLogger = {
-					debug: (...args) => logger.debug(`[${handlerName} init]`, ...args),
-					error: (...args) => logger.error(`[${handlerName} init]`, ...args),
-					info: (...args) => logger.info(`[${handlerName} init]`, ...args),
-					warn: (...args) => logger.warn(`[${handlerName} init]`, ...args)
-				};
-
-				const handler = require(hanlderPath);
-				if (typeof handler.init == "function") await handler.init(handlerLogger, client, discord, server, config);
-			}
-		}
-	}
-
-	const update = async () => {
-		if (fs.existsSync(folder)) {
-			for (const file of fs.readdirSync(folder)) {
-				if (file.endsWith(".js")) {
-					const hanlderPath = path.join(folder, file);
-					const handlerName = file.slice(0, -3);
-
-					const handlerLogger = {
-						debug: (...args) => logger.debug(`[${handlerName} process]`, ...args),
-						error: (...args) => logger.error(`[${handlerName} process]`, ...args),
-						info: (...args) => logger.info(`[${handlerName} process]`, ...args),
-						warn: (...args) => logger.warn(`[${handlerName} process]`, ...args)
-					};
-
-					const handler = require(hanlderPath);
-					if (typeof handler.process == "function") await handler.process(handlerLogger, client, discord, server, config);
-				}
-			}
-		}
-
-		setTimeout(update, 2500);
-	};
-
-	return update;
-};
+const { wait } = require("./lib/utils.js");
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
  */
 const main = async (logger) => {
-	const configPath = path.join(__dirname, "configs", (process.env.config ?? "default") + ".js");
+	const tries = {
+		current: 0,
+		max: 10,
+		delay: 3,
+		get text() {
+			return `[TRY ${String(this.current).padStart(String(this.max).length, "0")}/${this.max}]`;
+		}
+	};
 
-	if (fs.existsSync(configPath)) {
-		/**
-		 * @type {import("./types.d.ts").Config}
-		 */
-		const config = require(configPath);
+	const restart = async () => {
+		logger.warn("-".repeat(tries.text.length), "Restarting");
+		if (tries.current < tries.max) await wait(tries.delay * tries.current * 1000);
+		else {
+			logger.warn("-".repeat(tries.text.length), "Exceeded maximum number of retries. Restarting in 5 minutes.");
+			await wait(5 * 60 * 1000);
+			tries.current = 0;
+		}
+		await execute();
+	};
 
-		logger.debug("Using", process.env.config ?? "default", "config");
+	const execute = async () => {
+		tries.current++;
 
-		// const client = new Client(logger, config.client);
-		const discord = new DiscordClient(logger);
-		const server = new Server(logger, config.server);
+		const args = [
+			...process.execArgv,
+			"./process.js"
+		];
 
-		const handlersLogger = {
-			debug: (...args) => logger.debug("[Handlers]", ...args),
-			error: (...args) => logger.error("[Handlers]", ...args),
-			info: (...args) => logger.info("[Handlers]", ...args),
-			warn: (...args) => logger.warn("[Handlers]", ...args)
+		logger.debug(tries.text, "Launching node process with args:", ...args);
+
+		const child = spawn("node", args, {
+			env: process.env
+		});
+
+		for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
+			process.once(signal, async (reason, code) => {
+				if (!child.killed) {
+					child.removeAllListeners("exit");
+					child.kill(signal);
+					await new Promise((callback) => process.once("exit", callback));
+					process.exit(code);
+				} else process.exit(code);
+			});
+		}
+
+		child.on("error", (e) => logger.error(e));
+
+		const processLog = (line) => {
+			line = line.replace(/\x1b\[[0-9;]*m/g, "").trim();
+
+			if (line.length > 0) {
+				const data = line.split(" ");
+				const level = data.shift();
+				const message = data.join(" ").replaceAll("<br />", "\n");
+
+				switch (level) {
+					case "[DEBUG]":
+						logger.debug(tries.text, message);
+						break;
+
+					case "[ERROR]":
+						logger.error(tries.text, message);
+						break;
+
+					case "[INFO]":
+						logger.info(tries.text, message);
+						break;
+
+					case "[WARN]":
+						logger.warn(tries.text, message);
+						break;
+
+					default:
+						logger.warn(tries.text, "Invalid level:", level);
+						logger.debug(tries.text, "Content:", message);
+						break;
+				};
+			}
 		};
 
-		const update = await handlers(handlersLogger, /*client*/ null, discord, server, config);
+		let buffer = "";
+		let cursor = 0;
+		child.stdout.on("data", (data) => {
+			buffer += data.toString();
 
-		// await client.init();
-		await discord.login(config.discord.token);
-		await server.init();
+			const lines = buffer.split("\n");
+			while (cursor < lines.length) {
+				const line = lines[cursor - 1] ?? "";
+				processLog(line);
+				cursor++;
+			}
+		});
+		child.stderr.on("data", (data) => {
+			buffer += data.toString();
 
-		update();
-	} else logger.error("Can't find the configuration file");
+			const lines = buffer.split("\n");
+			while (cursor < lines.length) {
+				const line = lines[cursor - 1] ?? "";
+				processLog(line);
+				cursor++;
+			}
+		});
+
+		child.on("exit", (code, signal) => {
+			if (code == 0) {
+				logger.debug(tries.text, `Exited with code ${code} and signal ${signal}`);
+				process.exit(0);
+			} else {
+				logger.error(tries.text, `Exited with code ${code} and signal ${signal}`);
+				const remainingBufferData = buffer.split("\n").slice(cursor).join("\n");
+				if (remainingBufferData.length > 0) logger.debug(tries.text, "Remaining buffer data:", remainingBufferData);
+				restart();
+			}
+		});
+	};
+
+	await execute();
 };
 
 main(log);
