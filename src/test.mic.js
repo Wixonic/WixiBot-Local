@@ -5,7 +5,7 @@ const url = "wss://localhost:999/";
 
 const startMicProcess = () => {
 	const sox = spawn("sox", [
-		"-t", "coreaudio", "Wave Link Stream",
+		"-t", "coreaudio", "BlackHole 2ch",
 		"-b", "16",
 		"-c", "2",
 		"-r", "48000",
