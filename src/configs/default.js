@@ -33,7 +33,7 @@ const config = {
 				github: {
 					id: "1349433570153992372",
 					assets: {
-						icon: "1345034466460045442"
+						icon: "1349433570153992372"
 					}
 				},
 				minecraft: {
