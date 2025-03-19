@@ -6,6 +6,8 @@ const { log } = require("@wixonic/logger");
 const Server = require("./lib/server.js");
 const DiscordClient = require("./lib/discord.js");
 
+log.displayDate = false;
+
 /**
  * @param {import("@wixonic/logger").Logger} logger
  * @param {Client} client
