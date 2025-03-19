@@ -62,15 +62,27 @@ export interface DiscordSecrets {
 	token: string;
 };
 
+export interface RobloxSecrets {
+	id: string;
+	token: string;
+};
+
 export interface SpotifySecrets {
 	id: string;
 	secret: string;
 };
 
+export interface SteamSecrets {
+	id: string;
+	token: string;
+};
+
 export interface Secrets {
 	client: ClientSecrets;
 	discord: DiscordSecrets;
+	roblox: RobloxSecrets;
 	spotify: SpotifySecrets;
+	steam: SteamSecrets;
 };
 
 export type RequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
