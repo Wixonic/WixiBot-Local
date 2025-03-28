@@ -35,28 +35,33 @@ const connectWebSocket = (micProcess) => {
 			console.log("WebSocket connected");
 
 			ws.once("message", (message) => {
+				console.log("First message received:", message.toString("hex"));
+
 				if (message[0] == 0x00) {
 					console.log("Server answered");
 
 					micProcess.stdout.on("data", (chunk) => {
 						if (ws.readyState == WebSocket.OPEN) ws.send(chunk);
 					});
-				} else console.log("Server didn't answered");
+				} else console.log("Server didn't answer as expected");
 			});
 
 			ws.send(Buffer.from([0x01]));
 		});
 
 		ws.on("error", (e) => {
-			console.log("WebSocket error:", e);
+			console.log("WebSocket error event:", e);
 			ws.close();
 		});
 
-		ws.on("close", () => {
-			console.log("WebSocket closed, attempting to reconnect...");
+		ws.on("close", (code, reason) => {
+			console.log("WebSocket closed, code:", code, "reason:", reason);
 			micProcess.kill();
 			setTimeout(connect, 1000);
 		});
+
+		ws.on("unexpected-response", () => console.log("Unexpected response"));
+		ws.on("upgrade", () => console.log("Upgrade"));
 	};
 
 	connect();
