@@ -1,6 +1,8 @@
 const { spawn } = require("child_process");
 const WebSocket = require("ws");
 
+const secrets = require("./secrets.js");
+
 const url = "wss://localhost:999/";
 
 const startMicProcess = () => {
@@ -46,7 +48,7 @@ const connectWebSocket = (micProcess) => {
 				} else console.log("Server didn't answer as expected");
 			});
 
-			ws.send(Buffer.from([0x01]));
+			ws.send(Buffer.from([0x01, ...Buffer.from(secrets.wixkey)]));
 		});
 
 		ws.on("error", (e) => {

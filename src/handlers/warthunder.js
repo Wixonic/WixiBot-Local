@@ -31,7 +31,7 @@ const process = async (logger, client, discord, server, config) => {
 				url: new URL("/rpc/warthunder/map.png", "https://" + config.client.hostname),
 				method: "POST",
 				headers: {
-					authorization: `WixKey ${config.client.wixkey}`,
+					authorization: `WixKey ${config.wixkey}`,
 					"content-type": "image/png"
 				},
 				secure: true,

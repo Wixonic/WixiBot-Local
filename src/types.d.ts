@@ -2,7 +2,6 @@ import { ActivitiesOptions, CustomStatus, RichPresence, SpotifyRPC } from "disco
 
 export interface ClientConfig {
 	host: string;
-	wixkey: string;
 };
 
 export interface DiscordClient {
@@ -55,7 +54,6 @@ export interface Config {
 
 
 export interface ClientSecrets {
-	wixkey: string;
 };
 
 export interface DiscordSecrets {
@@ -83,6 +81,7 @@ export interface Secrets {
 	roblox: RobloxSecrets;
 	spotify: SpotifySecrets;
 	steam: SteamSecrets;
+	wixkey: string;
 };
 
 export type RequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";

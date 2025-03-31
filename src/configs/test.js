@@ -5,8 +5,7 @@ const secrets = require("../secrets.js");
  */
 const config = {
 	client: {
-		hostname: "localhost:999",
-		wixkey: secrets.client.wixkey
+		hostname: "localhost:999"
 	},
 	discord: {
 		application: {
@@ -77,6 +76,7 @@ const config = {
 		},
 		token: secrets.discord.token
 	},
+	rejectUnauthorized: false,
 	roblox: {
 		id: secrets.roblox.id,
 		token: secrets.roblox.token
@@ -107,7 +107,7 @@ const config = {
 		port: 8111,
 		waitingTime: 0.1
 	},
-	rejectUnauthorized: false
+	wixkey: secrets.wixkey
 };
 
 module.exports = config;
