@@ -3,7 +3,7 @@ const WebSocket = require("ws");
 
 const secrets = require("./secrets.js");
 
-const url = "wss://localhost:999/";
+const url = "wss://server.wixonic.fr";
 
 const startMicProcess = () => {
 	const sox = spawn("sox", [
@@ -30,7 +30,7 @@ const connectWebSocket = (micProcess) => {
 		console.log("Connecting WebSocket...");
 
 		ws = new WebSocket(url, {
-			rejectUnauthorized: false // config.rejectUnauthorized
+			rejectUnauthorized: true // config.rejectUnauthorized
 		});
 
 		ws.on("open", () => {
@@ -42,6 +42,7 @@ const connectWebSocket = (micProcess) => {
 				if (message[0] == 0x00) {
 					console.log("Server answered");
 
+					micProcess.stderr.on("data", (e) => console.error("sox error:", e.toString()));
 					micProcess.stdout.on("data", (chunk) => {
 						if (ws.readyState == WebSocket.OPEN) ws.send(chunk);
 					});
@@ -74,8 +75,6 @@ const handleMicCrash = async () => {
 	try {
 		const micProcess = startMicProcess();
 		const ws = connectWebSocket(micProcess);
-
-		micProcess.stderr.on("data", (e) => console.error("sox error:", e.toString()));
 
 		micProcess.on("close", (code, signal) => {
 			console.log(`sox process exited with code ${code} and signal ${signal}`);
