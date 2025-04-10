@@ -7,7 +7,7 @@ const url = "wss://server.wixonic.fr";
 
 const startMicProcess = () => {
 	const sox = spawn("sox", [
-		"-t", "coreaudio", "BlackHole 16ch",
+		"-t", "coreaudio", "BlackHole - Musique",
 		"-b", "16",
 		"-c", "2",
 		"-r", "48000",
