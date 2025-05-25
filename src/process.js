@@ -78,7 +78,7 @@ const main = async (logger) => {
 		logger.debug("Using", process.env.config ?? "default", "config");
 
 		// const client = new Client(logger, config.client);
-		const discord = new DiscordClient(logger);
+		const discord = new DiscordClient(logger, config);
 		const server = new Server(logger, config.server);
 
 		const handlersLogger = {
@@ -91,7 +91,7 @@ const main = async (logger) => {
 		const update = await handlers(handlersLogger, /*client*/ null, discord, server, config);
 
 		// await client.init();
-		await discord.login(config.discord.token);
+		await discord.login();
 		await server.init();
 
 		update();

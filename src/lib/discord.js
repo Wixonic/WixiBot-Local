@@ -1,5 +1,6 @@
 const { Client, RichPresence } = require("discord.js-selfbot-v13");
 
+const request = require("./request.js");
 const { clone } = require("./utils.js");
 
 class ClientManager {
@@ -12,6 +13,11 @@ class ClientManager {
 	 * @type {Client?}
 	 */
 	client = null;
+
+	/**
+	 * @type {import("../types.d.ts").Config?}
+	 */
+	config = null;
 
 	/**
 	 * @param {string} id
@@ -52,8 +58,10 @@ class ClientManager {
 	 * @param {string} id
 	 */
 	removeActivity(id) {
-		delete this.activities[id];
-		this.updateActivities();
+		if (this.activities[id]) {
+			delete this.activities[id];
+			this.updateActivities();
+		}
 	};
 
 	async updateActivities() {
@@ -62,6 +70,24 @@ class ClientManager {
 		*/
 		const activities = Object.values(clone(this.activities));
 		activities.sort((activityA, activityB) => (activityA.level ?? 0) - (activityB.level ?? 0));
+
+		this.logger.debug(JSON.stringify(this.activities));
+
+		try {
+			request(this.logger, {
+				url: new URL("/activity/", "https://" + this.config.client.hostname),
+				method: "POST",
+				headers: {
+					authorization: `WixKey ${this.config.wixkey}`,
+					"content-type": "plain/text"
+				},
+				secure: true,
+				type: "text",
+				body: Buffer.from(JSON.stringify(this.activities), "utf-8")
+			}).catch((e) => this.logger.warn("Failed to upload activites:", e));
+		} catch (e) {
+			this.logger.warn("Failed to upload activites:", e);
+		}
 
 		this.client.user.setPresence({
 			activities,
@@ -86,8 +112,9 @@ class ClientManager {
 
 	/**
 	 * @param {import("@wixonic/logger").Logger} logger
+	 * @param {import("../types.d.ts").Config} config
 	 */
-	constructor(logger) {
+	constructor(logger, config) {
 		/**
 		 * @type {import("@wixonic/logger").Logger}
 		 */
@@ -107,6 +134,8 @@ class ClientManager {
 			}
 		});
 
+		this.config = config;
+
 		this.client.on("ready", () => {
 			this.logger.info(`Logged in as ${this.client.user?.username ?? "unknown"}.`);
 			this.updateActivities();
@@ -115,11 +144,8 @@ class ClientManager {
 		this.client.on("error", (error) => this.logger.error(`An error occured: ${error}`));
 	};
 
-	/**
-	 * @param {string} token
-	 */
-	async login(token) {
-		await this.client.login(token);
+	async login() {
+		await this.client.login(this.config.discord.token);
 	};
 };
 
