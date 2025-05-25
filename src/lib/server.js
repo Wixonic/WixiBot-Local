@@ -38,8 +38,13 @@ class Server {
 
 		return new Promise((resolve) => {
 			this.app.use((req, res, next) => {
-				this.logger.debug(`Request: ${req.method} ${req.url}`);
-				res.setHeader("Access-Control-Allow-Origin", "*");
+				const origin = req.headers.origin;
+				this.logger.debug(`Request: ${req.method} ${origin} | ${req.url}`);
+
+				res.setHeader("Access-Control-Allow-Origin", origin);
+				res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+				res.setHeader("Access-Control-Allow-Headers", "Authorization,Content-Type");
+				res.setHeader("Access-Control-Allow-Credentials", "true");
 				next();
 			});
 
@@ -79,7 +84,6 @@ class Server {
 			});
 
 			this.ws.on("error", (e) => this.logger.error("[WebSocket]", "Server error:", e));
-
 
 			this.http.listen(this.port, () => {
 				this.logger.info(`Running on :${this.port}`);

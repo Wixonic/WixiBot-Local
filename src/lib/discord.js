@@ -71,19 +71,17 @@ class ClientManager {
 		const activities = Object.values(clone(this.activities));
 		activities.sort((activityA, activityB) => (activityA.level ?? 0) - (activityB.level ?? 0));
 
-		this.logger.debug(JSON.stringify(this.activities));
-
 		try {
 			request(this.logger, {
 				url: new URL("/activity/", "https://" + this.config.client.hostname),
 				method: "POST",
 				headers: {
 					authorization: `WixKey ${this.config.wixkey}`,
-					"content-type": "plain/text"
+					"content-type": "application/json"
 				},
 				secure: true,
 				type: "text",
-				body: Buffer.from(JSON.stringify(this.activities), "utf-8")
+				body: JSON.stringify(this.activities)
 			}).catch((e) => this.logger.warn("Failed to upload activites:", e));
 		} catch (e) {
 			this.logger.warn("Failed to upload activites:", e);
