@@ -45,6 +45,10 @@ const connectWebSocket = (micProcess) => {
 					micProcess.stderr.on("data", (e) => console.error("sox error:", e.toString()));
 					micProcess.stdout.on("data", (chunk) => {
 						if (ws.readyState == WebSocket.OPEN) ws.send(chunk);
+						else {
+							ws.close(0x00);
+							connectWebSocket(micProcess);
+						}
 					});
 				} else console.log("Server didn't answer as expected");
 			});
