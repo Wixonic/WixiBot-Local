@@ -22,14 +22,19 @@ const getUnitData = async (logger, unit) => {
 	const html = await request(emptyLogger, {
 		url: "https://wiki.warthunder.com/unit/" + unit,
 		type: "text",
-		method: "GET"
+		method: "GET",
+		headers: {
+			accept: "text/html"
+		}
 	});
 
 	const DOM = new JSDOM(html);
 	const document = DOM.window.document;
 
-	const name = document.querySelector(".game-unit_name").textContent.trim();
-	const rank = document.querySelector(".game-unit_card-info_item.game-unit_rank .game-unit_card-info_value").textContent.trim();
+	const nameEl = document.querySelector(".game-unit_name");
+	const name = nameEl ? nameEl.textContent.trim() : unit;
+	const rankEl = document.querySelector(".game-unit_card-info_item.game-unit_rank .game-unit_card-info_value");
+	const rank = rankEl ? rankEl.textContent.trim() : "unknown";
 
 	let role = null;
 	const infoItems = document.querySelectorAll(".game-unit_card-info_item");
@@ -123,55 +128,56 @@ const get = async (logger, config) => {
 	await wait(config.waitingTime);
 
 	if (errors.length == 0) {
-		try {
-			const indicators = await request(emptyLogger, {
-				url: new URL(config.paths.vehicle.indicators, `http://localhost:${config.port}`),
-				type: "json",
-				secure: false
-			});
+		//try {
+		const indicators = await request(emptyLogger, {
+			url: new URL(config.paths.vehicle.indicators, `http://localhost:${config.port}`),
+			type: "json",
+			secure: false
+		});
 
-			if (indicators.error) throw indicators.error;
+		if (indicators.error) throw indicators.error;
 
-			if (indicators?.type == "dummy_plane") errors.push("Not spawned");
-			else {
-				switch (indicators?.army) {
-					case "tank":
+		if (indicators?.type == "dummy_plane") errors.push("Not spawned");
+		else {
+			switch (indicators?.army) {
+				case "tank":
+					console.log(indicators.type.split("/").at(-1));
+					const unitData = await getUnitData(logger, indicators.type.split("/").at(-1));
+					unit = `${unitData.role ? unitData.role + " " : ""}${unitData.name}`;
+					details = `${unit} (Rank ${unitData.rank}) - ${indicators.crew_current}/${indicators.crew_total} crew members remaining`;
+					break;
+
+				case "air":
+					await wait(config.waitingTime);
+
+					try {
+						const state = await request(emptyLogger, {
+							url: new URL(config.paths.vehicle.state, `http://localhost:${config.port}`),
+							type: "json",
+							secure: false
+						});
+
+						const altitude = Math.ceil(state["H, m"] / 100) * 100;
+						const speed = Math.ceil(state["TAS, km/h"] / 50) * 50;
+
 						const unitData = await getUnitData(logger, indicators.type.split("/").at(-1));
-						unit = `${unitData.role} ${unitData.name}`;
-						details = `${unit} (Rank ${unitData.rank}) - ${indicators.crew_current}/${indicators.crew_total} crew members remaining`;
-						break;
 
-					case "air":
-						await wait(config.waitingTime);
+						unit = `${unitData.role ? unitData.role + " " : ""}${unitData.name}`;
+						details = `${unit} (Rank ${unitData.rank}) - ${speed} km/h, ${altitude} m`;
+					} catch (e) {
+						errors.push(`State: ${e}`);
+					}
+					break;
 
-						try {
-							const state = await request(emptyLogger, {
-								url: new URL(config.paths.vehicle.state, `http://localhost:${config.port}`),
-								type: "json",
-								secure: false
-							});
-
-							const altitude = Math.ceil(state["H, m"] / 100) * 100;
-							const speed = Math.ceil(state["TAS, km/h"] / 50) * 50;
-
-							const unitData = await getUnitData(logger, indicators.type.split("/").at(-1));
-
-							unit = `${unitData.role} ${unitData.name}`;
-							details = `${unit} (Rank ${unitData.rank}) - ${speed} km/h, ${altitude} m`;
-						} catch (e) {
-							errors.push(`State: ${e}`);
-						}
-						break;
-
-					default:
-						details = "Naval unit";
-						unit = "Naval unit";
-						break;
-				};
-			}
-		} catch (e) {
-			errors.push(`Indicators: ${e}`);
+				default:
+					details = "Naval unit";
+					unit = "Naval unit";
+					break;
+			};
 		}
+		/*} catch (e) {
+			errors.push(`Indicators: ${e}`);
+		}*/
 	}
 
 	return {
