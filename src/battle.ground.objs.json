@@ -1,0 +1,4192 @@
+[
+	{
+		"type": "airfield",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "none",
+		"icon_bg": "none",
+		"sx": 1.098719,
+		"sy": -0.426233,
+		"ex": 1.06737,
+		"ey": -0.373864
+	},
+	{
+		"type": "airfield",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "none",
+		"icon_bg": "none",
+		"sx": 0.224016,
+		"sy": 1.483199,
+		"ex": 0.229817,
+		"ey": 1.42244
+	},
+	{
+		"type": "airfield",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "none",
+		"icon_bg": "none",
+		"sx": 0.672006,
+		"sy": 2.783367,
+		"ex": 0.66149,
+		"ey": 2.66175
+	},
+	{
+		"type": "airfield",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "none",
+		"icon_bg": "none",
+		"sx": 1.862505,
+		"sy": -1.424262,
+		"ex": 1.795283,
+		"ey": -1.322368
+	},
+	{
+		"type": "airfield",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "none",
+		"icon_bg": "none",
+		"sx": 3.345711,
+		"sy": 2.903913,
+		"ex": 2.846571,
+		"ey": 2.302907
+	},
+	{
+		"type": "airfield",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "none",
+		"icon_bg": "none",
+		"sx": 0.595832,
+		"sy": -3.267673,
+		"ex": 0.576092,
+		"ey": -2.486672
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.603507,
+		"y": 0.477882
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.55068,
+		"y": 0.381521
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "MediumTank",
+		"icon_bg": "none",
+		"x": 0.540848,
+		"y": 0.350847
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.599399,
+		"y": 0.504313
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.604042,
+		"y": 0.466842
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.55447,
+		"y": 0.390734
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.557968,
+		"y": 0.328538
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.601381,
+		"y": 0.505691
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.597579,
+		"y": 0.506979
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.636119,
+		"y": 0.350744
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.598368,
+		"y": 0.505703
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.582376,
+		"y": 0.430573
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "MediumTank",
+		"icon_bg": "none",
+		"x": 0.544254,
+		"y": 0.365114
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.592602,
+		"y": 0.302153
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.556067,
+		"y": 0.393064
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.627269,
+		"y": 0.376441
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "MediumTank",
+		"icon_bg": "none",
+		"x": 0.625837,
+		"y": 0.379692
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "MediumTank",
+		"icon_bg": "none",
+		"x": 0.644054,
+		"y": 0.32643
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.617066,
+		"y": 0.401966
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "MediumTank",
+		"icon_bg": "none",
+		"x": 0.530011,
+		"y": 0.377248
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.605294,
+		"y": 0.458323
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "MediumTank",
+		"icon_bg": "none",
+		"x": 0.554188,
+		"y": 0.38932
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.549072,
+		"y": 0.377293
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.606812,
+		"y": 0.43806
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "MediumTank",
+		"icon_bg": "none",
+		"x": 0.509232,
+		"y": 0.412718
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.54884,
+		"y": 0.344575
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.54329,
+		"y": 0.362376
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "MediumTank",
+		"icon_bg": "none",
+		"x": 0.546066,
+		"y": 0.369244
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "HeavyTank",
+		"icon_bg": "none",
+		"x": 0.522536,
+		"y": 0.389456
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "Player",
+		"icon_bg": "none",
+		"x": 0.52418,
+		"y": 0.449088,
+		"dx": -0.576093,
+		"dy": 0.817384
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "MediumTank",
+		"icon_bg": "none",
+		"x": 0.570103,
+		"y": 0.303575
+	},
+	{
+		"type": "ground_model",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "MediumTank",
+		"icon_bg": "none",
+		"x": 0.649743,
+		"y": 0.313504
+	},
+	{
+		"type": "capture_zone",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "capture_zone",
+		"icon_bg": "none",
+		"x": 0.438088,
+		"y": 0.564746
+	},
+	{
+		"type": "capture_zone",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "capture_zone",
+		"icon_bg": "none",
+		"x": 0.568577,
+		"y": 0.38738
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.39363,
+		"y": 0.65897
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.39603,
+		"y": 0.662436
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.393318,
+		"y": 0.661523
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.391006,
+		"y": 0.659377
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.388416,
+		"y": 0.656997
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.394832,
+		"y": 0.664937
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.385198,
+		"y": 0.656738
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.392134,
+		"y": 0.665215
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.389822,
+		"y": 0.663069
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.393884,
+		"y": 0.667346
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.387231,
+		"y": 0.660689
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.384268,
+		"y": 0.659285
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.382046,
+		"y": 0.65751
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.392268,
+		"y": 0.669573
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.390325,
+		"y": 0.66792
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.388015,
+		"y": 0.665981
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.385703,
+		"y": 0.664045
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.383394,
+		"y": 0.662109
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.38085,
+		"y": 0.660276
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.389507,
+		"y": 0.671084
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.387078,
+		"y": 0.669265
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.384946,
+		"y": 0.667473
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.382815,
+		"y": 0.665684
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.380176,
+		"y": 0.663355
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.387322,
+		"y": 0.672751
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.380142,
+		"y": 0.666387
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.385083,
+		"y": 0.671714
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.336917,
+		"y": 0.622734
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.332495,
+		"y": 0.618259
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.382798,
+		"y": 0.669863
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.330078,
+		"y": 0.616404
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.334275,
+		"y": 0.621035
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.327424,
+		"y": 0.614585
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.338232,
+		"y": 0.625691
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.38521,
+		"y": 0.674641
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.37978,
+		"y": 0.669084
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.324768,
+		"y": 0.61282
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.322498,
+		"y": 0.611414
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.330393,
+		"y": 0.619719
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.382678,
+		"y": 0.674353
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.379924,
+		"y": 0.671816
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.327083,
+		"y": 0.617705
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.334399,
+		"y": 0.625256
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.331709,
+		"y": 0.622673
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.336008,
+		"y": 0.62803
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.324312,
+		"y": 0.61604
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.31958,
+		"y": 0.612102
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.321533,
+		"y": 0.614373
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.332629,
+		"y": 0.627773
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.330288,
+		"y": 0.62574
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.33449,
+		"y": 0.630264
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.327849,
+		"y": 0.623621
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.32541,
+		"y": 0.621492
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.322966,
+		"y": 0.619373
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.32053,
+		"y": 0.617246
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.331587,
+		"y": 0.630444
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.329502,
+		"y": 0.628716
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.327437,
+		"y": 0.626892
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.325417,
+		"y": 0.625066
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.323406,
+		"y": 0.623428
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.319575,
+		"y": 0.619922
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.321238,
+		"y": 0.621777
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.320732,
+		"y": 0.624426
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.323879,
+		"y": 0.62814
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.655049,
+		"y": 0.31115
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.657563,
+		"y": 0.312231
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.649863,
+		"y": 0.307698
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.652666,
+		"y": 0.308801
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.659917,
+		"y": 0.310767
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.657446,
+		"y": 0.309158
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.648796,
+		"y": 0.304663
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.586309,
+		"y": 0.273242
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.65564,
+		"y": 0.307393
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.578606,
+		"y": 0.268982
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.581536,
+		"y": 0.270352
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.584468,
+		"y": 0.271716
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.653052,
+		"y": 0.305217
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.589314,
+		"y": 0.272693
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.659814,
+		"y": 0.307798
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.662385,
+		"y": 0.309062
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.647734,
+		"y": 0.301626
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.577866,
+		"y": 0.266436
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.658225,
+		"y": 0.305703
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.652056,
+		"y": 0.302146
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.583252,
+		"y": 0.267695
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.576396,
+		"y": 0.264026
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.587761,
+		"y": 0.269487
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.64667,
+		"y": 0.298591
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.66186,
+		"y": 0.305725
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.656655,
+		"y": 0.30313
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.664397,
+		"y": 0.30679
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.574316,
+		"y": 0.261802
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.581172,
+		"y": 0.265217
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.590969,
+		"y": 0.269917
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.586333,
+		"y": 0.267485
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.651096,
+		"y": 0.29926
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.660142,
+		"y": 0.303708
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.579089,
+		"y": 0.262742
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.583994,
+		"y": 0.264856
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.655393,
+		"y": 0.2998
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.577012,
+		"y": 0.260261
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.593538,
+		"y": 0.268313
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.663982,
+		"y": 0.303411
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.582209,
+		"y": 0.262507
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.650146,
+		"y": 0.296211
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.659194,
+		"y": 0.300642
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.590972,
+		"y": 0.266343
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.661951,
+		"y": 0.301426
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.574934,
+		"y": 0.257786
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.588406,
+		"y": 0.264377
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.580471,
+		"y": 0.2602
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.654128,
+		"y": 0.29647
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.58584,
+		"y": 0.262407
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.593574,
+		"y": 0.265713
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.665488,
+		"y": 0.301309
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.578076,
+		"y": 0.25759
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.658223,
+		"y": 0.297251
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.583684,
+		"y": 0.260095
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.591487,
+		"y": 0.263491
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.663464,
+		"y": 0.299238
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.58905,
+		"y": 0.261714
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.652869,
+		"y": 0.293137
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.586382,
+		"y": 0.259775
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.581379,
+		"y": 0.257275
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.584021,
+		"y": 0.258103
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.661323,
+		"y": 0.29645
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.656938,
+		"y": 0.294065
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.579434,
+		"y": 0.254961
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.39363,
+		"y": 0.65897
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.388416,
+		"y": 0.656997
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.39603,
+		"y": 0.662436
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.391006,
+		"y": 0.659377
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.393318,
+		"y": 0.661523
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.385198,
+		"y": 0.656738
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.394832,
+		"y": 0.664937
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.387231,
+		"y": 0.660689
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.382046,
+		"y": 0.65751
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.384268,
+		"y": 0.659285
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.389822,
+		"y": 0.663069
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.392134,
+		"y": 0.665215
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.393884,
+		"y": 0.667346
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.38085,
+		"y": 0.660276
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.383394,
+		"y": 0.662109
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.385703,
+		"y": 0.664045
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.388015,
+		"y": 0.665981
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.390325,
+		"y": 0.66792
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.392268,
+		"y": 0.669573
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.380176,
+		"y": 0.663355
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.382815,
+		"y": 0.665684
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.384946,
+		"y": 0.667473
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.387078,
+		"y": 0.669265
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.389507,
+		"y": 0.671084
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.380142,
+		"y": 0.666387
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.387322,
+		"y": 0.672751
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.382798,
+		"y": 0.669863
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.385083,
+		"y": 0.671714
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.37978,
+		"y": 0.669084
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.38521,
+		"y": 0.674641
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.379924,
+		"y": 0.671816
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.382678,
+		"y": 0.674353
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.586309,
+		"y": 0.273242
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.578606,
+		"y": 0.268982
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.581536,
+		"y": 0.270352
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.584468,
+		"y": 0.271716
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.589314,
+		"y": 0.272693
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.577866,
+		"y": 0.266436
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.583252,
+		"y": 0.267695
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.576396,
+		"y": 0.264026
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.587761,
+		"y": 0.269487
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.581172,
+		"y": 0.265217
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.590969,
+		"y": 0.269917
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.574316,
+		"y": 0.261802
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.586333,
+		"y": 0.267485
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.579089,
+		"y": 0.262742
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.583994,
+		"y": 0.264856
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.593538,
+		"y": 0.268313
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.577012,
+		"y": 0.260261
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.582209,
+		"y": 0.262507
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.590972,
+		"y": 0.266343
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.588406,
+		"y": 0.264377
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.574934,
+		"y": 0.257786
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.580471,
+		"y": 0.2602
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.58584,
+		"y": 0.262407
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.593574,
+		"y": 0.265713
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.578076,
+		"y": 0.25759
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.583684,
+		"y": 0.260095
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.591487,
+		"y": 0.263491
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.58905,
+		"y": 0.261714
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.586382,
+		"y": 0.259775
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.581379,
+		"y": 0.257275
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.584021,
+		"y": 0.258103
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.579434,
+		"y": 0.254961
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.336917,
+		"y": 0.622734
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.332495,
+		"y": 0.618259
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.330078,
+		"y": 0.616404
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.334275,
+		"y": 0.621035
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.338232,
+		"y": 0.625691
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.327424,
+		"y": 0.614585
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.324768,
+		"y": 0.61282
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.322498,
+		"y": 0.611414
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.330393,
+		"y": 0.619719
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.327083,
+		"y": 0.617705
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.334399,
+		"y": 0.625256
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.331709,
+		"y": 0.622673
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.336008,
+		"y": 0.62803
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.324312,
+		"y": 0.61604
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.31958,
+		"y": 0.612102
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.321533,
+		"y": 0.614373
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.332629,
+		"y": 0.627773
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.330288,
+		"y": 0.62574
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.33449,
+		"y": 0.630264
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.327849,
+		"y": 0.623621
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.32541,
+		"y": 0.621492
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.322966,
+		"y": 0.619373
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.32053,
+		"y": 0.617246
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.331587,
+		"y": 0.630444
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.329502,
+		"y": 0.628716
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.327437,
+		"y": 0.626892
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.325417,
+		"y": 0.625066
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.323406,
+		"y": 0.623428
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.319575,
+		"y": 0.619922
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.321238,
+		"y": 0.621777
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.320732,
+		"y": 0.624426
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.323879,
+		"y": 0.62814
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.649863,
+		"y": 0.307698
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.655049,
+		"y": 0.31115
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.652666,
+		"y": 0.308801
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.657563,
+		"y": 0.312231
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.648796,
+		"y": 0.304663
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.647734,
+		"y": 0.301626
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.657446,
+		"y": 0.309158
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.65564,
+		"y": 0.307393
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.653052,
+		"y": 0.305217
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.659917,
+		"y": 0.310767
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.64667,
+		"y": 0.298591
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.652056,
+		"y": 0.302146
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.659814,
+		"y": 0.307798
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.658225,
+		"y": 0.305703
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.662385,
+		"y": 0.309062
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.651096,
+		"y": 0.29926
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.656655,
+		"y": 0.30313
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.650146,
+		"y": 0.296211
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.66186,
+		"y": 0.305725
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.655393,
+		"y": 0.2998
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.660142,
+		"y": 0.303708
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.664397,
+		"y": 0.30679
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.654128,
+		"y": 0.29647
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.659194,
+		"y": 0.300642
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.663982,
+		"y": 0.303411
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.661951,
+		"y": 0.301426
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.652869,
+		"y": 0.293137
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.658223,
+		"y": 0.297251
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.665488,
+		"y": 0.301309
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.656938,
+		"y": 0.294065
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.663464,
+		"y": 0.299238
+	},
+	{
+		"type": "respawn_base_tank",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_tank",
+		"icon_bg": "none",
+		"x": 0.661323,
+		"y": 0.29645
+	},
+	{
+		"type": "respawn_base_fighter",
+		"color": "#fa0C00",
+		"color[]": [
+			250,
+			12,
+			0
+		],
+		"blink": 0,
+		"icon": "respawn_base_fighter",
+		"icon_bg": "none",
+		"x": 3.087695,
+		"y": 2.975928,
+		"dx": -210.397003,
+		"dy": -213.852997
+	},
+	{
+		"type": "respawn_base_fighter",
+		"color": "#174DFF",
+		"color[]": [
+			23,
+			77,
+			255
+		],
+		"blink": 0,
+		"icon": "respawn_base_fighter",
+		"icon_bg": "none",
+		"x": 1.0052,
+		"y": -3.144092,
+		"dx": -45.440701,
+		"dy": 296.539001
+	}
+]
