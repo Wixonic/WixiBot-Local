@@ -8,6 +8,8 @@ const DiscordClient = require("./lib/discord.js");
 
 log.displayDate = false;
 
+const handlerData = {};
+
 /**
  * @param {import("@wixonic/logger").Logger} logger
  * @param {Client} client
@@ -19,7 +21,7 @@ const handlers = async (logger, client, discord, server, config) => {
 	const folder = path.join(__dirname, "handlers");
 
 	if (fs.existsSync(folder)) {
-		for (const file of fs.readdirSync(folder)) {
+		for (const file of fs.readdirSync(folder, { recursive: true })) {
 			if (file.endsWith(".js")) {
 				const hanlderPath = path.join(folder, file);
 				const handlerName = file.slice(0, -3);
@@ -33,31 +35,50 @@ const handlers = async (logger, client, discord, server, config) => {
 
 				const handler = require(hanlderPath);
 				if (typeof handler.init == "function") await handler.init(handlerLogger, client, discord, server, config);
+
+				handlerData[hanlderPath] = {
+					delay: handler.delay,
+					idle: true,
+					lastUpdated: 0
+				};
 			}
 		}
 	}
 
 	const update = async () => {
+		const now = Date.now();
+
 		if (fs.existsSync(folder)) {
-			for (const file of fs.readdirSync(folder)) {
+			for (const file of fs.readdirSync(folder, { recursive: true })) {
 				if (file.endsWith(".js")) {
 					const hanlderPath = path.join(folder, file);
-					const handlerName = file.slice(0, -3);
 
-					const handlerLogger = {
-						debug: (...args) => logger.debug(`[${handlerName} process]`, ...args),
-						error: (...args) => logger.error(`[${handlerName} process]`, ...args),
-						info: (...args) => logger.info(`[${handlerName} process]`, ...args),
-						warn: (...args) => logger.warn(`[${handlerName} process]`, ...args)
-					};
+					if (handlerData[hanlderPath].lastUpdated + (handlerData[hanlderPath].active ? 60 * 1000 : handlerData[hanlderPath].delay) < now) {
+						const handlerName = file.slice(0, -3);
 
-					const handler = require(hanlderPath);
-					if (typeof handler.process == "function") await handler.process(handlerLogger, client, discord, server, config);
+						const handlerLogger = {
+							debug: (...args) => logger.debug(`[${handlerName} process]`, ...args),
+							error: (...args) => logger.error(`[${handlerName} process]`, ...args),
+							info: (...args) => logger.info(`[${handlerName} process]`, ...args),
+							warn: (...args) => logger.warn(`[${handlerName} process]`, ...args)
+						};
+
+						const handler = require(hanlderPath);
+						if (typeof handler.process == "function") {
+							const status = await handler.process(handlerLogger, client, discord, server, config);
+							if (status != handlerData[hanlderPath].idle) {
+								handlerLogger.debug(`Now ${status ? "idle" : "active"}`);
+								handlerData[hanlderPath].idle = status;
+							}
+						}
+
+						handlerData[hanlderPath].lastUpdated = now;
+					}
 				}
 			}
 		}
 
-		setTimeout(update, 2500);
+		setTimeout(update, now - Date.now() + 500);
 	};
 
 	return update;

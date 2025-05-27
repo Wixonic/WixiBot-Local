@@ -40,8 +40,10 @@ const init = async (logger, client, discord, server, config) => {
 const process = async (logger, client, discord, server, config) => {
 	if (blenderData && blenderData.date + 30 * 1000 < Date.now()) blenderData = null;
 
-	if (!blenderData) discord.removeActivity("blender");
-	else {
+	if (!blenderData) {
+		discord.removeActivity("blender");
+		return true;
+	} else {
 		discord.addActivity("blender", {
 			applicationId: config.discord.application.clients.blender.id,
 			assets: {
@@ -68,10 +70,13 @@ const process = async (logger, client, discord, server, config) => {
 			state: blenderData.state,
 			type: "PLAYING"
 		});
+
+		return false;
 	}
 };
 
 module.exports = {
+	delay: 1 * 1000,
 	init,
 	process
 };

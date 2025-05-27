@@ -71,8 +71,10 @@ const init = async (logger, client, discord, server, config) => {
 const process = async (logger, client, discord, server, config) => {
 	if (githubData && githubData.updatedAt + 30 * 1000 < Date.now()) githubData = null;
 
-	if (!githubData) discord.removeActivity("github");
-	else {
+	if (!githubData) {
+		discord.removeActivity("github");
+		return true;
+	} else {
 		/**
 		 * @type {import("../types.d.ts").Activity}
 		 */
@@ -138,12 +140,18 @@ const process = async (logger, client, discord, server, config) => {
 				break;
 		};
 
-		if (data) discord.addActivity("github", data);
-		else discord.removeActivity("github");
+		if (data) {
+			discord.addActivity("github", data);
+			return false;
+		} else {
+			discord.removeActivity("github");
+			return true;
+		}
 	}
 };
 
 module.exports = {
+	delay: 1 * 1000,
 	init,
 	process
 };

@@ -51,8 +51,10 @@ const init = async (logger, client, discord, server, config) => {
 const process = async (logger, client, discord, server, config) => {
 	if (youtubeData && youtubeData.updatedAt + 30 * 1000 < Date.now()) youtubeData = null;
 
-	if (!youtubeData) discord.removeActivity("youtube");
-	else {
+	if (!youtubeData) {
+		discord.removeActivity("youtube");
+		return true;
+	} else {
 		/**
 		 * @type {import("../types.d.ts").Activity}
 		 */
@@ -98,10 +100,12 @@ const process = async (logger, client, discord, server, config) => {
 		}
 
 		discord.addActivity("youtube", activity);
+		return false;
 	}
 };
 
 module.exports = {
+	delay: 1 * 1000,
 	init,
 	process
 };

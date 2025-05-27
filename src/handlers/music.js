@@ -22,8 +22,7 @@ const process = async (logger, client, discord, server, config) => {
 		if (song == null) {
 			currentSong = null;
 			discord.removeActivity("music");
-
-			logger.debug("Music stopped.");
+			return true;
 		} else if ((currentSong?.state != "PAUSED" && song.state == "PAUSED") || song.state != "PAUSED") {
 			if (song.state == "PAUSED" && currentSong) {
 				song = currentSong;
@@ -34,6 +33,8 @@ const process = async (logger, client, discord, server, config) => {
 				const spotifyArtworkUrl = spotifySong?.album?.images?.at(0)?.url;
 				song.spotifyArtwork = spotifyArtworkUrl?.slice((spotifyArtworkUrl?.lastIndexOf("/") ?? -1) + 1) ?? null;
 			}
+
+			currentSong = song;
 
 			if (song.state == "PLAYING") {
 				discord.addActivity("music", {
@@ -63,20 +64,27 @@ const process = async (logger, client, discord, server, config) => {
 					state: song.artist,
 					type: "LISTENING"
 				});
-			} else discord.removeActivity("music");
 
-			currentSong = song;
-			logger.debug(`Music set to ${currentSong.track} by ${currentSong.artist} (${currentSong.state}).`);
+				return false;
+			} else {
+				discord.removeActivity("music");
+				return false;
+			}
 		}
 	};
 
-	if (song == null) {
-		if (currentSong != null) await update();
-	} else {
-		if (currentSong == null || (currentSong?.state != song.state || currentSong?.track != song.track || currentSong?.artist != song.artist || currentSong?.album != song.album || currentSong?.startedAt != song.startedAt)) await update();
-	}
+	if ((song == null && currentSong != null) ||
+		(song != null &&
+			(currentSong == null ||
+				currentSong.state !== song.state ||
+				currentSong.track !== song.track ||
+				currentSong.artist !== song.artist ||
+				currentSong.album !== song.album ||
+				currentSong.startedAt !== song.startedAt)))
+		return await update();
 };
 
 module.exports = {
+	delay: 1 * 1000,
 	process
 };

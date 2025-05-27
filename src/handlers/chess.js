@@ -251,8 +251,10 @@ const init = async (logger, client, discord, server, config) => {
 const process = async (logger, client, discord, server, config) => {
 	if (chessData && chessData.date + 30 * 1000 < Date.now()) chessData = null;
 
-	if (!chessData) discord.removeActivity("chess");
-	else {
+	if (!chessData) {
+		discord.removeActivity("chess");
+		return true;
+	} else {
 		discord.addActivity("chess", {
 			applicationId: config.discord.application.clients.chess.id,
 			buttons: [
@@ -271,10 +273,13 @@ const process = async (logger, client, discord, server, config) => {
 			name: "Chess",
 			type: "PLAYING"
 		});
+
+		return false;
 	}
 };
 
 module.exports = {
+	delay: 1 * 1000,
 	init,
 	process
 };
