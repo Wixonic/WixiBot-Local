@@ -141,7 +141,6 @@ const get = async (logger, config) => {
 		else {
 			switch (indicators?.army) {
 				case "tank":
-					console.log(indicators.type.split("/").at(-1));
 					const unitData = await getUnitData(logger, indicators.type.split("/").at(-1));
 					unit = `${unitData.role ? unitData.role + " " : ""}${unitData.name}`;
 					details = `${unit} (Rank ${unitData.rank}) - ${indicators.crew_current}/${indicators.crew_total} crew members remaining`;

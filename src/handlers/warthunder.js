@@ -42,7 +42,7 @@ const process = async (logger, client, discord, server, config) => {
 			discord.addActivity("wt", {
 				applicationId: config.discord.application.clients.war_thunder.id,
 				assets: {
-					large_image: await discord.getExternalAsset(config.discord.application.clients.war_thunder.id, new URL(`/warthunder/map.png?t=${Date.now()}`, "https://" + config.client.hostname)),
+					large_image: await discord.getExternalAsset(config.discord.application.clients.war_thunder.id, new URL(`/rpc/warthunder/map.png?t=${Date.now()}`, "https://" + config.client.hostname)),
 					large_text: data.unit,
 					small_image: config.discord.application.clients.war_thunder.assets.icon,
 					small_text: "War Thunder"
