@@ -89,7 +89,7 @@ const handleMicCrash = async () => {
 
 		for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
 			process.on(signal, () => {
-				if (ws.readyState === WebSocket.OPEN) ws.close(0);
+				if (ws.readyState == WebSocket.OPEN) ws.close();
 				micProcess.kill();
 				process.exit();
 			});

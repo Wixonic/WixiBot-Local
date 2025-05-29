@@ -22,7 +22,6 @@ const process = async (logger, client, discord, server, config) => {
 		if (song == null) {
 			currentSong = null;
 			discord.removeActivity("music");
-			return true;
 		} else if ((currentSong?.state != "PAUSED" && song.state == "PAUSED") || song.state != "PAUSED") {
 			if (song.state == "PAUSED" && currentSong) {
 				song = currentSong;
@@ -64,24 +63,19 @@ const process = async (logger, client, discord, server, config) => {
 					state: song.artist,
 					type: "LISTENING"
 				});
-
-				return false;
-			} else {
-				discord.removeActivity("music");
-				return false;
-			}
+			} else discord.removeActivity("music");
 		}
 	};
 
 	if ((song == null && currentSong != null) ||
 		(song != null &&
 			(currentSong == null ||
-				currentSong.state !== song.state ||
-				currentSong.track !== song.track ||
-				currentSong.artist !== song.artist ||
-				currentSong.album !== song.album ||
-				currentSong.startedAt !== song.startedAt)))
-		return await update();
+				currentSong.state != song.state ||
+				currentSong.track != song.track ||
+				currentSong.artist != song.artist ||
+				currentSong.album != song.album ||
+				Math.floor(currentSong.startedAt / 10000) != Math.floor(song.startedAt / 10000)))) await update();
+	return currentSong != null;
 };
 
 module.exports = {
