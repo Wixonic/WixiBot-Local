@@ -35,7 +35,7 @@ const initModels = async () => {
 		},
 		runningMode: "VIDEO",
 		outputFaceBlendshapes: true,
-		outputFacialTransformationMatrixes: false
+		outputFacialTransformationMatrixes: true
 	});
 };
 
@@ -55,31 +55,53 @@ const draw = async () => {
 	canvas.width = width;
 	canvas.height = height;
 
-	ctx.drawImage(video, 0, 0, width, height);
+	// ctx.drawImage(video, 0, 0, width, height);
 
 	if (models.faceLandmarker) {
 		const result = await models.faceLandmarker.detectForVideo(video, performance.now());
-		if (!window.logged && result.faceBlendshapes.length > 0) {
+
+		if (!window.logged) {
+			console.log(result);
 			window.logged = true;
-			console.log(JSON.stringify(result));
 		}
 
-		ctx.strokeWidth = 0;
-		for (const face of result.faceLandmarks) {
-			for (const landmark of face) {
+		for (let i = 0; i < Math.min(result.faceLandmarks.length, result.faceBlendshapes.length, result.facialTransformationMatrixes.length); ++i) {
+			const face = {
+				x: 0,
+				y: 0,
+				landmarks: result.faceLandmarks[i],
+				blendShapes: result.faceBlendshapes[i],
+				matrix: result.facialTransformationMatrixes[i],
+				text: []
+			};
+
+			ctx.strokeWidth = 0;
+			for (const landmark of face.landmarks) {
 				ctx.fillStyle = "lime";
 				const x = landmark.x * width;
 				const y = landmark.y * height;
 				const size = 1 * scale;
 				ctx.fillRect(x - size / 2, y - size / 2, size, size);
 			}
-		}
 
-		for (const face of result.faceBlendshapes) {
-			const blinkLeft = face.categories[9].score > 0.5;
-			const blinkRight = face.categories[10].score > 0.5;
+			const blinkLeft = face.blendShapes.categories[9].score;
+			const blinkRight = face.blendShapes.categories[10].score;
+			const smile = (face.blendShapes.categories[44].score + face.blendShapes.categories[45].score) / 2;
+			const browDown = (face.blendShapes.categories[1].score + face.blendShapes.categories[2].score) / 2;
+			const browUp = face.blendShapes.categories[0].score + face.blendShapes.categories[0].score;
+			const mouthOpen = face.blendShapes.categories[25].score;
 
-			document.body.style.background = blinkLeft && blinkRight ? "#00F" : (blinkLeft ? "#0F0" : (blinkRight ? "#F00" : "#000"));
+			if (blinkLeft > 0.35) face.text.push("Left eye closed");
+			if (blinkRight > 0.35) face.text.push("Right eye closed");
+
+			if (smile > 0.5) face.text.push("Joy");
+			else if (browUp > 0.7) face.text.push("Surprise");
+			else if (browDown > 0.4) face.text.push("Angry");
+			else if (mouthOpen > 0.8) face.text.push("Fear");
+
+			ctx.fillStyle = "lime";
+			ctx.font = "16px Arial";
+			ctx.fillText(face.text.join(" "), face.x, face.y + 16);
 		}
 	}
 
