@@ -1,11 +1,8 @@
-import {
-	FilesetResolver,
-	FaceLandmarker,
-} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs";
+import { FilesetResolver, FaceLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs";
+import * as THREE from "https://cdn.jsdelivr.net/npm/three/build/three.module.min.js";
 
 const CAM_NAME = "Caméra du MacBook Pro";
 
-let model;
 let video;
 let canvas;
 let ctx;
@@ -13,8 +10,7 @@ let models = {};
 
 const connectCamera = async () => {
 	const devices = await navigator.mediaDevices.enumerateDevices();
-	const cam = devices.find((d) => d.kind === "videoinput" && d.label.includes(CAM_NAME));
-
+	const cam = devices.find((d) => d.kind == "videoinput" && d.label == CAM_NAME);
 	const stream = await navigator.mediaDevices.getUserMedia({
 		video: cam ? { deviceId: { exact: cam.deviceId } } : true,
 	});
@@ -31,7 +27,7 @@ const initModels = async () => {
 
 	models.faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
 		baseOptions: {
-			modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task",
+			modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task"
 		},
 		runningMode: "VIDEO",
 		outputFaceBlendshapes: true,
@@ -54,8 +50,6 @@ const draw = async () => {
 
 	canvas.width = width;
 	canvas.height = height;
-
-	// ctx.drawImage(video, 0, 0, width, height);
 
 	if (models.faceLandmarker) {
 		const result = await models.faceLandmarker.detectForVideo(video, performance.now());
@@ -88,22 +82,29 @@ const draw = async () => {
 			const blinkRight = face.blendShapes.categories[10].score;
 			const smile = (face.blendShapes.categories[44].score + face.blendShapes.categories[45].score) / 2;
 			const browDown = (face.blendShapes.categories[1].score + face.blendShapes.categories[2].score) / 2;
-			const browUp = face.blendShapes.categories[0].score + face.blendShapes.categories[0].score;
-			const mouthOpen = face.blendShapes.categories[25].score;
+			const browUp = face.blendShapes.categories[3].score;
 
-			if (blinkLeft > 0.35) face.text.push("Left eye closed");
+			if (blinkLeft > 0.4) face.text.push("Left eye closed");
 			if (blinkRight > 0.35) face.text.push("Right eye closed");
 
 			if (smile > 0.5) face.text.push("Joy");
-			else if (browUp > 0.7) face.text.push("Surprise");
-			else if (browDown > 0.4) face.text.push("Angry");
-			else if (mouthOpen > 0.8) face.text.push("Fear");
+			else if (browUp > 0.1) face.text.push("Surprise");
+			else if (browDown > 0.3) face.text.push("Angry");
+			else if (browDown > 0.1) face.text.push("Perplex");
+
+			const m = face.matrix.data;
+
+			const rotX = Math.atan2(m[9], m[10]);
+			const rotY = Math.atan2(-m[8], Math.sqrt(m[9] * m[9] + m[10] * m[10]));
+			const rotZ = Math.atan2(m[4], m[0]);
+
+			face.text.push(`Rot X: ${rotX.toFixed(2)}`, `Rot Y: ${rotY.toFixed(2)}`, `Rot Z: ${rotZ.toFixed(2)}`);
 
 			ctx.fillStyle = "lime";
 			ctx.font = "16px Arial";
 			ctx.fillText(face.text.join(" "), face.x, face.y + 16);
 		}
-	}
+	};
 
 	setTimeout(draw, 1000 / 30);
 };
