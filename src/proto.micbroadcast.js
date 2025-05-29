@@ -3,7 +3,8 @@ const WebSocket = require("ws");
 
 const secrets = require("./secrets.js");
 
-const url = "wss://server.wixonic.fr";
+// const url = "wss://server.wixonic.fr";
+const url = "wss://localhost:999/";
 
 const startMicProcess = () => {
 	const sox = spawn("sox", [
@@ -30,7 +31,7 @@ const connectWebSocket = (micProcess) => {
 		console.log("Connecting WebSocket...");
 
 		ws = new WebSocket(url, {
-			rejectUnauthorized: true // config.rejectUnauthorized
+			rejectUnauthorized: false // config.rejectUnauthorized
 		});
 
 		ws.on("open", () => {
