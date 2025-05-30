@@ -145,7 +145,7 @@ const drawLoop = async () => {
 			if (smile > 0.5) expressions.push("Joy");
 			else if (browUp > 0.1) expressions.push("Surprise");
 			else if (browDown > 0.3) expressions.push("Angry");
-			else if (browDown > 0.1) expressions.push("Perplex");
+			else if (browDown > 0.2) expressions.push("Perplex");
 
 			const m = face.matrix.data;
 			const rotX = Math.atan2(m[9], m[10]);
@@ -158,7 +158,9 @@ const drawLoop = async () => {
 			ctx.font = `${14 * scale}px Arial`;
 			ctx.fillText(expressions.join(" · "), 0, 20 * scale);
 		}
-	};
+	}
+
+
 
 	video.requestVideoFrameCallback(drawLoop);
 };

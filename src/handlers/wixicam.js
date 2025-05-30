@@ -1,7 +1,9 @@
 const { spawn, spawnSync } = require("child_process");
 
-let deviceMap = new Map();
+let deviceList = [];
 let cameraProcess = null;
+
+const trimCameraName = (name) => name.split("(")[0].replace(/\s\n\t/, " ").trim();
 
 const updateDeviceList = () => {
 	const result = spawnSync("ffmpeg", [
@@ -10,12 +12,10 @@ const updateDeviceList = () => {
 		"-i", ""
 	], { encoding: "utf8", stderr: "pipe" });
 
-	deviceMap.clear();
+	deviceList = [];
 	const output = result.stderr || result.stdout;
-	output.split("\n").forEach((line) => {
-		const match = line.match(/\.*\] \[(\d+)\] (.+)/);
-		if (match) deviceMap.set(match[2].trim(), match[1]);
-	});
+
+	for (const match of output.split("AVFoundation audio devices")[0].matchAll(/\.*\] \[(\d+)\] (.+)/g)) deviceList[Number(match[1])] = trimCameraName(match[2]);
 };
 
 const captureCamera = (cameraIndex) => {
@@ -68,10 +68,19 @@ const init = async (logger, client, discord, server, config) => {
 				ws.once("message", (nameData) => {
 					updateDeviceList();
 
-					cameraName = nameData.toString();
-					const cameraIndex = deviceMap.get(cameraName) || "0";
+					const cameraName = trimCameraName(nameData.toString());
 
-					logger.info("Starting stream with camera:", cameraName);
+					let cameraIndex = 0;
+					for (const id in deviceList) {
+						const name = deviceList[id];
+
+						if (name == cameraName) {
+							cameraIndex = id;
+							break;
+						}
+					}
+
+					logger.info("Starting stream with camera:", deviceList[cameraIndex] ?? "unknown");
 
 					captureCamera(cameraIndex);
 					cameraProcess.stdout.on("data", (frame) => ws.send(frame));
