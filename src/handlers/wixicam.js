@@ -86,7 +86,7 @@ const init = async (logger, client, discord, server, config) => {
 					cameraProcess.stdout.on("data", (frame) => ws.send(frame));
 					cameraProcess.stderr.on("data", (error) => logger.warn(`FFMPEG: ${String(error).trim()}`));
 					cameraProcess.on("error", (err) => logger.error(`FFMPEG error: ${err.message}`));
-					cameraProcess.on("exit", () => cameraProcess = null);
+					cameraProcess.on("exit", () => cleanup());
 				});
 
 				ws.on("error", (err) => {

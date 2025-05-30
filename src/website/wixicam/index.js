@@ -1,19 +1,52 @@
 import { FilesetResolver, FaceLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs";
-import * as THREE from "https://cdn.jsdelivr.net/npm/three/build/three.module.min.js";
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 const CAMERA_NAME = "Caméra du MacBook";
 const SERVER_URL = "ws://localhost:1000/";
-const FACE_DETECTION_FPS = 20;
+const FACE_DETECTION_FPS = 30;
 
-let canvas, ctx;
+let canvas2D, ctx2D;
+let canvas3D;
+
 let video, mediaSource, sourceBuffer;
-let models = {};
+
 let ws;
+
+let scene, camera, renderer;
+let ambientLight, primaryDirectionalLight, secondaryDirectionalLight;
+
+let head, leftEye, rightEye, body, leftArm, rightArm;
+
+let models = {};
 let lastDetect = 0;
 
-const initCanvas = () => {
-	canvas = document.querySelector("canvas");
-	ctx = canvas.getContext("2d");
+const initCanvas = async () => {
+	canvas2D = document.querySelector("#canvas2D");
+	ctx2D = canvas2D.getContext("2d");
+	canvas3D = document.querySelector("#canvas3D");
+
+	scene = new THREE.Scene();
+	renderer = new THREE.WebGLRenderer({ canvas: canvas3D, antialias: true });
+
+	camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+	camera.position.set(0, 0, 1);
+	scene.add(camera);
+
+	ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+
+	primaryDirectionalLight = new THREE.DirectionalLight(0xffffff, 3);
+	primaryDirectionalLight.position.set(4, 5, 10);
+
+	secondaryDirectionalLight = new THREE.DirectionalLight(0xffffff, 1);
+	secondaryDirectionalLight.position.set(-5, 2, 5);
+
+	scene.add(ambientLight, primaryDirectionalLight, secondaryDirectionalLight);
+
+	const loader = new GLTFLoader();
+	head = await new Promise((resolve) => loader.load("./head.glb", (gltf) => resolve(gltf.scene.children[0])));
+	head.position.set(0, 0, 0);
+	scene.add(head);
 
 	const resize = () => {
 		const ratio = 640 / 480;
@@ -25,8 +58,14 @@ const initCanvas = () => {
 			width = height * ratio;
 		}
 
-		canvas.width = width * devicePixelRatio;
-		canvas.height = height * devicePixelRatio;
+		camera.aspect = width / height;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize(width, height);
+		renderer.setPixelRatio(devicePixelRatio);
+
+		canvas3D.width = canvas2D.width = width * devicePixelRatio;
+		canvas3D.height = canvas2D.height = height * devicePixelRatio;
 	};
 
 	video = document.querySelector("video");
@@ -98,8 +137,7 @@ const connectCamera = async () => {
 
 const drawLoop = async () => {
 	if (video.readyState >= 2) {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		// ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+		ctx2D.clearRect(0, 0, canvas2D.width, canvas2D.height);
 
 		const now = performance.now();
 		if (now - lastDetect >= 1000 / FACE_DETECTION_FPS) {
@@ -113,7 +151,7 @@ const drawLoop = async () => {
 			}
 		}
 
-		const scale = Math.min(canvas.width, canvas.height) / 500 * devicePixelRatio;
+		const scale = Math.min(canvas2D.width, canvas2D.height) / 500 * devicePixelRatio;
 
 		for (let i = 0; i < Math.min(
 			models.faceLandmarker.result.faceLandmarks.length,
@@ -126,12 +164,12 @@ const drawLoop = async () => {
 				matrix: models.faceLandmarker.result.facialTransformationMatrixes[i]
 			};
 
-			ctx.fillStyle = "lime";
+			/* ctx2D.fillStyle = "lime";
 			for (const landmark of face.landmarks) {
-				const x = canvas.width - (landmark.x * canvas.width);
-				const y = landmark.y * canvas.height;
-				ctx.fillRect(x - scale, y - scale, scale, scale);
-			}
+				const x = canvas2D.width - (landmark.x * canvas2D.width);
+				const y = landmark.y * canvas2D.height;
+				ctx2D.fillRect(x - 0.5 * scale, y - 0.5 * scale, 0.5 * scale, 0.5 * scale);
+			} */
 
 			const expressions = [];
 			const blinkLeft = face.blendShapes.categories[9].score;
@@ -142,27 +180,38 @@ const drawLoop = async () => {
 
 			if (blinkLeft > 0.4) expressions.push("Left eye closed");
 			if (blinkRight > 0.35) expressions.push("Right eye closed");
-			if (smile > 0.5) expressions.push("Joy");
+			if (smile > 0.4) expressions.push("Joy");
 			else if (browUp > 0.1) expressions.push("Surprise");
-			else if (browDown > 0.3) expressions.push("Angry");
-			else if (browDown > 0.2) expressions.push("Perplex");
+			else if (browDown > 0.4) expressions.push("Angry");
+			else if (browDown > 0.15) expressions.push("Perplex");
 
 			const m = face.matrix.data;
-			const rotX = Math.atan2(m[9], m[10]);
-			const rotY = Math.atan2(-m[8], Math.sqrt(m[9] * m[9] + m[10] * m[10]));
-			const rotZ = Math.atan2(m[4], m[0]);
+			const targetPosition = new THREE.Vector3(
+				Math.min(Math.max(-m[12], -10), 10) / 20,
+				Math.min(Math.max(m[13], -8), 8) / 20,
+				Math.min((m[14] + 50) / 15, 0.5)
+			);
 
-			expressions.push(`Rot X: ${rotX.toFixed(2)}`, `Rot Y: ${rotY.toFixed(2)}`, `Rot Z: ${rotZ.toFixed(2)}`);
+			head.position.lerp(targetPosition, 0.02);
 
-			ctx.fillStyle = "white";
-			ctx.font = `${14 * scale}px Arial`;
-			ctx.fillText(expressions.join(" · "), 0, 20 * scale);
+			const targetRotation = new THREE.Euler(
+				-Math.atan2(m[9], m[10]) + 0.2,
+				Math.atan2(-m[8], Math.sqrt(m[9] * m[9] + m[10] * m[10])),
+				Math.atan2(m[4], m[0])
+			);
+
+			const targetQuaternion = new THREE.Quaternion().setFromEuler(targetRotation);
+			head.quaternion.slerp(targetQuaternion, 0.15);
+
+			ctx2D.fillStyle = "white";
+			ctx2D.font = `${4 * scale}px Arial`;
+			ctx2D.fillText(expressions.join(" · "), 0, 5 * scale);
 		}
 	}
 
+	renderer.render(scene, camera);
 
-
-	video.requestVideoFrameCallback(drawLoop);
+	requestAnimationFrame(drawLoop);
 };
 
 const reconnect = async () => {
@@ -190,7 +239,7 @@ const initModels = async () => {
 };
 
 addEventListener("DOMContentLoaded", async () => {
-	initCanvas();
+	await initCanvas();
 	connectCamera();
 	initModels();
 	drawLoop();
