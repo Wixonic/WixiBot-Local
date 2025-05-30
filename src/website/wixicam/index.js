@@ -3,15 +3,13 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three/build/three.module.mi
 
 const CAMERA_NAME = "Caméra du MacBook";
 const SERVER_URL = "ws://localhost:1000/";
-const FACE_DETECTION_FPS = 10;
+const FACE_DETECTION_FPS = 20;
 
-let decoder;
-let hasKeyFrame = false;
 let canvas, ctx;
+let video, mediaSource, sourceBuffer;
 let models = {};
 let ws;
-let lastFrameTime = 0;
-let animationId;
+let lastDetect = 0;
 
 const initCanvas = () => {
 	canvas = document.querySelector("canvas");
@@ -27,9 +25,12 @@ const initCanvas = () => {
 			width = height * ratio;
 		}
 
-		canvas.width = width;
-		canvas.height = height;
+		canvas.width = width * devicePixelRatio;
+		canvas.height = height * devicePixelRatio;
 	};
+
+	video = document.querySelector("video");
+	video.addEventListener("loadedmetadata", () => video.play());
 
 	resize();
 	window.addEventListener("resize", resize);
@@ -37,172 +38,146 @@ const initCanvas = () => {
 
 const connectCamera = async () => {
 	const devices = await navigator.mediaDevices.enumerateDevices();
-	const cameraDevice = devices.find((d) => d.kind === "videoinput" && d.label.includes(CAMERA_NAME));
+	const cameraDevice = devices.find((d) => d.kind == "videoinput" && d.label.startsWith(CAMERA_NAME));
 
 	if (!cameraDevice) {
-		console.error("Camera not found");
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-		return connectCamera();
+		console.error("Camera device not found");
+		setTimeout(connectCamera, 2000);
+		return;
 	}
+
+	console.log("Using device:", cameraDevice.label);
 
 	ws = new WebSocket(SERVER_URL);
 	ws.binaryType = "arraybuffer";
 
 	ws.addEventListener("open", () => ws.send(new Uint8Array([0x02])));
-
 	ws.addEventListener("message", (event) => {
 		if (new Uint8Array(event.data)[0] == 0x00) {
-			ws.send(cameraDevice.label);
+			console.log("Initializing media source...");
 
-			ws.addEventListener("message", (event) => {
-				if (!decoder || decoder.state == "closed") initDecoder();
+			mediaSource = new MediaSource();
 
-				const data = new Uint8Array(event.data);
+			mediaSource.addEventListener("sourceopen", () => {
+				console.log("Initializing source buffer...");
 
-				let isKeyFrame = false;
-				for (let i = 0; i < Math.min(data.length, 20); i++) {
-					if (data[i] === 0x00 && data[i + 1] === 0x00 && data[i + 2] === 0x00 && data[i + 3] === 0x01) {
-						const nalType = data[i + 4] & 0x1F;
-						if (nalType === 5) {
-							isKeyFrame = true;
-							break;
-						}
+				sourceBuffer = mediaSource.addSourceBuffer(`video/mp4; codecs="avc1.42E01E"`);
+
+				mediaSource.duration = Infinity;
+				sourceBuffer.mode = "sequence";
+
+				let queue = [];
+				let updating = false;
+
+				sourceBuffer.addEventListener("updateend", () => {
+					updating = false;
+					if (queue.length > 0) {
+						updating = true;
+						sourceBuffer.appendBuffer(queue.shift());
 					}
-				}
+				});
 
-				if (isKeyFrame) hasKeyFrame = true;
-				if (!hasKeyFrame) return;
+				ws.addEventListener("message", (event) => {
+					const chunk = new Uint8Array(event.data);
+					if (updating || sourceBuffer.updating || mediaSource.readyState != "open") queue.push(chunk);
+					else {
+						updating = true;
+						sourceBuffer.appendBuffer(chunk);
+					}
+				});
 
-				try {
-					decoder.decode(new EncodedVideoChunk({
-						type,
-						timestamp: performance.now(),
-						data
-					}));
-				} catch (e) {
-					console.error("Decode error:", e);
-					initDecoder();
-				}
+				ws.send(cameraDevice.label);
 			});
-		} else console.error(event.data);
+
+			video.src = URL.createObjectURL(mediaSource);
+		} else console.error("Handshake failed:", data);
 	}, { once: true });
+
 	ws.addEventListener("close", reconnect);
-	ws.addEventListener("error", reconnect);
 };
 
-const initDecoder = () => {
-	hasKeyFrame = false;
-	decoder = new VideoDecoder({
-		output: drawFrame,
-		error: (e) => {
-			console.error("Decoder error:", e);
-			setTimeout(initDecoder, 100);
-		}
-	});
+const drawLoop = async () => {
+	if (video.readyState >= 2) {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		// ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-	decoder.configure({
-		codec: "avc1.42001E",
-		codedWidth: 640,
-		codedHeight: 480,
-		optimizeForLatency: true
-	});
-};
+		const now = performance.now();
+		if (now - lastDetect >= 1000 / FACE_DETECTION_FPS) {
+			lastDetect = now;
+			if (!models.faceLandmarker) return;
 
-const drawFrame = async (frame) => {
-	const now = performance.now();
-
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-	frame.close();
-
-	if (now - lastFrameTime >= 1000 / FACE_DETECTION_FPS) {
-		lastFrameTime = now;
-		detectFaces();
-	}
-};
-
-const detectFaces = async () => {
-	if (!models.faceLandmarker) return;
-
-	try {
-		const result = await models.faceLandmarker.detect(canvas, performance.now());
-		renderFaceResults(result);
-	} catch (e) {
-		console.warn("Face detection error:", e);
-	}
-};
-
-const renderFaceResults = (result) => {
-	const scale = Math.min(canvas.width, canvas.height) / 500;
-
-	for (let i = 0; i < Math.min(
-		result.faceLandmarks.length,
-		result.faceBlendshapes.length,
-		result.facialTransformationMatrixes.length
-	); i++) {
-		const face = {
-			landmarks: result.faceLandmarks[i],
-			blendShapes: result.faceBlendshapes[i],
-			matrix: result.facialTransformationMatrixes[i]
-		};
-
-		ctx.fillStyle = "lime";
-		for (const landmark of face.landmarks) {
-			const x = landmark.x * canvas.width;
-			const y = landmark.y * canvas.height;
-			ctx.fillRect(x - 1, y - 1, 2, 2);
+			try {
+				models.faceLandmarker.result = await models.faceLandmarker.detectForVideo(video, performance.now());
+			} catch (e) {
+				console.warn("Face detection error:", e);
+			}
 		}
 
-		const expressions = [];
-		const blinkLeft = face.blendShapes.categories[9].score;
-		const blinkRight = face.blendShapes.categories[10].score;
-		const smile = (face.blendShapes.categories[44].score + face.blendShapes.categories[45].score) / 2;
-		const browDown = (face.blendShapes.categories[1].score + face.blendShapes.categories[2].score) / 2;
-		const browUp = face.blendShapes.categories[3].score;
+		const scale = Math.min(canvas.width, canvas.height) / 500 * devicePixelRatio;
 
-		if (blinkLeft > 0.4) expressions.push("Left eye closed");
-		if (blinkRight > 0.35) expressions.push("Right eye closed");
-		if (smile > 0.5) expressions.push("Joy");
-		else if (browUp > 0.1) expressions.push("Surprise");
-		else if (browDown > 0.3) expressions.push("Angry");
-		else if (browDown > 0.1) expressions.push("Perplex");
+		for (let i = 0; i < Math.min(
+			models.faceLandmarker.result.faceLandmarks.length,
+			models.faceLandmarker.result.faceBlendshapes.length,
+			models.faceLandmarker.result.facialTransformationMatrixes.length
+		); i++) {
+			const face = {
+				landmarks: models.faceLandmarker.result.faceLandmarks[i],
+				blendShapes: models.faceLandmarker.result.faceBlendshapes[i],
+				matrix: models.faceLandmarker.result.facialTransformationMatrixes[i]
+			};
 
-		const m = face.matrix.data;
-		const rotX = Math.atan2(m[9], m[10]);
-		const rotY = Math.atan2(-m[8], Math.sqrt(m[9] * m[9] + m[10] * m[10]));
-		const rotZ = Math.atan2(m[4], m[0]);
+			ctx.fillStyle = "lime";
+			for (const landmark of face.landmarks) {
+				const x = canvas.width - (landmark.x * canvas.width);
+				const y = landmark.y * canvas.height;
+				ctx.fillRect(x - scale, y - scale, scale, scale);
+			}
 
-		expressions.push(`Rot X: ${rotX.toFixed(2)}`, `Rot Y: ${rotY.toFixed(2)}`, `Rot Z: ${rotZ.toFixed(2)}`);
+			const expressions = [];
+			const blinkLeft = face.blendShapes.categories[9].score;
+			const blinkRight = face.blendShapes.categories[10].score;
+			const smile = (face.blendShapes.categories[44].score + face.blendShapes.categories[45].score) / 2;
+			const browDown = (face.blendShapes.categories[1].score + face.blendShapes.categories[2].score) / 2;
+			const browUp = face.blendShapes.categories[3].score;
 
-		ctx.fillStyle = "white";
-		ctx.font = `${14 * scale}px Arial`;
-		ctx.fillText(expressions.join(" · "), 10, 20);
-	}
+			if (blinkLeft > 0.4) expressions.push("Left eye closed");
+			if (blinkRight > 0.35) expressions.push("Right eye closed");
+			if (smile > 0.5) expressions.push("Joy");
+			else if (browUp > 0.1) expressions.push("Surprise");
+			else if (browDown > 0.3) expressions.push("Angry");
+			else if (browDown > 0.1) expressions.push("Perplex");
+
+			const m = face.matrix.data;
+			const rotX = Math.atan2(m[9], m[10]);
+			const rotY = Math.atan2(-m[8], Math.sqrt(m[9] * m[9] + m[10] * m[10]));
+			const rotZ = Math.atan2(m[4], m[0]);
+
+			expressions.push(`Rot X: ${rotX.toFixed(2)}`, `Rot Y: ${rotY.toFixed(2)}`, `Rot Z: ${rotZ.toFixed(2)}`);
+
+			ctx.fillStyle = "white";
+			ctx.font = `${14 * scale}px Arial`;
+			ctx.fillText(expressions.join(" · "), 0, 20 * scale);
+		}
+	};
+
+	video.requestVideoFrameCallback(drawLoop);
 };
 
 const reconnect = async () => {
-	cancelAnimationFrame(animationId);
-	if (decoder) {
-		await decoder.flush();
-		decoder.close();
-	}
-
-	await new Promise(r => setTimeout(r, 1000));
+	await new Promise((resolve) => setTimeout(resolve, 2000));
 	connectCamera();
 };
 
 const initModels = async () => {
 	try {
-		const vision = await FilesetResolver.forVisionTasks(
-			"https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm"
-		);
+		const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm");
 
 		models.faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
 			baseOptions: {
 				modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task",
-				delegate: "GPU"
+				delegate: "CPU"
 			},
-			runningMode: "IMAGE",
+			runningMode: "VIDEO",
 			outputFaceBlendshapes: true,
 			outputFacialTransformationMatrixes: true
 		});
@@ -216,4 +191,5 @@ addEventListener("DOMContentLoaded", async () => {
 	initCanvas();
 	connectCamera();
 	initModels();
+	drawLoop();
 });
