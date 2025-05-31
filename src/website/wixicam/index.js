@@ -301,7 +301,7 @@ const drawLoop = async () => {
 				// const browDown = (face.blendShapes.categories[1].score + face.blendShapes.categories[2].score) / 2;
 				// const browUp = face.blendShapes.categories[3].score;
 
-				const isBlinking = blinkLeft > 0.55 || blinkRight > 0.55;
+				const isBlinking = blinkLeft > 0.35 || blinkRight > 0.35;
 				const isSmiling = !isBlinking && smile > 0.3;
 				// const isSurprised = !isBlinking && !isSmiling && browUp > 0.1;
 				// const isAngry = !isBlinking && !isSmiling && browDown > 0.4;
