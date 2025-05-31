@@ -19,6 +19,7 @@ let ambientLight, primaryDirectionalLight, secondaryDirectionalLight;
 
 let head, leftEye, rightEye, body, leftArm, rightArm;
 const eyeMaterials = [];
+let headTargetPosition, headTargetQuaternion, leftEyeTargetPosition, rightEyeTargetPosition;
 
 const models = {};
 let lastDetect = 0;
@@ -259,29 +260,25 @@ const drawLoop = async () => {
 					};
 				};
 
-				const eyeLerpCoeff = 0.1;
-
 				const leftIris = face.landmarks[473];
 				const leftEyeRange = eyeRange(362, 263);
 
 				const leftOffset = getClampedIrisOffset(leftIris, leftEyeRange);
-				const leftEyeTargetPosition = new THREE.Vector3(
+				leftEyeTargetPosition = new THREE.Vector3(
 					leftEye.initalPosition.x + leftOffset.x,
 					leftEye.initalPosition.y + leftOffset.y,
 					leftEye.initalPosition.z
 				);
-				leftEye.position.lerp(leftEyeTargetPosition, eyeLerpCoeff);
 
 				const rightIris = face.landmarks[468];
 				const rightEyeRange = eyeRange(133, 33);
 
 				const rightOffset = getClampedIrisOffset(rightIris, rightEyeRange);
-				const rightEyeTargetPosition = new THREE.Vector3(
+				rightEyeTargetPosition = new THREE.Vector3(
 					rightEye.initalPosition.x + rightOffset.x,
 					rightEye.initalPosition.y + rightOffset.y,
 					rightEye.initalPosition.z
 				);
-				rightEye.position.lerp(rightEyeTargetPosition, eyeLerpCoeff);
 
 				/* ctx2D.fillStyle = "lime";
 				for (const landmark of [
@@ -326,22 +323,18 @@ const drawLoop = async () => {
 
 			if (face.matrix?.data) {
 				const m = face.matrix.data;
-				const headTargetPosition = new THREE.Vector3(
+				headTargetPosition = new THREE.Vector3(
 					Math.min(Math.max(-m[12], -15), 15) / 15,
 					Math.min(Math.max(m[13], -12), 12) / 15,
 					Math.min((m[14] + 45) / 15, 0.5)
 				);
-
-				head.position.lerp(headTargetPosition, 0.05);
 
 				const headTargetRotation = new THREE.Euler(
 					-Math.atan2(m[9], m[10]) + 0.2,
 					Math.atan2(-m[8], Math.sqrt(m[9] * m[9] + m[10] * m[10])),
 					Math.atan2(m[4], m[0])
 				);
-
-				const headTargetQuaternion = new THREE.Quaternion().setFromEuler(headTargetRotation);
-				head.quaternion.slerp(headTargetQuaternion, 0.15);
+				headTargetQuaternion = new THREE.Quaternion().setFromEuler(headTargetRotation);
 			}
 		}
 
@@ -349,6 +342,13 @@ const drawLoop = async () => {
 		ctx2D.font = `${4 * scale}px Arial`;
 		ctx2D.fillText(log.join(" · "), 0, 5 * scale);
 	};
+
+	const eyeLerpCoeff = 0.1;
+	if (leftEyeTargetPosition) leftEye.position.lerp(leftEyeTargetPosition, eyeLerpCoeff);
+	if (rightEyeTargetPosition) rightEye.position.lerp(rightEyeTargetPosition, eyeLerpCoeff);
+
+	if (headTargetPosition) head.position.lerp(headTargetPosition, 0.05);
+	if (headTargetQuaternion) head.quaternion.slerp(headTargetQuaternion, 0.15);
 
 	renderer.render(scene, camera);
 
