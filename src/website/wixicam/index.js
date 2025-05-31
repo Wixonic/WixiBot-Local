@@ -67,8 +67,8 @@ const initCanvas = async () => {
 	leftEye = new THREE.Mesh(eyeGeometry, eyeMaterials[0]);
 	rightEye = new THREE.Mesh(eyeGeometry, eyeMaterials[0]);
 
-	leftEye.initalPosition = new THREE.Vector3(-0.08, 0, 0.245);
-	rightEye.initalPosition = new THREE.Vector3(0.08, 0, 0.245);
+	leftEye.initalPosition = new THREE.Vector3(-0.07, 0, 0.245);
+	rightEye.initalPosition = new THREE.Vector3(0.07, 0, 0.245);
 
 	leftEye.position.set(leftEye.initalPosition.x, leftEye.initalPosition.y, leftEye.initalPosition.z);
 	rightEye.position.set(rightEye.initalPosition.x, rightEye.initalPosition.y, rightEye.initalPosition.z);
@@ -171,6 +171,10 @@ const connectCamera = async () => {
 const drawLoop = async () => {
 	if (video.readyState >= 2) {
 		ctx2D.clearRect(0, 0, canvas2D.width, canvas2D.height);
+		ctx2D.save();
+		ctx2D.scale(-1, 1);
+		// ctx2D.drawImage(video, 0, 0, -canvas2D.width, canvas2D.height);
+		ctx2D.restore();
 
 		const now = performance.now();
 		if (now - lastDetect >= 1000 / FACE_DETECTION_FPS) {
@@ -199,6 +203,19 @@ const drawLoop = async () => {
 					return {
 						left: face.landmarks[left],
 						right: face.landmarks[right],
+						get top() {
+							return {
+								x: this.leftAndRightMiddle.x,
+								y: this.leftAndRightMiddle.y - this.leftAndRightDistance.x / 4
+							};
+						},
+						get bottom() {
+							return {
+								x: this.leftAndRightMiddle.x,
+								y: this.leftAndRightMiddle.y - this.leftAndRightDistance.x / 8
+							};
+						},
+
 
 						get leftAndRightMiddle() {
 							return {
@@ -212,65 +229,72 @@ const drawLoop = async () => {
 								y: Math.abs(this.left.y - this.right.y)
 							};
 						},
+						get topAndBottomMiddle() {
+							return {
+								x: (this.top.x + this.top.x) / 2,
+								y: (this.bottom.y + this.bottom.y) / 2
+							};
+						},
 						get topAndBottomDistance() {
 							return {
 								x: Math.abs(this.top.x - this.bottom.x),
 								y: Math.abs(this.top.y - this.bottom.y)
 							};
-						},
-
-						get top() {
-							return {
-								x: this.leftAndRightMiddle.x,
-								y: this.leftAndRightMiddle.y - this.leftAndRightDistance.x / 5
-							};
-						},
-						get bottom() {
-							return {
-								x: this.leftAndRightMiddle.x,
-								y: this.leftAndRightMiddle.y
-							};
 						}
 					};
 				};
 
-				const getClampedIrisOffset = (iris, range) => {
-					const center = new THREE.Vector3().addVectors(range.top, range.bottom).multiplyScalar(0.5);
-					const centerHorizontal = new THREE.Vector3().addVectors(range.left, range.right).multiplyScalar(0.5);
-					center.x = centerHorizontal.x;
-
-					const offset = new THREE.Vector3().subVectors(iris, center);
-
-					const halfWidth = range.leftAndRightDistance.x / 2;
-					const halfHeight = range.topAndBottomDistance.y / 2;
-
-					offset.x = THREE.MathUtils.clamp(offset.x, -halfWidth, halfWidth);
-					offset.y = THREE.MathUtils.clamp(offset.y, -halfHeight, halfHeight);
-
-					return offset;
-				};
-
 				const eyeMovementCoeff = {
-					x: 5,
+					x: 10,
 					y: 10
 				};
+
+				const getClampedIrisOffset = (iris, range) => {
+					const x = range.leftAndRightMiddle.x - iris.x;
+					const y = range.topAndBottomMiddle.y - iris.y;
+
+					return {
+						x: Math.min(Math.max(x * eyeMovementCoeff.x, -0.05), 0.05),
+						y: Math.min(Math.max(y * eyeMovementCoeff.y, -0.03), 0.03),
+					};
+				};
+
 				const eyeLerpCoeff = 0.1;
 
-				const leftOffset = getClampedIrisOffset(face.landmarks[473], eyeRange(362, 263));
+				const leftIris = face.landmarks[473];
+				const leftEyeRange = eyeRange(362, 263);
+
+				const leftOffset = getClampedIrisOffset(leftIris, leftEyeRange);
 				const leftEyeTargetPosition = new THREE.Vector3(
-					leftEye.initalPosition.x - leftOffset.x * eyeMovementCoeff.x,
-					leftEye.initalPosition.y - leftOffset.y * eyeMovementCoeff.y,
+					leftEye.initalPosition.x + leftOffset.x,
+					leftEye.initalPosition.y + leftOffset.y,
 					leftEye.initalPosition.z
 				);
 				leftEye.position.lerp(leftEyeTargetPosition, eyeLerpCoeff);
 
-				const rightOffset = getClampedIrisOffset(face.landmarks[468], eyeRange(133, 33));
+				const rightIris = face.landmarks[468];
+				const rightEyeRange = eyeRange(133, 33);
+
+				const rightOffset = getClampedIrisOffset(rightIris, rightEyeRange);
 				const rightEyeTargetPosition = new THREE.Vector3(
-					rightEye.initalPosition.x - rightOffset.x * eyeMovementCoeff.x,
-					rightEye.initalPosition.y - rightOffset.y * eyeMovementCoeff.y,
+					rightEye.initalPosition.x + rightOffset.x,
+					rightEye.initalPosition.y + rightOffset.y,
 					rightEye.initalPosition.z
 				);
 				rightEye.position.lerp(rightEyeTargetPosition, eyeLerpCoeff);
+
+				/* ctx2D.fillStyle = "lime";
+				for (const landmark of [
+					{ x: leftEyeRange.leftAndRightMiddle.x, y: leftEyeRange.topAndBottomMiddle.y },
+					leftEyeRange.top, leftEyeRange.left, leftEyeRange.bottom, leftEyeRange.right,
+
+					{ x: rightEyeRange.leftAndRightMiddle.x, y: rightEyeRange.topAndBottomMiddle.y },
+					rightEyeRange.top, rightEyeRange.left, rightEyeRange.bottom, rightEyeRange.right,
+				]) {
+					const x = canvas2D.width - (landmark.x * canvas2D.width);
+					const y = landmark.y * canvas2D.height;
+					ctx2D.fillRect(x - 0.5 * scale, y - 0.5 * scale, 0.5 * scale, 0.5 * scale);
+				} */
 			};
 
 			if (face.blendShapes?.categories) {
@@ -305,7 +329,7 @@ const drawLoop = async () => {
 				const headTargetPosition = new THREE.Vector3(
 					Math.min(Math.max(-m[12], -15), 15) / 15,
 					Math.min(Math.max(m[13], -12), 12) / 15,
-					Math.min((m[14] + 45) / 15, 0.5)
+					Math.min((m[14] + 40) / 15, 0.5)
 				);
 
 				head.position.lerp(headTargetPosition, 0.05);

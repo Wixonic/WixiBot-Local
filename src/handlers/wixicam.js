@@ -55,7 +55,7 @@ const init = async (logger, client, discord, server, config) => {
 	server.ws.on("connection", (ws) => {
 		const cleanup = () => {
 			if (cameraProcess) {
-				cameraProcess.kill("SIGINT");
+				cameraProcess.kill("SIGKILL");
 				cameraProcess = null;
 				logger.debug("Camera process killed");
 			}
@@ -80,16 +80,16 @@ const init = async (logger, client, discord, server, config) => {
 						}
 					}
 
+					cleanup();
 					logger.info("Starting stream with camera:", deviceList[cameraIndex] ?? "unknown");
-
 					captureCamera(cameraIndex);
 					cameraProcess.stdout.on("data", (frame) => ws.send(frame));
-					cameraProcess.stderr.on("data", (error) => logger.warn(`FFMPEG: ${String(error).trim()}`));
-					cameraProcess.on("error", (err) => logger.error(`FFMPEG error: ${err.message}`));
+					cameraProcess.stderr.on("data", (e) => logger.warn(`ffmpeg: ${String(e).trim()}`));
+					cameraProcess.on("error", (e) => logger.error(`ffmpeg error: ${e.message}`));
 					cameraProcess.on("exit", () => cleanup());
 				});
 
-				ws.on("error", (err) => {
+				ws.on("error", (e) => {
 					logger.warn(`WebSocket error: ${err.message}`);
 					cleanup();
 				});
