@@ -26,7 +26,7 @@ const captureCamera = (cameraIndex) => {
 		"-strict", "-2",
 		"-f", "avfoundation",
 		"-framerate", "30",
-		"-video_size", "640x480",
+		"-video_size", "1280x720",
 		"-pix_fmt", "uyvy422",
 		"-i", `${cameraIndex}:none`,
 		"-preset", "ultrafast",

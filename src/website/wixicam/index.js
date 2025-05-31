@@ -1,4 +1,5 @@
 import { FilesetResolver, FaceLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs";
+
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
@@ -17,8 +18,9 @@ let scene, camera, renderer;
 let ambientLight, primaryDirectionalLight, secondaryDirectionalLight;
 
 let head, leftEye, rightEye, body, leftArm, rightArm;
+const eyeMaterials = [];
 
-let models = {};
+const models = {};
 let lastDetect = 0;
 
 const initCanvas = async () => {
@@ -28,6 +30,7 @@ const initCanvas = async () => {
 
 	scene = new THREE.Scene();
 	renderer = new THREE.WebGLRenderer({ canvas: canvas3D, antialias: true });
+	renderer.setClearAlpha(0);
 
 	camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
 	camera.position.set(0, 0, 1);
@@ -43,13 +46,40 @@ const initCanvas = async () => {
 
 	scene.add(ambientLight, primaryDirectionalLight, secondaryDirectionalLight);
 
-	const loader = new GLTFLoader();
-	head = await new Promise((resolve) => loader.load("./head.glb", (gltf) => resolve(gltf.scene.children[0])));
+	const gltfLoader = new GLTFLoader();
+	head = await new Promise((resolve) => gltfLoader.load("./head.glb", (gltf) => resolve(gltf.scene.children[0])));
 	head.position.set(0, 0, 0);
+
+	const textureLoader = new THREE.TextureLoader();
+	const eyeTextures = ["./eye/default/", "./eye/blink/", "./eye/happy/"];
+	for (const path of eyeTextures) {
+		const color = await textureLoader.loadAsync(path + "color.png");
+		const alpha = await textureLoader.loadAsync(path + "alpha.png");
+
+		eyeMaterials.push(new THREE.MeshBasicMaterial({
+			map: color,
+			alphaMap: alpha,
+			transparent: true
+		}));
+	}
+
+	const eyeGeometry = new THREE.PlaneGeometry(0.1, 0.1);
+	leftEye = new THREE.Mesh(eyeGeometry, eyeMaterials[0]);
+	rightEye = new THREE.Mesh(eyeGeometry, eyeMaterials[0]);
+
+	leftEye.initalPosition = new THREE.Vector3(-0.08, 0, 0.245);
+	rightEye.initalPosition = new THREE.Vector3(0.08, 0, 0.245);
+
+	leftEye.position.set(leftEye.initalPosition.x, leftEye.initalPosition.y, leftEye.initalPosition.z);
+	rightEye.position.set(rightEye.initalPosition.x, rightEye.initalPosition.y, rightEye.initalPosition.z);
+
+	leftEye.currentEye = rightEye.currentEye = 0;
+	head.add(leftEye, rightEye);
+
 	scene.add(head);
 
 	const resize = () => {
-		const ratio = 640 / 480;
+		const ratio = video.videoWidth / video.videoHeight;
 		let width = window.innerWidth;
 		let height = width / ratio;
 
@@ -69,7 +99,10 @@ const initCanvas = async () => {
 	};
 
 	video = document.querySelector("video");
-	video.addEventListener("loadedmetadata", () => video.play());
+	video.addEventListener("loadedmetadata", async () => {
+		await video.play();
+		resize();
+	});
 
 	resize();
 	window.addEventListener("resize", resize);
@@ -142,72 +175,156 @@ const drawLoop = async () => {
 		const now = performance.now();
 		if (now - lastDetect >= 1000 / FACE_DETECTION_FPS) {
 			lastDetect = now;
-			if (!models.faceLandmarker) return;
 
 			try {
 				models.faceLandmarker.result = await models.faceLandmarker.detectForVideo(video, performance.now());
 			} catch (e) {
-				console.warn("Face detection error:", e);
+				console.warn("Face landmarker error:", e);
 			}
 		}
 
 		const scale = Math.min(canvas2D.width, canvas2D.height) / 500 * devicePixelRatio;
 
-		for (let i = 0; i < Math.min(
-			models.faceLandmarker.result.faceLandmarks.length,
-			models.faceLandmarker.result.faceBlendshapes.length,
-			models.faceLandmarker.result.facialTransformationMatrixes.length
-		); i++) {
+		const log = [];
+
+		if (models.faceLandmarker && models.faceLandmarker.result) {
 			const face = {
-				landmarks: models.faceLandmarker.result.faceLandmarks[i],
-				blendShapes: models.faceLandmarker.result.faceBlendshapes[i],
-				matrix: models.faceLandmarker.result.facialTransformationMatrixes[i]
+				landmarks: models.faceLandmarker.result.faceLandmarks[0],
+				blendShapes: models.faceLandmarker.result.faceBlendshapes[0],
+				matrix: models.faceLandmarker.result.facialTransformationMatrixes[0]
 			};
 
-			/* ctx2D.fillStyle = "lime";
-			for (const landmark of face.landmarks) {
-				const x = canvas2D.width - (landmark.x * canvas2D.width);
-				const y = landmark.y * canvas2D.height;
-				ctx2D.fillRect(x - 0.5 * scale, y - 0.5 * scale, 0.5 * scale, 0.5 * scale);
-			} */
+			if (face.landmarks) {
+				const eyeRange = (left, right) => {
+					return {
+						left: face.landmarks[left],
+						right: face.landmarks[right],
 
-			const expressions = [];
-			const blinkLeft = face.blendShapes.categories[9].score;
-			const blinkRight = face.blendShapes.categories[10].score;
-			const smile = (face.blendShapes.categories[44].score + face.blendShapes.categories[45].score) / 2;
-			const browDown = (face.blendShapes.categories[1].score + face.blendShapes.categories[2].score) / 2;
-			const browUp = face.blendShapes.categories[3].score;
+						get leftAndRightMiddle() {
+							return {
+								x: (this.left.x + this.right.x) / 2,
+								y: (this.left.y + this.right.y) / 2
+							};
+						},
+						get leftAndRightDistance() {
+							return {
+								x: Math.abs(this.left.x - this.right.x),
+								y: Math.abs(this.left.y - this.right.y)
+							};
+						},
+						get topAndBottomDistance() {
+							return {
+								x: Math.abs(this.top.x - this.bottom.x),
+								y: Math.abs(this.top.y - this.bottom.y)
+							};
+						},
 
-			if (blinkLeft > 0.4) expressions.push("Left eye closed");
-			if (blinkRight > 0.35) expressions.push("Right eye closed");
-			if (smile > 0.4) expressions.push("Joy");
-			else if (browUp > 0.1) expressions.push("Surprise");
-			else if (browDown > 0.4) expressions.push("Angry");
-			else if (browDown > 0.15) expressions.push("Perplex");
+						get top() {
+							return {
+								x: this.leftAndRightMiddle.x,
+								y: this.leftAndRightMiddle.y - this.leftAndRightDistance.x / 5
+							};
+						},
+						get bottom() {
+							return {
+								x: this.leftAndRightMiddle.x,
+								y: this.leftAndRightMiddle.y
+							};
+						}
+					};
+				};
 
-			const m = face.matrix.data;
-			const targetPosition = new THREE.Vector3(
-				Math.min(Math.max(-m[12], -10), 10) / 20,
-				Math.min(Math.max(m[13], -8), 8) / 20,
-				Math.min((m[14] + 50) / 15, 0.5)
-			);
+				const getClampedIrisOffset = (iris, range) => {
+					const center = new THREE.Vector3().addVectors(range.top, range.bottom).multiplyScalar(0.5);
+					const centerHorizontal = new THREE.Vector3().addVectors(range.left, range.right).multiplyScalar(0.5);
+					center.x = centerHorizontal.x;
 
-			head.position.lerp(targetPosition, 0.02);
+					const offset = new THREE.Vector3().subVectors(iris, center);
 
-			const targetRotation = new THREE.Euler(
-				-Math.atan2(m[9], m[10]) + 0.2,
-				Math.atan2(-m[8], Math.sqrt(m[9] * m[9] + m[10] * m[10])),
-				Math.atan2(m[4], m[0])
-			);
+					const halfWidth = range.leftAndRightDistance.x / 2;
+					const halfHeight = range.topAndBottomDistance.y / 2;
 
-			const targetQuaternion = new THREE.Quaternion().setFromEuler(targetRotation);
-			head.quaternion.slerp(targetQuaternion, 0.15);
+					offset.x = THREE.MathUtils.clamp(offset.x, -halfWidth, halfWidth);
+					offset.y = THREE.MathUtils.clamp(offset.y, -halfHeight, halfHeight);
 
-			ctx2D.fillStyle = "white";
-			ctx2D.font = `${4 * scale}px Arial`;
-			ctx2D.fillText(expressions.join(" · "), 0, 5 * scale);
+					return offset;
+				};
+
+				const eyeMovementCoeff = {
+					x: 5,
+					y: 10
+				};
+				const eyeLerpCoeff = 0.1;
+
+				const leftOffset = getClampedIrisOffset(face.landmarks[473], eyeRange(362, 263));
+				const leftEyeTargetPosition = new THREE.Vector3(
+					leftEye.initalPosition.x - leftOffset.x * eyeMovementCoeff.x,
+					leftEye.initalPosition.y - leftOffset.y * eyeMovementCoeff.y,
+					leftEye.initalPosition.z
+				);
+				leftEye.position.lerp(leftEyeTargetPosition, eyeLerpCoeff);
+
+				const rightOffset = getClampedIrisOffset(face.landmarks[468], eyeRange(133, 33));
+				const rightEyeTargetPosition = new THREE.Vector3(
+					rightEye.initalPosition.x - rightOffset.x * eyeMovementCoeff.x,
+					rightEye.initalPosition.y - rightOffset.y * eyeMovementCoeff.y,
+					rightEye.initalPosition.z
+				);
+				rightEye.position.lerp(rightEyeTargetPosition, eyeLerpCoeff);
+			};
+
+			if (face.blendShapes?.categories) {
+				const blinkLeft = face.blendShapes.categories[9].score;
+				const blinkRight = face.blendShapes.categories[10].score;
+				const smile = (face.blendShapes.categories[44].score + face.blendShapes.categories[45].score) / 2;
+				// const browDown = (face.blendShapes.categories[1].score + face.blendShapes.categories[2].score) / 2;
+				// const browUp = face.blendShapes.categories[3].score;
+
+				const isBlinking = blinkLeft > 0.55 || blinkRight > 0.55;
+				const isSmiling = !isBlinking && smile > 0.3;
+				// const isSurprised = !isBlinking && !isSmiling && browUp > 0.1;
+				// const isAngry = !isBlinking && !isSmiling && browDown > 0.4;
+				// const isPerplex = !isBlinking && !isSmiling && !isAngry && browDown > 0.15;
+
+				const emotion = isSmiling ? 2 : 0;
+				const targetEye = isBlinking ? 1 : emotion;
+
+				if (leftEye.currentEye != targetEye) {
+					leftEye.currentEye = targetEye;
+					leftEye.material = eyeMaterials[targetEye];
+				}
+
+				if (rightEye.currentEye != targetEye) {
+					rightEye.currentEye = targetEye;
+					rightEye.material = eyeMaterials[targetEye];
+				}
+			}
+
+			if (face.matrix?.data) {
+				const m = face.matrix.data;
+				const headTargetPosition = new THREE.Vector3(
+					Math.min(Math.max(-m[12], -15), 15) / 15,
+					Math.min(Math.max(m[13], -12), 12) / 15,
+					Math.min((m[14] + 45) / 15, 0.5)
+				);
+
+				head.position.lerp(headTargetPosition, 0.05);
+
+				const headTargetRotation = new THREE.Euler(
+					-Math.atan2(m[9], m[10]) + 0.2,
+					Math.atan2(-m[8], Math.sqrt(m[9] * m[9] + m[10] * m[10])),
+					Math.atan2(m[4], m[0])
+				);
+
+				const headTargetQuaternion = new THREE.Quaternion().setFromEuler(headTargetRotation);
+				head.quaternion.slerp(headTargetQuaternion, 0.15);
+			}
 		}
-	}
+
+		ctx2D.fillStyle = "white";
+		ctx2D.font = `${4 * scale}px Arial`;
+		ctx2D.fillText(log.join(" · "), 0, 5 * scale);
+	};
 
 	renderer.render(scene, camera);
 
@@ -228,12 +345,13 @@ const initModels = async () => {
 				modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task",
 				delegate: "CPU"
 			},
+			numFaces: 1,
 			runningMode: "VIDEO",
 			outputFaceBlendshapes: true,
 			outputFacialTransformationMatrixes: true
 		});
 	} catch (e) {
-		console.error("Model initialization failed:", e);
+		console.error("Models initialization failed:", e);
 		setTimeout(initModels, 3000);
 	}
 };
@@ -243,4 +361,4 @@ addEventListener("DOMContentLoaded", async () => {
 	connectCamera();
 	initModels();
 	drawLoop();
-});
+});;
