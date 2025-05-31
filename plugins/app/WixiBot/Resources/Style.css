@@ -39,7 +39,3 @@ body.state-on :is(.state-off, .state-unknown) {
 body.state-off :is(.state-on, .state-unknown) {
     display: none;
 }
-
-button {
-    font-size: 1em;
-}
