@@ -446,6 +446,7 @@
 				INFOPLIST_FILE = WixiBot/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WixiBot;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -484,6 +485,7 @@
 				INFOPLIST_FILE = WixiBot/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WixiBot;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;

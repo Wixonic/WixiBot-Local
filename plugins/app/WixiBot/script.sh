@@ -1,12 +1,10 @@
 #!/bin/zsh
 
-source ".zprofile"
+source ~/.zprofile
 
-echo "$HOME - $PATH"
+cd ~/Documents/GitHub/WixiBot-Local/src
 
-LOG_DIR="~/WixiBot/logs"
-LOG_FILE="$LOG_DIR/local.log"
+mkdir -p ~/WixiBot/logs/
+touch ~/WixiBot/logs/local.log
 
-cd "~/Documents/GitHub/WixiBot-Local/src"
-
-nohup npm run start >> "$LOG_FILE" 2>&1 &
+npm run start >> ~/WixiBot/logs/local.log 2>&1 &
