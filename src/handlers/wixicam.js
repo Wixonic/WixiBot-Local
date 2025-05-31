@@ -19,7 +19,7 @@ const updateDeviceList = () => {
 };
 
 const captureCamera = (cameraIndex) => {
-	cameraProcess = spawn("ffmpeg", [
+	cameraProcess = spawn("/opt/homebrew/bin/ffmpeg", [
 		"-loglevel", "error",
 		"-fflags", "nobuffer",
 		"-flags", "low_delay",

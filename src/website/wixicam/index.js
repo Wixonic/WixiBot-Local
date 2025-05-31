@@ -329,7 +329,7 @@ const drawLoop = async () => {
 				const headTargetPosition = new THREE.Vector3(
 					Math.min(Math.max(-m[12], -15), 15) / 15,
 					Math.min(Math.max(m[13], -12), 12) / 15,
-					Math.min((m[14] + 40) / 15, 0.5)
+					Math.min((m[14] + 45) / 15, 0.5)
 				);
 
 				head.position.lerp(headTargetPosition, 0.05);
