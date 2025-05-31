@@ -1,5 +1,8 @@
 const { spawn, spawnSync } = require("child_process");
 
+console.log(`[DEBUG] Node execPath: ${process.execPath}`);
+
+
 let deviceList = [];
 let cameraProcess = null;
 
