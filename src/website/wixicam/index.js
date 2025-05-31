@@ -325,7 +325,7 @@ const drawLoop = async () => {
 				const m = face.matrix.data;
 				headTargetPosition = new THREE.Vector3(
 					Math.min(Math.max(-m[12], -15), 15) / 15,
-					Math.min(Math.max(m[13], -12), 12) / 15,
+					Math.min(Math.max(m[13], -12), 12) / 25,
 					Math.min((m[14] + 45) / 15, 0.5)
 				);
 
