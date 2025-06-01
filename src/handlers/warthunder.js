@@ -28,6 +28,23 @@ const process = async (logger, client, discord, server, config) => {
 
 	if (data.valid) {
 		await request(emptyLogger, {
+			url: new URL("/rpc/warthunder/data.json", "https://" + config.client.hostname),
+			method: "POST",
+			headers: {
+				Authorization: `WixKey ${config.wixkey}`,
+				"Content-Type": "application/json"
+			},
+			secure: true,
+			type: "text",
+			body: JSON.stringify({
+				info: data.info,
+				objects: data.objs,
+				indicators: data.indicators,
+				unit: data.unit
+			})
+		});
+
+		await request(emptyLogger, {
 			url: new URL("/rpc/warthunder/map.png", "https://" + config.client.hostname),
 			method: "POST",
 			headers: {
@@ -35,7 +52,7 @@ const process = async (logger, client, discord, server, config) => {
 				"Content-Type": "image/png"
 			},
 			secure: true,
-			type: "raw",
+			type: "text",
 			body: data.map.toString("base64url")
 		});
 

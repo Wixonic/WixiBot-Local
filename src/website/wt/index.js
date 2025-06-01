@@ -1,12 +1,10 @@
-import request from "https://wixonic.fr/lib/request.js";
+import request from "./request.js";
+
+const host = "https://localhost:999/"; // "https://server.wixonic.fr/";
 
 const config = {
 	paths: {
-		map: "https://server.wixonic.fr/rpc/warthunder/map.png",
-		vehicle: {
-			indicators: "/indicators",
-			state: "/state"
-		}
+		map: new URL("/rpc/warthunder/map.png", host)
 	},
 	port: 8111,
 	waitingTime: 0.1

@@ -75,7 +75,7 @@ const process = async (logger, client, discord, server, config) => {
 				currentSong.artist != song.artist ||
 				currentSong.album != song.album ||
 				Math.floor(currentSong.startedAt / 10000) != Math.floor(song.startedAt / 10000)))) await update();
-	return currentSong != null;
+	return currentSong == null;
 };
 
 module.exports = {

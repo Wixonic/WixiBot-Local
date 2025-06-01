@@ -1,3 +1,4 @@
+const fs = require("fs");
 const { JSDOM } = require("jsdom");
 const sharp = require("sharp");
 
@@ -60,8 +61,9 @@ const getUnitData = async (logger, unit) => {
 const get = async (logger, config) => {
 	const errors = [];
 	let info = {};
-	let map = Buffer.from("");
 	let objs = {};
+	let indicators = {};
+	let map = Buffer.from("");
 	let details = "Unknown unit";
 	let unit = "Unknown unit";
 
@@ -72,6 +74,8 @@ const get = async (logger, config) => {
 			secure: false
 		});
 
+		fs.writeFileSync("./warthunder.test.data/info.json", JSON.stringify(info), "utf-8");
+
 		await wait(config.waitingTime);
 
 		objs = await request(emptyLogger, {
@@ -79,6 +83,8 @@ const get = async (logger, config) => {
 			type: "json",
 			secure: false
 		});
+
+		fs.writeFileSync("./warthunder.test.data/objs.json", JSON.stringify(objs), "utf-8");
 
 		await wait(config.waitingTime);
 
@@ -95,13 +101,6 @@ const get = async (logger, config) => {
 		if (errors.length == 0) {
 			const width = 2048;
 			const height = 2048;
-			const iconSize = Math.min(width, height) / 64;
-			const S = iconSize * 0.2;
-
-			const scaleX = width / info.grid_size[0];
-			const scaleY = height / info.grid_size[1];
-			const offsetX = info.grid_zero[0] * scaleX;
-			const offsetY = info.grid_zero[1] * scaleY;
 
 			let mapImage = sharp(Buffer.concat(imageResponse)).resize({
 				width,
@@ -109,58 +108,7 @@ const get = async (logger, config) => {
 				fit: "contain"
 			});
 
-			const svgEls = [];
-
-			for (const key in objs) {
-				const obj = objs[key];
-
-				switch (obj.type) {
-					case "airfield":
-						svgEls.push(`<line x1="${obj.sx * info.grid_size[0] * scaleX - offsetX}" y1="${obj.sy * info.grid_size[1] * scaleY - offsetY}" x2="${obj.ex * info.grid_size[0] * scaleX - offsetX}" y2="${obj.ey * info.grid_size[1] * scaleY - offsetY}" stroke="${obj.color}" stroke-width="${iconSize / 2}" />`);
-						break;
-
-					case "ground_model":
-						{
-							const x = obj.x * info.grid_size[0] * scaleX;
-							const y = obj.y * info.grid_size[1] * scaleY;
-
-							switch (obj.icon) {
-								case "Player":
-									svgEls.unshift(`<path transform="rotate(${Math.atan2(obj.dy, obj.dx) * 180 / Math.PI + 90}, ${x + iconSize / 4}, ${y + iconSize / 4})" d="M ${x + iconSize / 4} ${y} L ${x + iconSize / 2} ${y + iconSize / 2} L ${x + iconSize / 4} ${y + iconSize * 0.375} L ${x} ${y + iconSize / 2} Z" fill="#FFF" stroke="#000" stroke-width="${iconSize / 16}" />`);
-									break;
-
-								case "LightTank":
-									svgEls.push(`<path d="M ${x - 1.5} ${y - 2 / 3} h ${S * 3} v ${S * 4 / 3} h ${-S * 3} v ${-S * 4 / 3} z" fill="${obj.color}" stroke="#000" stroke-width="${iconSize / 16}" />`);
-									break;
-
-								case "MediumTank":
-									svgEls.push(`<path d="M ${x - 1.5} ${y - 1} h ${S * 3} v ${S * 4 / 3} h ${-S * 2} v ${-S} h ${-S * 2} v ${S} h ${-S} v ${-S * 2} z" fill="${obj.color}" stroke="#000" stroke-width="${iconSize / 16}" />`);
-									break;
-
-								case "SPAA":
-									svgEls.push(`<path d="M ${x - 0.5} ${y - 0.5} h ${S * 2 / 3} v ${S} h ${S * 2 / 3} v ${-S} h ${S * 2 / 3} v ${S} h ${S / 2} v ${S} h ${-3 * S} v ${-S} h ${S / 2} v ${-S} z" fill="${obj.color}" stroke="#000" stroke-width="${iconSize / 16}" />`);
-									break;
-
-								default:
-									svgEls.push(`<rect x="${x - iconSize / 6}" y="${y - iconSize / 6}" width="${iconSize / 2}" height="${iconSize / 2}" fill="${obj.color}" stroke="#000" stroke-width="${iconSize / 16}"  />`);
-									break;
-							}
-							break;
-						}
-
-					case "respawn_base_tank":
-						svgEls.push(`<rect x="${obj.x * info.grid_size[0] * scaleX - iconSize / 16}" y="${obj.y * info.grid_size[1] * scaleY - iconSize / 16}" width="${iconSize / 8}" height="${iconSize / 8}" fill="${obj.color}"  />`);
-						break;
-				}
-			}
-
-			mapImage = mapImage.composite([{
-				input: Buffer.from(`<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">${svgEls.reverse().join("")}</svg>`),
-				top: 0,
-				left: 0
-			}]).toFormat("png");
-
-			map = await mapImage.toBuffer();
+			map = await mapImage.toFormat("png").toBuffer();
 		}
 	} catch (e) {
 		logger.warn(`Image: ${e}`);
@@ -170,11 +118,13 @@ const get = async (logger, config) => {
 
 	if (errors.length == 0) {
 		try {
-			const indicators = await request(emptyLogger, {
+			indicators = await request(emptyLogger, {
 				url: new URL(config.paths.vehicle.indicators, `http://localhost:${config.port}`),
 				type: "json",
 				secure: false
 			});
+
+			fs.writeFileSync("./warthunder.test.data/indicators.json", JSON.stringify(indicators), "utf-8");
 
 			if (indicators.error) throw indicators.error;
 
@@ -223,8 +173,9 @@ const get = async (logger, config) => {
 	return {
 		errors,
 		info,
-		map,
 		objs,
+		indicators,
+		map,
 		valid: errors.length == 0,
 		details,
 		unit
