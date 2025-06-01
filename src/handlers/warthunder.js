@@ -58,7 +58,7 @@ const process = async (logger, client, discord, server, config) => {
 
 		if (!inWarThunderGameSince) inWarThunderGameSince = now;
 
-		if (lastWarThunderRefresh + 15 * 1000 < now || !warThunderLargeImage) warThunderLargeImage = await discord.getExternalAsset(config.discord.application.clients.war_thunder.id, new URL(`/rpc/warthunder/map.png?t=${now}`, "https://" + config.client.hostname));
+		if (lastWarThunderRefresh + 15 * 1000 < now || !warThunderLargeImage) warThunderLargeImage = await discord.getExternalAsset(config.discord.application.clients.war_thunder.id, new URL(`/rpc/warthunder/map.png?t=${now.toString(16)}`, "https://" + config.client.hostname));
 
 		discord.addActivity("wt", {
 			applicationId: config.discord.application.clients.war_thunder.id,

@@ -1,12 +1,15 @@
 body {
+	background: #000;
 	margin: 0;
 }
 
-#map {
+canvas {
 	display: block;
 
 	max-width: 100vw;
 	max-height: 100vh;
+
+	background: #222;
 
 	margin: auto;
 }

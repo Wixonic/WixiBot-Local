@@ -98,18 +98,7 @@ const get = async (logger, config) => {
 		if (objs.error) errors.push(`Map Objects: ${objs.error}`);
 		if (imageResponse.error) errors.push(`Map: ${imageResponse.error}`);
 
-		if (errors.length == 0) {
-			const width = 2048;
-			const height = 2048;
-
-			let mapImage = sharp(Buffer.concat(imageResponse)).resize({
-				width,
-				height,
-				fit: "contain"
-			});
-
-			map = await mapImage.toFormat("png").toBuffer();
-		}
+		if (errors.length == 0) map = await sharp(Buffer.concat(imageResponse)).toFormat("png").toBuffer();
 	} catch (e) {
 		logger.warn(`Image: ${e}`);
 	}
