@@ -36,6 +36,7 @@ const cycle = async () => {
 		]);
 
 		data = dataResponse.response;
+		if (performance.now() < 1000) console.log(data);
 		map = await createImageBitmap(imageResponse.response);
 	} catch (e) {
 		console.error("Cycle failed:", e);
@@ -45,8 +46,8 @@ const cycle = async () => {
 };
 
 const draw = () => {
-	if (data && data.info && map) {
-		const { info } = data;
+	if (data && data.info && data.objects && map) {
+		const { info, objects } = data;
 		const ratio = map.width / map.height;
 		let width = innerWidth * devicePixelRatio;
 		let height = width / ratio;
@@ -69,13 +70,24 @@ const draw = () => {
 				y -= info.map_min[1];
 			}
 
-			const worldWidth = info.map_max[0] - info.map_min[0];
-			const worldHeight = info.map_max[1] - info.map_min[1];
-
 			return [
-				(x / worldWidth) * width * camera.zoom + camera.position[0],
-				(y / worldHeight) * height * camera.zoom + camera.position[1]
+				(x / (info.map_max[0] - info.map_min[0])) * width * camera.zoom + (translate ? camera.position[0] : 0),
+				(y / (info.map_max[1] - info.map_min[1])) * height * camera.zoom + (translate ? camera.position[1] : 0)
 			];
+		};
+
+		const gridToCanvasCoordinates = (x, y, translate) => {
+			if (Array.isArray(x)) {
+				y = x[1];
+				x = x[0];
+			}
+
+			const [w, h] = [info.map_max[0] - info.map_min[0], info.map_max[1] - info.map_min[1]];
+
+			x += info.map_min[0] / w;
+			y += info.map_min[1] / h;
+
+			return worldToCanvasCoordinates(x * w, y * h, translate);
 		};
 
 		canvas.width = width;
@@ -86,31 +98,39 @@ const draw = () => {
 		const [ex, ey] = worldToCanvasCoordinates(info.map_max);
 		ctx.drawImage(map, sx, sy, ex - sx, ey - sy);
 
-		const [gx, gy] = worldToCanvasCoordinates(info.grid_zero[0], info.grid_zero[1] - info.grid_size[1]);
-		const [gx2, gy2] = worldToCanvasCoordinates(info.grid_zero[0] + info.grid_size[0], info.grid_zero[1]);
-		const [stepX, stepY] = worldToCanvasCoordinates(info.grid_steps, null, false);
-
 		ctx.strokeStyle = "#000";
 
 		ctx.beginPath();
 
-		for (let x = gx; x <= gx2; x += stepX) {
-			const lineX = Math.min(x, gx2);
-			ctx.moveTo(lineX, gy);
-			ctx.lineTo(lineX, gy2);
+		for (let x = info.map_min[0]; x <= info.map_max[0]; x += info.grid_steps[0]) {
+			const xx = worldToCanvasCoordinates(Math.floor((x - info.map_max[0])), 0)[0];
+			ctx.moveTo(xx, sy);
+			ctx.lineTo(xx, ey);
 		}
 
-		for (let y = gy; y <= gy2; y += stepY) {
-			const lineY = Math.min(y, gy2);
-			ctx.moveTo(gx, lineY);
-			ctx.lineTo(gx2, lineY);
+		for (let y = info.map_min[1]; y <= info.map_max[1]; y += info.grid_steps[1]) {
+			const yy = worldToCanvasCoordinates(0, Math.min(y, info.map_max[1]))[1];
+			ctx.moveTo(sx, yy);
+			ctx.lineTo(ex, yy);
 		}
+
 		ctx.lineWidth = drawSize;
 		ctx.stroke();
 
-		ctx.lineWidth = drawSize * 3;
-		ctx.strokeRect(gx, gy, gx2 - gx, gy2 - gy);
-	}
+		for (const obj of objects) {
+			switch (obj.type) {
+				default:
+					{
+						ctx.fillStyle = "#F0F";
+						ctx.lineWidth = 0;
+						const [x, y] = gridToCanvasCoordinates(obj.x, obj.y);
+						const s = drawSize * 2;
+						ctx.fillRect(x - s / 2, y - s / 2, s, s);
+					}
+					break;
+			}
+		}
+	};
 
 	requestAnimationFrame(draw);
 };
