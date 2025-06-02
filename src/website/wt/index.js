@@ -1,13 +1,13 @@
 import request from "./request.js";
 
-const host = "https://localhost:999/";
+// const host = "https://localhost:999/";
+const host = "https://server.wixonic.fr/";
 
 const config = {
 	paths: {
 		data: new URL("/rpc/warthunder/data.json", host),
 		map: new URL("/rpc/warthunder/map.png", host)
 	},
-	port: 8111,
 	waitingTime: 0.1
 };
 
