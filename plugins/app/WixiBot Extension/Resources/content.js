@@ -129,6 +129,18 @@ const extensions = [
 						data = dataScript;
 						break;
 					}
+
+					const convertToSeconds = (time) => {
+						time = time.split(":");
+						let seconds = Number(data.time[0]) * 60 + Number(data.time)[1];
+						if (time.length > 2) seconds = seconds * 60 + Number(data.time)[2];
+						return seconds;
+					};
+
+					const videoElement = document.querySelector(".html5-video-player");
+					data.paused = videoElement.className.includes("paused-mode");
+					data.time = convertToSeconds(videoElement.querySelector(".ytp-time-current").innerHTML);
+					data.duration = convertToSeconds(videoElement.querySelector(".ytp-time-duration").innerHTML);
 				} catch { }
 			}
 
@@ -137,6 +149,9 @@ const extensions = [
 					type: "video",
 					author: data.author,
 					name: data.name,
+					paused: data.paused,
+					duration: data.duration,
+					time: data.time,
 					thumbnail: (data.thumbnailUrl ?? [])[0],
 					url: `https://www.youtube.com/watch?v=${data.embedUrl.slice("https://www.youtube.com/embed/".length)}`
 				});
