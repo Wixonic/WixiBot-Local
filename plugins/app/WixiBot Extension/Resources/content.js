@@ -142,8 +142,10 @@ const extensions = [
 			try {
 				const videoElement = document.querySelector(".html5-video-player");
 				data.paused = videoElement.className.includes("paused-mode");
-				if (!videoElement.className.includes("ytp-autohide")) window.time = convertToSeconds(videoElement.querySelector(".ytp-time-current").innerHTML);
-				else window.time += 1;
+				if (!videoElement.className.includes("ytp-autohide")) window.time = {
+					value: convertToSeconds(videoElement.querySelector(".ytp-time-current").innerHTML),
+					date: performance.now()
+				};
 				data.duration = convertToSeconds(videoElement.querySelector(".ytp-time-duration").innerHTML);
 			} catch {
 				data.paused = true;
@@ -155,7 +157,7 @@ const extensions = [
 					author: data.author,
 					name: data.name,
 					paused: data.paused,
-					time: window.time,
+					time: window.time.value + Math.floor((performance.now() - window.time.date) / 1000),
 					duration: data.duration,
 					thumbnail: (data.thumbnailUrl ?? [])[0],
 					url: `https://www.youtube.com/watch?v=${data.embedUrl.slice("https://www.youtube.com/embed/".length)}`

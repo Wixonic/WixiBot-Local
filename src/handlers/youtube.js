@@ -106,7 +106,7 @@ const process = async (logger, client, discord, server, config) => {
 };
 
 module.exports = {
-	delay: 15 * 1000,
+	delay: 1 * 1000,
 	init,
 	process
 };

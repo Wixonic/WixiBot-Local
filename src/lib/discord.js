@@ -87,11 +87,15 @@ class ClientManager {
 			this.logger.warn("Failed to upload activites:", e);
 		}
 
-		this.client.user.setPresence({
-			activities,
-			afk: true,
-			status: Object.values(this.activities).length > 0 ? "idle" : "invisible"
-		});
+		try {
+			this.client.user.setPresence({
+				activities,
+				afk: true,
+				status: Object.values(this.activities).length > 0 ? "idle" : "invisible"
+			});
+		} catch (e) {
+			this.logger.warn("Failed to set activites:", e);
+		}
 	};
 
 	/**
