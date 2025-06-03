@@ -129,19 +129,24 @@ const extensions = [
 						data = dataScript;
 						break;
 					}
-
-					const convertToSeconds = (time) => {
-						time = time.split(":");
-						let seconds = Number(data.time[0]) * 60 + Number(data.time)[1];
-						if (time.length > 2) seconds = seconds * 60 + Number(data.time)[2];
-						return seconds;
-					};
-
-					const videoElement = document.querySelector(".html5-video-player");
-					data.paused = videoElement.className.includes("paused-mode");
-					data.time = convertToSeconds(videoElement.querySelector(".ytp-time-current").innerHTML);
-					data.duration = convertToSeconds(videoElement.querySelector(".ytp-time-duration").innerHTML);
 				} catch { }
+			}
+
+			const convertToSeconds = (time) => {
+				time = time.split(":");
+				let seconds = Number(time[0]) * 60 + Number(time[1]);
+				if (time.length > 2) seconds = seconds * 60 + Number(time[2]);
+				return seconds;
+			};
+
+			try {
+				const videoElement = document.querySelector(".html5-video-player");
+				data.paused = videoElement.className.includes("paused-mode");
+				if (!videoElement.className.includes("ytp-autohide")) window.time = convertToSeconds(videoElement.querySelector(".ytp-time-current").innerHTML);
+				else window.time += 1;
+				data.duration = convertToSeconds(videoElement.querySelector(".ytp-time-duration").innerHTML);
+			} catch {
+				data.paused = true;
 			}
 
 			if (data != {}) {
@@ -150,8 +155,8 @@ const extensions = [
 					author: data.author,
 					name: data.name,
 					paused: data.paused,
+					time: window.time,
 					duration: data.duration,
-					time: data.time,
 					thumbnail: (data.thumbnailUrl ?? [])[0],
 					url: `https://www.youtube.com/watch?v=${data.embedUrl.slice("https://www.youtube.com/embed/".length)}`
 				});

@@ -21,8 +21,11 @@ const init = async (logger, client, discord, server, config) => {
 				if (youtubeResponse.name != youtubeData?.name || youtubeResponse.author != youtubeData?.author) {
 					youtubeData = youtubeResponse;
 					youtubeData.thumbnail = await discord.getExternalAsset(config.discord.application.clients.youtube.id, youtubeData.thumbnail);
-					youtubeData.startedAt = Date.now();
 					youtubeData.updatedAt = Date.now();
+					youtubeData.timestamps = youtubeData.paused ? null : {
+						start: Date.now() - youtubeData.time * 1000,
+						end: Date.now() + (youtubeData.duration - youtubeData.time) * 1000
+					};
 					logger.info("Data updated");
 				} else {
 					if (youtubeData) youtubeData.updatedAt = Date.now();
@@ -57,7 +60,7 @@ const process = async (logger, client, discord, server, config) => {
 	} else {
 		/**
 		 * @type {import("../types.d.ts").Activity}
-		 */
+		*/
 		const activity = {
 			applicationId: config.discord.application.clients.youtube.id,
 			assets: {
@@ -76,9 +79,7 @@ const process = async (logger, client, discord, server, config) => {
 					"https://go.wixonic.fr/youtube"
 				]
 			},
-			timestamps: {
-				start: youtubeData.startedAt
-			},
+			timestamps: youtubeData.timestamps,
 			name: youtubeData.name,
 			details: youtubeData.name,
 			state: `By ${youtubeData.author}`,
@@ -105,7 +106,7 @@ const process = async (logger, client, discord, server, config) => {
 };
 
 module.exports = {
-	delay: 1 * 1000,
+	delay: 15 * 1000,
 	init,
 	process
 };
