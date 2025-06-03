@@ -22,13 +22,14 @@ const init = async (logger, client, discord, server, config) => {
 					youtubeData = youtubeResponse;
 					youtubeData.thumbnail = await discord.getExternalAsset(config.discord.application.clients.youtube.id, youtubeData.thumbnail);
 					youtubeData.updatedAt = Date.now();
-					youtubeData.timestamps = youtubeData.paused ? null : {
-						start: Date.now() - youtubeData.time * 1000,
-						end: Date.now() + (youtubeData.duration - youtubeData.time) * 1000
-					};
 					logger.info("Data updated");
-				} else {
-					if (youtubeData) youtubeData.updatedAt = Date.now();
+				} else if (youtubeResponse) {
+					youtubeData.updatedAt = Date.now();
+					youtubeData.timestamps = youtubeResponse.paused ? {} : {
+						start: Date.now() - youtubeResponse.time * 1000,
+						end: Date.now() + (youtubeResponse.duration - youtubeResponse.time) * 1000
+					};
+
 					logger.debug("Timings updated");
 				}
 
