@@ -157,7 +157,7 @@ const extensions = [
 					author: data.author,
 					name: data.name,
 					paused: data.paused,
-					time: window.time.value + Math.floor((performance.now() - window.time.date) / 1000),
+					time: window.time?.value ?? 0 + Math.floor((performance.now() - window.time?.date ?? 0) / 1000),
 					duration: data.duration,
 					thumbnail: (data.thumbnailUrl ?? [])[0],
 					url: `https://www.youtube.com/watch?v=${data.embedUrl.slice("https://www.youtube.com/embed/".length)}`
