@@ -6,12 +6,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 	func applicationDidFinishLaunching(_ notification: Notification) {
 		statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+
 		if let button = statusItem.button {
 			button.image = NSImage(systemSymbolName: "terminal.fill", accessibilityDescription: "Launcher")
 		}
 
 		let menu = NSMenu()
-		menu.addItem(NSMenuItem(title: "Quitter", action: #selector(terminate), keyEquivalent: "q"))
+		menu.addItem(NSMenuItem(title: "Quit", action: #selector(terminate), keyEquivalent: "q"))
 		statusItem.menu = menu
 
 		runZshScript()
