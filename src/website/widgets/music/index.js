@@ -133,6 +133,7 @@ addEventListener("DOMContentLoaded", async () => {
 
 				activityContainer.innerHTML = "";
 				activityContainer.append(...els);
+				if (!document.body.contains(activityContainer)) document.body.append(activityContainer);
 			}
 		} catch (e) {
 			console.log("Activity not available:", e);
