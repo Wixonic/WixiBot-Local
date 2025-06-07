@@ -1,12 +1,16 @@
-:root {
-	--background: #FFF;
-	--secondary-background: #EEEEF4;
-	--color: #000;
-	--header-color: #000;
+@font-face {
+	font-family: "Open Sans";
+	src: url("./font/OpenSans/normal.ttf") format("truetype");
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Open Sans";
+	src: url("./font/OpenSans/italic.ttf") format("truetype");
+	font-style: italic;
 }
 
 * {
-	color: var(--color);
 	font-display: block;
 	font-family: inherit;
 
@@ -29,9 +33,7 @@ body {
 	display: flex;
 	flex-direction: column;
 
-	background: var(--background);
-
-	font-family: arial, sans-serif;
+	font-family: "Open Sans", arial, sans-serif;
 
 	min-height: 100vh;
 
@@ -51,8 +53,6 @@ body * {
 
 
 container activity {
-	--color: #FFF;
-
 	display: grid;
 	grid-template-columns: 4.5rem repeat(2, 5.35rem);
 	grid-template-rows: 1.3rem repeat(2, 1rem) 0.8rem 0.4rem;
@@ -159,7 +159,7 @@ container activity .bar {
 	width: calc(100% - 0.7rem);
 	height: calc(100% - 0.2rem);
 
-	border: 0.01rem solid var(--color);
+	border: 0.01rem solid #FFF;
 	border-radius: 0.2rem;
 
 	margin: 0 0.2rem 0.2rem 0.5rem;
@@ -169,7 +169,7 @@ container activity .bar .innerBar {
 	width: 0;
 	height: 100%;
 
-	background: var(--color);
+	background: #FFF;
 
 	transition: width 1s ease-out;
 }

@@ -1,0 +1,56 @@
+@font-face {
+	font-family: "Open Sans";
+	src: url("./font/OpenSans/normal.ttf") format("truetype");
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Open Sans";
+	src: url("./font/OpenSans/italic.ttf") format("truetype");
+	font-style: italic;
+}
+
+* {
+	font-display: block;
+	font-family: inherit;
+	font-size: 1.5rem;
+	text-align: center;
+
+	cursor: inherit;
+	pointer-events: inherit;
+	outline: inherit;
+
+	box-sizing: border-box;
+
+	appearance: none;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+
+	user-select: inherit;
+	-moz-user-select: inherit;
+	-webkit-user-select: inherit;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	font-family: "Open Sans", arial, sans-serif;
+
+	min-height: 100vh;
+
+	margin: 0;
+
+	cursor: default;
+	outline: none;
+
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+body * {
+	overflow: hidden;
+}
