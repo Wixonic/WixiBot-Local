@@ -63,6 +63,8 @@ container activity {
 	background: linear-gradient(0deg, #FC3C44, #F94C57) content-box;
 	box-shadow: 0 0.1rem 0.3rem #666;
 
+	color: #FFF;
+
 	border-radius: 0.4rem;
 
 	margin: 0.5rem auto 0 auto;
