@@ -3,7 +3,7 @@ import { FilesetResolver, FaceLandmarker } from "https://cdn.jsdelivr.net/npm/@m
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-const CAMERA_NAME = "Caméra du MacBook";
+const CAMERA_NAME = "MacBook Pro Camera";
 const SERVER_URL = "ws://localhost:1000/";
 const FACE_DETECTION_FPS = 30;
 
