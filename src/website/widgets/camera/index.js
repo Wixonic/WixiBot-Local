@@ -80,14 +80,8 @@ const initCanvas = async () => {
 	scene.add(head);
 
 	const resize = () => {
-		const ratio = video.videoWidth / video.videoHeight;
-		let width = window.innerWidth;
-		let height = width / ratio;
-
-		if (height > window.innerHeight) {
-			height = window.innerHeight;
-			width = height * ratio;
-		}
+		const width = innerWidth;
+		const height = innerHeight;
 
 		camera.aspect = width / height;
 		camera.updateProjectionMatrix();
