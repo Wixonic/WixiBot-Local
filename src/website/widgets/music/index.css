@@ -51,7 +51,6 @@ body * {
 	overflow: hidden;
 }
 
-
 container activity {
 	display: grid;
 	grid-template-columns: 4.5rem repeat(2, 5.35rem);
@@ -60,8 +59,7 @@ container activity {
 	width: 15.4rem;
 	height: 4.5rem;
 
-	background: linear-gradient(0deg, #FC3C44, #F94C57) content-box;
-	box-shadow: 0 0.1rem 0.3rem #666;
+	background: #000;
 
 	color: #FFF;
 
@@ -161,7 +159,7 @@ container activity .bar {
 	width: calc(100% - 0.7rem);
 	height: calc(100% - 0.2rem);
 
-	border: 0.01rem solid #FFF;
+	border: 0.01rem solid #FFF6;
 	border-radius: 0.2rem;
 
 	margin: 0 0.2rem 0.2rem 0.5rem;
