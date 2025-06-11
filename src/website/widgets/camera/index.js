@@ -163,7 +163,12 @@ const connectCamera = async () => {
 	ws.addEventListener("close", reconnect);
 };
 
+let lastFrame = performance.now();
 const drawLoop = async () => {
+	const now = performance.now();
+	const delta = (now - lastFrame) / 1000;
+	lastFrame = now;
+
 	if (video.readyState >= 2) {
 		ctx2D.clearRect(0, 0, canvas2D.width, canvas2D.height);
 		ctx2D.save();
@@ -171,7 +176,6 @@ const drawLoop = async () => {
 		// ctx2D.drawImage(video, 0, 0, -canvas2D.width, canvas2D.height);
 		ctx2D.restore();
 
-		const now = performance.now();
 		if (now - lastDetect >= 1000 / FACE_DETECTION_FPS) {
 			lastDetect = now;
 
@@ -337,12 +341,18 @@ const drawLoop = async () => {
 		ctx2D.fillText(log.join(" · "), 0, 5 * scale);
 	};
 
-	const eyeLerpCoeff = 0.1;
-	if (leftEyeTargetPosition) leftEye.position.lerp(leftEyeTargetPosition, eyeLerpCoeff);
-	if (rightEyeTargetPosition) rightEye.position.lerp(rightEyeTargetPosition, eyeLerpCoeff);
+	const eyeBaseCoeff = 0.1;
+	const headPositionBaseCoeff = 0.05;
+	const headQuaternionBaseCoeff = 0.15;
 
-	if (headTargetPosition) head.position.lerp(headTargetPosition, 0.05);
-	if (headTargetQuaternion) head.quaternion.slerp(headTargetQuaternion, 0.15);
+	const eyeLerpAlpha = 1 - Math.pow(1 - eyeBaseCoeff, delta * 60);
+	const headPositionLerpAlpha = 1 - Math.pow(1 - headPositionBaseCoeff, delta * 60);
+	const headQuaternionLerpAlpha = 1 - Math.pow(1 - headQuaternionBaseCoeff, delta * 60);
+
+	if (leftEyeTargetPosition) leftEye.position.lerp(leftEyeTargetPosition, eyeLerpAlpha);
+	if (rightEyeTargetPosition) rightEye.position.lerp(rightEyeTargetPosition, eyeLerpAlpha);
+	if (headTargetPosition) head.position.lerp(headTargetPosition, headPositionLerpAlpha);
+	if (headTargetQuaternion) head.quaternion.slerp(headTargetQuaternion, headQuaternionLerpAlpha);
 
 	renderer.render(scene, camera);
 
@@ -379,4 +389,4 @@ addEventListener("DOMContentLoaded", async () => {
 	connectCamera();
 	initModels();
 	drawLoop();
-});;
+});
