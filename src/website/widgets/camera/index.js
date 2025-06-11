@@ -30,7 +30,7 @@ const initCanvas = async () => {
 	canvas3D = document.querySelector("#canvas3D");
 
 	scene = new THREE.Scene();
-	renderer = new THREE.WebGLRenderer({ canvas: canvas3D, antialias: false });
+	renderer = new THREE.WebGLRenderer({ canvas: canvas3D, antialias: true });
 	renderer.setClearAlpha(0);
 
 	camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
