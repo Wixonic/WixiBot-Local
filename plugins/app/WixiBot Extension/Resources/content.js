@@ -186,14 +186,13 @@ const extensions = [
 	}, {
 		// https://www.chess.com/game/:id
 		matches: [chess.regexp],
-
 		run: (_, id) => {
 			send("POST", "/rpc/chess/", {
 				url: `https://www.chess.com/game/${id}`
 			});
 
 			onUnload.path = "/rpc/chess/";
-		};
+		}
 	}
 ];
 
