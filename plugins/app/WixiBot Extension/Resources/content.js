@@ -171,11 +171,13 @@ const extensions = [
 					author: data.author,
 					name: data.name,
 					paused: data.paused,
-					time: cache.youtube.value ?? 0 + Math.floor((performance.now() - cache.youtube.date ?? 0) / 1000),
+					time: (cache.youtube.value ?? 0) + Math.floor((performance.now() - (cache.youtube.date ?? 0)) / 1000),
 					duration: data.duration,
 					thumbnail: (data.thumbnailUrl ?? [])[0],
 					url: `https://www.youtube.com/watch?v=${data.embedUrl.slice("https://www.youtube.com/embed/".length)}`
 				});
+
+				console.log((cache.youtube.value ?? 0) + Math.floor((performance.now() - (cache.youtube.date ?? 0)) / 1000));
 
 				onUnload.path = "/rpc/youtube/";
 				onUnload.data = {
