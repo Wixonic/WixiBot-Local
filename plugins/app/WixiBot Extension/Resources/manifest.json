@@ -1,6 +1,6 @@
 {
 	"manifest_version": 3,
-	"name": "Safari RPC",
+	"name": "SafariRPC",
 	"description": "Safari Extension for WixiBot",
 	"version": "0.11.0",
 	"icons": {
@@ -18,19 +18,10 @@
 	"content_scripts": [
 		{
 			"js": [
-				"handlers/youtube.js"
+				"content.js"
 			],
 			"matches": [
-				"https://www.youtube.com/watch*"
-			]
-		},
-		{
-			"js": [
-				"handlers/github.js"
-			],
-			"matches": [
-				"https://github.com/*",
-				"https://github.com/*/*"
+				"<all_urls>"
 			]
 		}
 	],
@@ -40,7 +31,6 @@
 	"permissions": [
 		"activeTab",
 		"http://localhost:1000/",
-		"background",
-		"scripting"
+		"background"
 	]
 }
