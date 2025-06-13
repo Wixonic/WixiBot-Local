@@ -47,6 +47,11 @@ const captureProcess = {
 				"-maxrate", "20000k",
 				"-bufsize", "40000k",
 				"-g", "0",
+
+				"-use_wallclock_as_timestamps", "1",
+				"-fflags", "+genpts+discardcorrupt",
+				"-avoid_negative_ts", "make_zero",
+
 				"-f", "mpegts",
 				"-pix_fmt", "yuv420p",
 				`udp://${config.client.hostname}:5000`
@@ -63,6 +68,13 @@ const captureProcess = {
 				"-loglevel", "error",
 				"-f", "avfoundation",
 				"-i", `:${deviceList.audio.indexOf("Elgato Wave:3")}`,
+				"-ac", "2",
+				"-af", "pan=stereo|c0=c0|c1=c0",
+
+				"-use_wallclock_as_timestamps", "1",
+				"-fflags", "+genpts+discardcorrupt",
+				"-avoid_negative_ts", "make_zero",
+
 				"-f", "mpegts",
 				`udp://${config.client.hostname}:5001`
 			], { stdio: "inherit" });
@@ -78,6 +90,11 @@ const captureProcess = {
 				"-loglevel", "error",
 				"-f", "avfoundation",
 				"-i", `:${deviceList.audio.indexOf("BlackHole Stream")}`,
+
+				"-use_wallclock_as_timestamps", "1",
+				"-fflags", "+genpts+discardcorrupt",
+				"-avoid_negative_ts", "make_zero",
+
 				"-f", "mpegts",
 				`udp://${config.client.hostname}:5002`
 			], { stdio: "inherit" });
@@ -93,6 +110,11 @@ const captureProcess = {
 				"-loglevel", "error",
 				"-f", "avfoundation",
 				"-i", `:${deviceList.audio.indexOf("BlackHole Musique")}`,
+
+				"-use_wallclock_as_timestamps", "1",
+				"-fflags", "+genpts+discardcorrupt",
+				"-avoid_negative_ts", "make_zero",
+
 				"-f", "mpegts",
 				`udp://${config.client.hostname}:5003`
 			], { stdio: "inherit" });
@@ -108,6 +130,11 @@ const captureProcess = {
 				"-loglevel", "error",
 				"-f", "avfoundation",
 				"-i", `:${deviceList.audio.indexOf("BlackHole Monitoring")}`,
+
+				"-use_wallclock_as_timestamps", "1",
+				"-fflags", "+genpts+discardcorrupt",
+				"-avoid_negative_ts", "make_zero",
+
 				"-f", "mpegts",
 				`udp://${config.client.hostname}:5004`
 			], { stdio: "inherit" });
