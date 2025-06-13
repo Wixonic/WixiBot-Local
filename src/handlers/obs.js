@@ -11,7 +11,7 @@ const deviceList = {
 const trimName = (name) => name.split("(")[0].replace(/\s\n\t/, " ").trim();
 
 const updateDeviceList = () => {
-	const result = childProcess.spawnSync("ffmpeg", [
+	const result = childProcess.spawnSync("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 		"-f", "avfoundation",
 		"-list_devices", "true",
 		"-i", ""
@@ -35,16 +35,21 @@ const captureProcess = {
 		spawn: (logger, config) => {
 			if (captureProcess.screen.active) {
 				logger.info("Starting process:", captureProcess.screen.name);
-				return childProcess.spawn("ffmpeg", [
+				return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 					"-loglevel", "error",
 					"-framerate", "60",
 					"-video_size", "3024x1964",
 					"-f", "avfoundation",
 					"-pixel_format", "uyvy422",
-					"-i", `${deviceList.video.indexOf("Capture screen 0")}:none`,
+					"-i", `${deviceList.video.indexOf("Capture screen 0")}:`,
+					"-an",
 					"-c:v", "h264_videotoolbox",
-					"-b:v", "6000k",
+					"-b:v", "20000k",
+					"-maxrate", "20000k",
+					"-bufsize", "40000k",
+					"-g", "0",
 					"-f", "mpegts",
+					"-pix_fmt", "yuv420p",
 					`udp://${config.client.hostname}:5000`
 				], { stdio: "inherit" });
 			} else return null;
@@ -53,11 +58,11 @@ const captureProcess = {
 	},
 	microphone: {
 		active: true,
-		name: "Monitoring capture",
+		name: "Microphone capture",
 		spawn: (logger, config) => {
-			if (captureProcess.monitoring.active) {
-				logger.info("Starting process:", captureProcess.monitoring.name);
-				return childProcess.spawn("ffmpeg", [
+			if (captureProcess.microphone.active) {
+				logger.info("Starting process:", captureProcess.microphone.name);
+				return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 					"-loglevel", "error",
 					"-f", "avfoundation",
 					"-i", `:${deviceList.audio.indexOf("Elgato Wave:3")}`,
@@ -70,11 +75,11 @@ const captureProcess = {
 	},
 	stream: {
 		active: true,
-		name: "Monitoring capture",
+		name: "Stream capture",
 		spawn: (logger, config) => {
-			if (captureProcess.monitoring.active) {
-				logger.info("Starting process:", captureProcess.monitoring.name);
-				return childProcess.spawn("ffmpeg", [
+			if (captureProcess.stream.active) {
+				logger.info("Starting process:", captureProcess.stream.name);
+				return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 					"-loglevel", "error",
 					"-f", "avfoundation",
 					"-i", `:${deviceList.audio.indexOf("BlackHole Stream")}`,
@@ -87,11 +92,11 @@ const captureProcess = {
 	},
 	music: {
 		active: true,
-		name: "Monitoring capture",
+		name: "Music capture",
 		spawn: (logger, config) => {
-			if (captureProcess.monitoring.active) {
-				logger.info("Starting process:", captureProcess.monitoring.name);
-				return childProcess.spawn("ffmpeg", [
+			if (captureProcess.music.active) {
+				logger.info("Starting process:", captureProcess.music.name);
+				return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 					"-loglevel", "error",
 					"-f", "avfoundation",
 					"-i", `:${deviceList.audio.indexOf("BlackHole Musique")}`,
@@ -108,7 +113,7 @@ const captureProcess = {
 		spawn: (logger, config) => {
 			if (captureProcess.monitoring.active) {
 				logger.info("Starting process:", captureProcess.monitoring.name);
-				return childProcess.spawn("ffmpeg", [
+				return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 					"-loglevel", "error",
 					"-f", "avfoundation",
 					"-i", `:${deviceList.audio.indexOf("BlackHole Monitoring")}`,
