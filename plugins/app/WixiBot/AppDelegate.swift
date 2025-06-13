@@ -6,6 +6,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var backgroundTaskProcess: Process?
     var backgroundTaskPID: Int32?
 
+	var audioEnabled: Bool = true
+	var cameraEnabled: Bool = false
+    var screenEnabled: Bool = false
+	var audioMenuItem: NSMenuItem!
+    var cameraMenuItem: NSMenuItem!
+	var screenMenuItem: NSMenuItem!
+
 	func applicationDidFinishLaunching(_ notification: Notification) {
 		statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
@@ -14,14 +21,71 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		}
 
 		let menu = NSMenu()
+		
+		audioMenuItem = NSMenuItem(title: "Audio", action: #selector(toggleAudio(_:)), keyEquivalent: "a")
+		audioMenuItem.state = audioEnabled ? .on : .off
+		audioMenuItem.target = self
+		menu.addItem(audioMenuItem)
+
+        cameraMenuItem = NSMenuItem(title: "Camera", action: #selector(toggleCamera(_:)), keyEquivalent: "c")
+        cameraMenuItem.state = cameraEnabled ? .on : .off
+        cameraMenuItem.target = self
+        menu.addItem(cameraMenuItem)
+
+        screenMenuItem = NSMenuItem(title: "Screen", action: #selector(toggleScreen(_:)), keyEquivalent: "s")
+        screenMenuItem.state = screenEnabled ? .on : .off
+        screenMenuItem.target = self
+        menu.addItem(screenMenuItem)
+
 		menu.addItem(NSMenuItem(title: "Quit", action: #selector(terminate), keyEquivalent: "q"))
 		statusItem.menu = menu
 
 		runZshScript()
 	}
+	
+	@objc func toggleAudio(_ sender: NSMenuItem) {
+		audioEnabled.toggle()
+		audioMenuItem.state = audioEnabled ? .on : .off
+		sendToggleRequest(id: "microphone", status: audioEnabled)
+		sendToggleRequest(id: "music", status: audioEnabled)
+		sendToggleRequest(id: "stream", status: audioEnabled)
+		sendToggleRequest(id: "monitoring", status: audioEnabled)
+	}
+
+    @objc func toggleCamera(_ sender: NSMenuItem) {
+        cameraEnabled.toggle()
+        cameraMenuItem.state = cameraEnabled ? .on : .off
+        sendToggleRequest(id: "camera", status: cameraEnabled)
+    }
+
+    @objc func toggleScreen(_ sender: NSMenuItem) {
+        screenEnabled.toggle()
+        screenMenuItem.state = screenEnabled ? .on : .off
+        sendToggleRequest(id: "screen", status: screenEnabled)
+    }
+
+    func sendToggleRequest(id: String, status: Bool) {
+        guard let url = URL(string: "http://localhost:1000/obs/settings/?id=\(id)") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let body: [String: Bool] = ["status": status]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error sending toggle request for \(id):", error)
+            } else {
+                print("Sent toggle request for \(id) with status: \(status)")
+            }
+        }
+        task.resume()
+    }
 
 	@objc func terminate() {
-        if let pid = backgroundTaskPID {
+        if let task = backgroundTaskProcess {
+            task.terminate()
+            print("Terminated npm process with PID: \(task.processIdentifier)")
+        } else if let pid = backgroundTaskPID {
             let killTask = Process()
             killTask.executableURL = URL(fileURLWithPath: "/bin/kill")
             killTask.arguments = ["-9", String(pid)]
@@ -37,41 +101,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 
 	func runZshScript() {
-        let shellCommand = """
-        source ~/.zprofile
-        cd ~/Documents/GitHub/WixiBot-Local/src
-        mkdir -p ~/WixiBot/logs/
-        touch ~/WixiBot/logs/local.log
-        nohup npm run start >> ~/WixiBot/logs/local.log 2>&1 &
-        echo $! # Output the PID of the background process
-        """
-
         let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/bin/zsh")
-        task.arguments = ["-c", shellCommand]
-        task.currentDirectoryURL = URL(fileURLWithPath: "/Users/\(NSUserName())")
-
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        task.standardError = pipe
-
+        task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/npm")
+        task.arguments = ["run", "start"]
+        task.currentDirectoryURL = URL(fileURLWithPath: "/Users/\(NSUserName())/Documents/GitHub/WixiBot-Local/src")
+        var currentEnv = ProcessInfo.processInfo.environment
+        let customPaths = "/usr/local/ffmpeg-4.1/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin"
+        if let userPath = currentEnv["PATH"] {
+            currentEnv["PATH"] = userPath + ":" + customPaths
+        }
+        task.environment = currentEnv
+        let logURL = URL(fileURLWithPath: "/Users/\(NSUserName())/WixiBot/logs/local.log")
+        FileManager.default.createFile(atPath: logURL.path, contents: nil, attributes: nil)
+        if let fileHandle = try? FileHandle(forWritingTo: logURL) {
+            task.standardOutput = fileHandle
+            task.standardError = fileHandle
+        }
         do {
             try task.run()
+            backgroundTaskPID = task.processIdentifier
+            backgroundTaskProcess = task
+            print("Started npm run start with PID: \(task.processIdentifier)")
         } catch {
-            print("Failed to run background script:", error)
-            return
+            print("Failed to run npm:", error)
         }
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        if let pidString = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
-           let pid = Int32(pidString) {
-            print("Started background process with PID: \(pid)")
-            backgroundTaskPID = pid
-        } else {
-            print("Could not obtain PID of background process.")
-        }
-        backgroundTaskProcess = task
-	}
+    }
 
 	func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
 		return false

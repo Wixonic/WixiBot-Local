@@ -30,29 +30,27 @@ const updateDeviceList = () => {
  */
 const captureProcess = {
 	screen: {
-		active: true,
+		active: false,
 		name: "Screen capture",
 		spawn: (logger, config) => {
-			if (captureProcess.screen.active) {
-				logger.info("Starting process:", captureProcess.screen.name);
-				return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
-					"-loglevel", "error",
-					"-framerate", "60",
-					"-video_size", "3024x1964",
-					"-f", "avfoundation",
-					"-pixel_format", "uyvy422",
-					"-i", `${deviceList.video.indexOf("Capture screen 0")}:`,
-					"-an",
-					"-c:v", "h264_videotoolbox",
-					"-b:v", "20000k",
-					"-maxrate", "20000k",
-					"-bufsize", "40000k",
-					"-g", "0",
-					"-f", "mpegts",
-					"-pix_fmt", "yuv420p",
-					`udp://${config.client.hostname}:5000`
-				], { stdio: "inherit" });
-			} else return null;
+			logger.info("Starting process:", captureProcess.screen.name);
+			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
+				"-loglevel", "error",
+				"-framerate", "60",
+				"-video_size", "3024x1964",
+				"-f", "avfoundation",
+				"-pixel_format", "uyvy422",
+				"-i", `${deviceList.video.indexOf("Capture screen 0")}:`,
+				"-an",
+				"-c:v", "h264_videotoolbox",
+				"-b:v", "20000k",
+				"-maxrate", "20000k",
+				"-bufsize", "40000k",
+				"-g", "0",
+				"-f", "mpegts",
+				"-pix_fmt", "yuv420p",
+				`udp://${config.client.hostname}:5000`
+			], { stdio: "inherit" });
 		},
 		process: null
 	},
@@ -60,16 +58,14 @@ const captureProcess = {
 		active: true,
 		name: "Microphone capture",
 		spawn: (logger, config) => {
-			if (captureProcess.microphone.active) {
-				logger.info("Starting process:", captureProcess.microphone.name);
-				return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
-					"-loglevel", "error",
-					"-f", "avfoundation",
-					"-i", `:${deviceList.audio.indexOf("Elgato Wave:3")}`,
-					"-f", "mpegts",
-					`udp://${config.client.hostname}:5001`
-				], { stdio: "inherit" });
-			} else return null;
+			logger.info("Starting process:", captureProcess.microphone.name);
+			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
+				"-loglevel", "error",
+				"-f", "avfoundation",
+				"-i", `:${deviceList.audio.indexOf("Elgato Wave:3")}`,
+				"-f", "mpegts",
+				`udp://${config.client.hostname}:5001`
+			], { stdio: "inherit" });
 		},
 		process: null
 	},
@@ -77,16 +73,14 @@ const captureProcess = {
 		active: true,
 		name: "Stream capture",
 		spawn: (logger, config) => {
-			if (captureProcess.stream.active) {
-				logger.info("Starting process:", captureProcess.stream.name);
-				return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
-					"-loglevel", "error",
-					"-f", "avfoundation",
-					"-i", `:${deviceList.audio.indexOf("BlackHole Stream")}`,
-					"-f", "mpegts",
-					`udp://${config.client.hostname}:5002`
-				], { stdio: "inherit" });
-			} else return null;
+			logger.info("Starting process:", captureProcess.stream.name);
+			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
+				"-loglevel", "error",
+				"-f", "avfoundation",
+				"-i", `:${deviceList.audio.indexOf("BlackHole Stream")}`,
+				"-f", "mpegts",
+				`udp://${config.client.hostname}:5002`
+			], { stdio: "inherit" });
 		},
 		process: null
 	},
@@ -94,16 +88,14 @@ const captureProcess = {
 		active: true,
 		name: "Music capture",
 		spawn: (logger, config) => {
-			if (captureProcess.music.active) {
-				logger.info("Starting process:", captureProcess.music.name);
-				return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
-					"-loglevel", "error",
-					"-f", "avfoundation",
-					"-i", `:${deviceList.audio.indexOf("BlackHole Musique")}`,
-					"-f", "mpegts",
-					`udp://${config.client.hostname}:5003`
-				], { stdio: "inherit" });
-			} else return null;
+			logger.info("Starting process:", captureProcess.music.name);
+			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
+				"-loglevel", "error",
+				"-f", "avfoundation",
+				"-i", `:${deviceList.audio.indexOf("BlackHole Musique")}`,
+				"-f", "mpegts",
+				`udp://${config.client.hostname}:5003`
+			], { stdio: "inherit" });
 		},
 		process: null
 	},
@@ -111,16 +103,14 @@ const captureProcess = {
 		active: true,
 		name: "Monitoring capture",
 		spawn: (logger, config) => {
-			if (captureProcess.monitoring.active) {
-				logger.info("Starting process:", captureProcess.monitoring.name);
-				return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
-					"-loglevel", "error",
-					"-f", "avfoundation",
-					"-i", `:${deviceList.audio.indexOf("BlackHole Monitoring")}`,
-					"-f", "mpegts",
-					`udp://${config.client.hostname}:5004`
-				], { stdio: "inherit" });
-			} else return null;
+			logger.info("Starting process:", captureProcess.monitoring.name);
+			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
+				"-loglevel", "error",
+				"-f", "avfoundation",
+				"-i", `:${deviceList.audio.indexOf("BlackHole Monitoring")}`,
+				"-f", "mpegts",
+				`udp://${config.client.hostname}:5004`
+			], { stdio: "inherit" });
 		},
 		process: null
 	}
@@ -133,11 +123,64 @@ const captureProcess = {
  * @param {import("../lib/server.js")} server
  * @param {import("../types.d.ts").Config} config
  */
+const init = async (logger, client, discord, server, config) => {
+	server.app.get("/obs/settings/", (req, res) => {
+		const { id } = req.query;
+		const processId = id;
+
+		if (!processId || !captureProcess[processId]) return res.status(400).send("Invalid or missing process ID");
+
+		res.json({ id: processId, active: captureProcess[processId].active });
+	});
+
+	server.app.post("/obs/settings/", (req, res) => {
+		let body = "";
+		req.on("data", (chunk) => body += chunk.toString());
+
+		req.on("end", async () => {
+			try {
+				const response = JSON.parse(body);
+				const { id } = req.query;
+				const { status } = response;
+
+				if (!id || !captureProcess[id]) return res.status(400).send("Invalid or missing process ID");
+				captureProcess[id].active = status;
+
+				res.json({ id, active: captureProcess[id].active });
+			} catch {
+				res.status(400).send("Invalid status value");
+			}
+		});
+	});
+};
+
+/**
+ * @param {import("@wixonic/logger").Logger} logger
+ * @param {import("../lib/client.js")} client
+ * @param {import("../lib/discord.js")} discord
+ * @param {import("../lib/server.js")} server
+ * @param {import("../types.d.ts").Config} config
+ */
 const handler = async (logger, client, discord, server, config) => {
 	updateDeviceList();
 
-	for (const process of Object.values(captureProcess)) {
-		if (!process.process || process.process.killed) process.process = process.spawn(logger, config);
+	for (const cp of Object.values(captureProcess)) {
+		if (!cp.process || cp.process.killed) {
+			if (cp.active) {
+				cp.process = cp.spawn(logger, config);
+
+				for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
+					process.once(signal, async (reason, code) => {
+						if (!cp.process.killed) {
+							cp.process.removeAllListeners("exit");
+							cp.process.kill(signal);
+							await new Promise((callback) => process.once("exit", callback));
+							process.exit(code);
+						} else process.exit(code);
+					});
+				}
+			}
+		} else if (!cp.process.killed && !cp.active) cp.process.kill();
 	}
 
 	return true;
@@ -145,5 +188,6 @@ const handler = async (logger, client, discord, server, config) => {
 
 module.exports = {
 	delay: 1 * 1000,
+	init,
 	process: handler
 };
