@@ -8,7 +8,7 @@ const url = "wss://server.wixonic.fr";
 
 const startMicProcess = () => {
 	const sox = spawn("sox", [
-		"-t", "coreaudio", "BlackHole Discord Sharing",
+		"-t", "coreaudio", "BlackHole WixiBot",
 		"-b", "16",
 		"-c", "2",
 		"-r", "48000",
