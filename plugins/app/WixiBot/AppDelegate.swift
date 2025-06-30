@@ -5,6 +5,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	var statusItem: NSStatusItem!
     var backgroundTaskProcess: Process?
     var backgroundTaskPID: Int32?
+	
+	var audioEnabled: Bool = true
+	var cameraEnabled: Bool = false
+	var screenEnabled: Bool = false
+	var audioMenuItem: NSMenuItem!
+	var cameraMenuItem: NSMenuItem!
+	var screenMenuItem: NSMenuItem!
 
 	func applicationDidFinishLaunching(_ notification: Notification) {
 		statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
