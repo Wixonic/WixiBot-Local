@@ -15,11 +15,61 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 		let menu = NSMenu()
 
+		audioMenuItem = NSMenuItem(title: "Audio", action: #selector(toggleAudio(_:)), keyEquivalent: "a")
+		audioMenuItem.state = audioEnabled ? .on : .off
+		audioMenuItem.target = self
+		menu.addItem(audioMenuItem)
+
+        screenMenuItem = NSMenuItem(title: "Screenshare", action: #selector(toggleScreen(_:)), keyEquivalent: "s")
+        screenMenuItem.state = screenEnabled ? .on : .off
+        screenMenuItem.target = self
+        menu.addItem(screenMenuItem)
+
+        cameraMenuItem = NSMenuItem(title: "Camera", action: #selector(toggleCamera(_:)), keyEquivalent: "c")
+        cameraMenuItem.state = cameraEnabled ? .on : .off
+        cameraMenuItem.target = self
+        menu.addItem(cameraMenuItem)
+
 		menu.addItem(NSMenuItem(title: "Quit", action: #selector(terminate), keyEquivalent: "q"))
 		statusItem.menu = menu
 
 		runZshScript()
 	}
+
+    @objc func toggleAudio(_ sender: NSMenuItem) {
+		audioEnabled.toggle()
+		audioMenuItem.state = audioEnabled ? .on : .off
+		sendToggleRequest(id: "audio", status: audioEnabled)
+	}
+
+    @objc func toggleScreen(_ sender: NSMenuItem) {
+        screenEnabled.toggle()
+        screenMenuItem.state = screenEnabled ? .on : .off
+        sendToggleRequest(id: "screenshare", status: screenEnabled)
+    }
+
+    @objc func toggleCamera(_ sender: NSMenuItem) {
+        cameraEnabled.toggle()
+        cameraMenuItem.state = cameraEnabled ? .on : .off
+        sendToggleRequest(id: "camera", status: cameraEnabled)
+    }
+
+    func sendToggleRequest(id: String, status: Bool) {
+        guard let url = URL(string: "http://localhost:1000/obs/settings/?id=\(id)") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let body: [String: Bool] = ["status": status]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error sending toggle request for \(id):", error)
+            } else {
+                print("Sent toggle request for \(id) with status: \(status)")
+            }
+        }
+        task.resume()
+    }
 
 	@objc func terminate() {
         if let task = backgroundTaskProcess {
