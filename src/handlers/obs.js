@@ -59,35 +59,10 @@ const captureProcess = {
 		process: null
 	},
 	screenshare: {
-		active: true,
+		active: false,
 		name: "Screen capture",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.screenshare.name);
-			return childProcess.spawn("ffmpeg", [
-				"-hide_banner",
-				"-loglevel", "info",
-				"-f", "avfoundation",
-				"-framerate", "30",
-				"-video_size", "1080x1920",
-				"-pixel_format", "uyvy422",
-				"-i", `${deviceList.video.findIndex((value) => value.startsWith("Caméra du "))}:`,
-
-				"-flags", "low_delay",
-				"-fflags", "nobuffer",
-				"-flush_packets", "1",
-				"-muxdelay", "0",
-				"-muxpreload", "0",
-				"-f", "mpegts",
-				`udp://${config.client.hostname}:2001`
-			], { stdio: "inherit" });
-		},
-		process: null
-	},
-	camera: {
-		active: false,
-		name: "Camera capture",
-		spawn: (logger, config) => {
-			logger.info("Starting process:", captureProcess.camera.name);
 			return childProcess.spawn("ffmpeg", [
 				"-hide_banner",
 				"-loglevel", "info",
@@ -112,6 +87,31 @@ const captureProcess = {
 				"-muxpreload", "0",
 				"-f", "mpegts",
 				`udp://${config.client.hostname}:2001`
+			], { stdio: "inherit" });
+		},
+		process: null
+	},
+	camera: {
+		active: false,
+		name: "Camera capture",
+		spawn: (logger, config) => {
+			logger.info("Starting process:", captureProcess.camera.name);
+			return childProcess.spawn("ffmpeg", [
+				"-hide_banner",
+				"-loglevel", "info",
+				"-f", "avfoundation",
+				"-framerate", "30",
+				"-video_size", "1920x1080",
+				"-pixel_format", "uyvy422",
+				"-i", `${deviceList.video.findIndex((value) => value.startsWith("Caméra du "))}:`,
+
+				"-flags", "low_delay",
+				"-fflags", "nobuffer",
+				"-flush_packets", "1",
+				"-muxdelay", "0",
+				"-muxpreload", "0",
+				"-f", "mpegts",
+				`udp://${config.client.hostname}:2002`
 			], { stdio: "inherit" });
 		},
 		process: null
