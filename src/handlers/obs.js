@@ -117,7 +117,7 @@ const captureProcess = {
 		process: null
 	},
 	microphone: {
-		active: true,
+		active: false,
 		name: "Microphone streaming",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.microphone.name);
@@ -127,8 +127,8 @@ const captureProcess = {
 				"-f", "mpegts",
 				"-i", "udp://@:2003",
 
-				"-f", "avfoundation",
-				`:${deviceList.audio.indexOf("BlackHole Microphone")}`,
+				"-f", "coreaudio",
+				`:${deviceList.audio.indexOf("BlackHole")}`,
 			], { stdio: "inherit" });
 		},
 		process: null
