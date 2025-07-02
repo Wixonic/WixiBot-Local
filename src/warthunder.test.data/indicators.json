@@ -1,1 +1,1 @@
-{"valid":true,"army":"tank","type":"tankModels/fr_leopard_2a4nl","stabilizer":1,"gear":12,"gear_neutral":4,"speed":28,"has_speed_warning":0,"rpm":1638,"driving_direction_mode":0,"cruise_control":0,"lws":-1,"ircm":-1,"roll_indicators_is_available":0,"first_stage_ammo":5,"crew_total":4,"crew_current":4,"crew_distance":1,"gunner_state":0,"driver_state":0}
+{"error":{"code":"ECONNRESET"}}

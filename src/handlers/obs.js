@@ -11,7 +11,7 @@ const deviceList = {
 const trimName = (name) => name.split("(")[0].replace(/\s\n\t/, " ").trim();
 
 const updateDeviceList = () => {
-	const result = childProcess.spawnSync("ffmpeg", [
+	const result = childProcess.spawnSync("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 		"-f", "avfoundation",
 		"-list_devices", "true",
 		"-i", ""
@@ -34,7 +34,7 @@ const captureProcess = {
 		name: "Audio capture",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.audio.name);
-			return childProcess.spawn("ffmpeg", [
+			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
 				"-loglevel", "info",
 				"-f", "avfoundation",
@@ -63,7 +63,7 @@ const captureProcess = {
 		name: "Screen capture",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.screenshare.name);
-			return childProcess.spawn("ffmpeg", [
+			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
 				"-loglevel", "info",
 				"-f", "avfoundation",
@@ -96,7 +96,7 @@ const captureProcess = {
 		name: "Camera capture",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.camera.name);
-			return childProcess.spawn("ffmpeg", [
+			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
 				"-loglevel", "info",
 				"-f", "avfoundation",
@@ -121,7 +121,7 @@ const captureProcess = {
 		name: "Microphone streaming",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.microphone.name);
-			return childProcess.spawn("ffmpeg", [
+			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
 				"-loglevel", "info",
 				"-f", "mpegts",
