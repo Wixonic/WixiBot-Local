@@ -5,7 +5,7 @@ const secrets = require("../secrets.js");
  */
 const config = {
 	client: {
-		hostname: "server.wixonic.fr"
+		hostname: "10.0.0.1"
 	},
 	discord: {
 		application: {
