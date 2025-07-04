@@ -8,6 +8,8 @@ const deviceList = {
 	video: []
 };
 
+const target = "10.0.0.1";
+
 const trimName = (name) => name.split("(")[0].replace(/\s\n\t/, " ").trim();
 
 const updateDeviceList = () => {
@@ -53,7 +55,7 @@ const captureProcess = {
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${config.client.hostname}:2000`
+				`udp://${target}:2000`
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -86,7 +88,7 @@ const captureProcess = {
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${config.client.hostname}:2001`
+				`udp://${target}:2001`
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -111,7 +113,7 @@ const captureProcess = {
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${config.client.hostname}:2002`
+				`udp://${target}:2002`
 			], { stdio: "inherit" });
 		},
 		process: null
