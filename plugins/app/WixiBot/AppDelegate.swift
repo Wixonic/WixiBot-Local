@@ -63,11 +63,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func sendToggleRequest(id: String, status: Bool) {
         guard let url = URL(string: "http://localhost:1000/obs/settings/?id=\(id)") else { return }
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
         let body: [String: Bool] = ["status": status]
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Error sending toggle request for \(id):", error)
@@ -75,6 +78,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 print("Sent toggle request for \(id) with status: \(status)")
             }
         }
+
         task.resume()
     }
 
@@ -86,6 +90,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let killTask = Process()
             killTask.executableURL = URL(fileURLWithPath: "/bin/kill")
             killTask.arguments = ["-9", String(pid)]
+            
             do {
                 try killTask.run()
                 killTask.waitUntilExit()
@@ -94,6 +99,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 print("Failed to terminate background process:", error)
             }
         }
+
         NSApp.terminate(nil)
 	}
 
