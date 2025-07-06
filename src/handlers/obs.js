@@ -107,7 +107,13 @@ const captureProcess = {
 				"-pixel_format", "uyvy422",
 				"-i", `${deviceList.video.findIndex((value) => value.startsWith("Caméra du "))}:`,
 
-				"-f", "mpegts",
+				"-c:v", "libx264",
+				"-preset", "ultrafast",
+				"-tune", "zerolatency",
+				"-pix_fmt", "yuv420p",
+
+				"-f", "mp4",
+				"-movflags", "frag_keyframe+empty_moov+default_base_moof+faststart",
 				`udp://${target}:2002`
 			], { stdio: "inherit" });
 		},
