@@ -90,7 +90,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let killTask = Process()
             killTask.executableURL = URL(fileURLWithPath: "/bin/kill")
             killTask.arguments = ["-9", String(pid)]
-            
+
             do {
                 try killTask.run()
                 killTask.waitUntilExit()
@@ -108,18 +108,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/npm")
         task.arguments = ["run", "start"]
         task.currentDirectoryURL = URL(fileURLWithPath: "/Users/\(NSUserName())/Documents/GitHub/WixiBot-Local/src")
+        
         var currentEnv = ProcessInfo.processInfo.environment
         let customPaths = "/usr/local/ffmpeg-4.1/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin"
+
         if let userPath = currentEnv["PATH"] {
             currentEnv["PATH"] = userPath + ":" + customPaths
         }
+
         task.environment = currentEnv
+
         let logURL = URL(fileURLWithPath: "/Users/\(NSUserName())/WixiBot/logs/local.log")
         FileManager.default.createFile(atPath: logURL.path, contents: nil, attributes: nil)
+
         if let fileHandle = try? FileHandle(forWritingTo: logURL) {
             task.standardOutput = fileHandle
             task.standardError = fileHandle
         }
+
         do {
             try task.run()
             backgroundTaskPID = task.processIdentifier
