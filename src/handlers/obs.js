@@ -112,6 +112,7 @@ const captureProcess = {
 				"-preset", "ultrafast",
 				"-tune", "zerolatency",
 				"-pix_fmt", "yuv420p",
+				"-x264-params", "repeat-headers=1:keyint=30",
 
 				"-f", "mpegts",
 				`udp://${target}:2002`
