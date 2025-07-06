@@ -38,7 +38,7 @@ const captureProcess = {
 			logger.info("Starting process:", captureProcess.audio.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
-				"-loglevel", "info",
+				"-loglevel", "warning",
 				"-f", "avfoundation",
 				"-framerate", "60",
 				"-i", `:${deviceList.audio.indexOf("BlackHole")}`,
@@ -67,7 +67,7 @@ const captureProcess = {
 			logger.info("Starting process:", captureProcess.screenshare.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
-				"-loglevel", "info",
+				"-loglevel", "warning",
 				"-f", "avfoundation",
 				"-capture_cursor", "1",
 				"-framerate", "60",
@@ -100,7 +100,7 @@ const captureProcess = {
 			logger.info("Starting process:", captureProcess.camera.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
-				"-loglevel", "info",
+				"-loglevel", "warning",
 				"-f", "avfoundation",
 				"-framerate", "30",
 				"-video_size", "1920x1080",
@@ -125,7 +125,7 @@ const captureProcess = {
 			logger.info("Starting process:", captureProcess.microphone.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
-				"-loglevel", "info",
+				"-loglevel", "warning",
 				"-f", "mpegts",
 				"-i", "udp://@:2003",
 
