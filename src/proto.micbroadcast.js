@@ -3,8 +3,7 @@ const WebSocket = require("ws");
 
 const secrets = require("./secrets.js");
 
-// const url = "wss://server.wixonic.fr";
-const url = "wss://localhost:999/";
+const url = "wss://server.wixonic.fr";
 
 const startMicProcess = () => {
 	const sox = spawn("sox", [
