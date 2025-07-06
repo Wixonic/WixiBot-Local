@@ -113,8 +113,7 @@ const captureProcess = {
 				"-tune", "zerolatency",
 				"-pix_fmt", "yuv420p",
 
-				"-f", "mp4",
-				"-movflags", "frag_keyframe+empty_moov+default_base_moof+faststart",
+				"-f", "mpegts",
 				`udp://${target}:2002`
 			], { stdio: "inherit" });
 		},
