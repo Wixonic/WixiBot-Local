@@ -107,11 +107,6 @@ const captureProcess = {
 				"-pixel_format", "uyvy422",
 				"-i", `${deviceList.video.findIndex((value) => value.startsWith("Caméra du "))}:`,
 
-				"-flags", "low_delay",
-				"-fflags", "nobuffer",
-				"-flush_packets", "1",
-				"-muxdelay", "0",
-				"-muxpreload", "0",
 				"-f", "mpegts",
 				`udp://${target}:2002`
 			], { stdio: "inherit" });
