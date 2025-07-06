@@ -108,6 +108,7 @@ const captureProcess = {
 				"-i", `${deviceList.video.findIndex((value) => value.startsWith("Caméra du "))}:`,
 
 				"-c:v", "libx264",
+				"-r", "30",
 				"-preset", "ultrafast",
 				"-tune", "zerolatency",
 				"-pix_fmt", "yuv420p",
