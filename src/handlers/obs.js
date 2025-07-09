@@ -134,14 +134,17 @@ const captureProcess = {
 		process: null
 	},
 	microphone: {
-		active: false,
+		active: true,
 		name: "Microphone streaming",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.microphone.name);
 			return childProcess.spawn("ffplay", [
-				"-vn",
+				"-hide_banner",
+				"-loglevel", "warning",
 				"-flags", "low_delay",
 				"-fflags", "nobuffer",
+				"-nodisp",
+				"-vn",
 				"-f", "mpegts",
 				"udp://@:2003"
 			], { stdio: "inherit" });
