@@ -78,7 +78,7 @@ const handlers = async (logger, client, discord, server, config) => {
 			}
 		}
 
-		setTimeout(update, now - Date.now() + 500);
+		setTimeout(update, Date.now() - now + 500);
 	};
 
 	return update;

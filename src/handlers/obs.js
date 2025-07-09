@@ -8,7 +8,10 @@ const deviceList = {
 	video: []
 };
 
-const target = "10.0.0.1";
+const target = {
+	"server.wixonic.fr": "10.0.0.1",
+	"localhost:999": "localhost"
+};
 
 const trimName = (name) => name.split("(")[0].replace(/\s\n\t/, " ").trim();
 
@@ -39,6 +42,10 @@ const captureProcess = {
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
 				"-loglevel", "warning",
+
+				"-flags", "low_delay",
+				"-fflags", "nobuffer",
+
 				"-f", "avfoundation",
 				"-framerate", "60",
 				"-i", `:${deviceList.audio.indexOf("BlackHole")}`,
@@ -49,13 +56,11 @@ const captureProcess = {
 				"-ac", "2",
 				"-ar", "48000",
 
-				"-flags", "low_delay",
-				"-fflags", "nobuffer",
 				"-flush_packets", "1",
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${target}:2000`
+				`udp://${target[config.client.host] ?? config.client.host}:2000`
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -68,6 +73,10 @@ const captureProcess = {
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
 				"-loglevel", "warning",
+
+				"-flags", "low_delay",
+				"-fflags", "nobuffer",
+
 				"-f", "avfoundation",
 				"-capture_cursor", "1",
 				"-framerate", "60",
@@ -82,13 +91,11 @@ const captureProcess = {
 				"-realtime", "1",
 				"-g", "30",
 
-				"-flags", "low_delay",
-				"-fflags", "nobuffer",
 				"-flush_packets", "1",
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${target}:2001`
+				`udp://${target[config.client.host] ?? config.client.host}:2001`
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -101,21 +108,27 @@ const captureProcess = {
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
 				"-loglevel", "warning",
+
+				"-fflags", "nobuffer+genpts",
+				"-flags", "low_delay",
+
 				"-f", "avfoundation",
 				"-framerate", "30",
 				"-video_size", "1920x1080",
 				"-pixel_format", "uyvy422",
 				"-i", `${deviceList.video.findIndex((value) => value.startsWith("Caméra du "))}:`,
 
+				"-x264-params", "keyint=30:min-keyint=30:repeat-headers=1:force-cfr=1",
+				"-bsf:v", "h264_metadata=aud=insert",
+
 				"-c:v", "libx264",
-				"-r", "30",
 				"-preset", "ultrafast",
 				"-tune", "zerolatency",
+				"-g", "30",
 				"-pix_fmt", "yuv420p",
-				"-x264-params", "repeat-headers=1:keyint=30",
 
 				"-f", "mpegts",
-				`udp://${target}:2002`
+				`udp://${target[config.client.host] ?? config.client.host}:2002`
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -125,14 +138,12 @@ const captureProcess = {
 		name: "Microphone streaming",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.microphone.name);
-			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
-				"-hide_banner",
-				"-loglevel", "warning",
+			return childProcess.spawn("ffplay", [
+				"-vn",
+				"-flags", "low_delay",
+				"-fflags", "nobuffer",
 				"-f", "mpegts",
-				"-i", "udp://@:2003",
-
-				"-f", "coreaudio",
-				`:${deviceList.audio.indexOf("BlackHole")}`,
+				"udp://@:2003"
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -149,11 +160,10 @@ const captureProcess = {
 const init = async (logger, client, discord, server, config) => {
 	server.app.get("/obs/settings/", (req, res) => {
 		const { id } = req.query;
-		const processId = id;
 
-		if (!processId || !captureProcess[processId]) return res.status(400).send("Invalid or missing process ID");
+		if (!id || !captureProcess[id]) return res.status(400).send("Invalid or missing process ID");
 
-		res.json({ id: processId, active: captureProcess[processId].active });
+		res.json({ id, active: captureProcess[id].active });
 	});
 
 	server.app.post("/obs/settings/", (req, res) => {

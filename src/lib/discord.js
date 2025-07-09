@@ -73,7 +73,7 @@ class ClientManager {
 
 		try {
 			request(this.logger, {
-				url: new URL("/activity/", "https://" + this.config.client.hostname),
+				url: new URL("/activity/", "https://" + this.config.client.host),
 				method: "POST",
 				headers: {
 					authorization: `WixKey ${this.config.wixkey}`,

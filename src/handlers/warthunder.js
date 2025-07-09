@@ -28,7 +28,7 @@ const process = async (logger, client, discord, server, config) => {
 
 	if (data.valid) {
 		await request(emptyLogger, {
-			url: new URL("/rpc/warthunder/data.json", "https://" + config.client.hostname),
+			url: new URL("/rpc/warthunder/data.json", "https://" + config.client.host),
 			method: "POST",
 			headers: {
 				Authorization: `WixKey ${config.wixkey}`,
@@ -45,7 +45,7 @@ const process = async (logger, client, discord, server, config) => {
 		});
 
 		await request(emptyLogger, {
-			url: new URL("/rpc/warthunder/map.png", "https://" + config.client.hostname),
+			url: new URL("/rpc/warthunder/map.png", "https://" + config.client.host),
 			method: "POST",
 			headers: {
 				Authorization: `WixKey ${config.wixkey}`,
@@ -58,7 +58,7 @@ const process = async (logger, client, discord, server, config) => {
 
 		if (!inWarThunderGameSince) inWarThunderGameSince = now;
 
-		if (lastWarThunderRefresh + 15 * 1000 < now || !warThunderLargeImage) warThunderLargeImage = await discord.getExternalAsset(config.discord.application.clients.war_thunder.id, new URL(`/rpc/warthunder/map.png?t=${now.toString(16)}`, "https://" + config.client.hostname));
+		if (lastWarThunderRefresh + 15 * 1000 < now || !warThunderLargeImage) warThunderLargeImage = await discord.getExternalAsset(config.discord.application.clients.war_thunder.id, new URL(`/rpc/warthunder/map.png?t=${now.toString(16)}`, "https://" + config.client.host));
 
 		discord.addActivity("wt", {
 			applicationId: config.discord.application.clients.war_thunder.id,

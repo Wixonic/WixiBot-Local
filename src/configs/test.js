@@ -5,7 +5,7 @@ const secrets = require("../secrets.js");
  */
 const config = {
 	client: {
-		hostname: "localhost:999"
+		host: "localhost:999"
 	},
 	discord: {
 		application: {
