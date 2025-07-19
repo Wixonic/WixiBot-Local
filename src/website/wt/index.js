@@ -24,6 +24,8 @@ let ctx;
 
 let data, map;
 
+let lastClick;
+
 const camera = {
 	position: [0, 0],
 	moving: false,
@@ -34,6 +36,53 @@ const camera = {
 		camera.position[1] = Math.max(Math.min(camera.position[1], 0), canvas.height - canvas.height * camera.zoom);
 	}
 };
+
+const canvasToWorldCoordinates = (x, y, info) => {
+	if (Array.isArray(x)) {
+		y = x[1];
+		x = x[0];
+	}
+
+	const [w, h] = [info.map_max[0] - info.map_min[0], info.map_max[1] - info.map_min[1]];
+
+	return [
+		((x - camera.position[0]) / canvas.width / camera.zoom) * w + info.map_min[0],
+		((y - camera.position[1]) / canvas.height / camera.zoom) * h + info.map_min[1]
+	];
+};
+
+const worldToCanvasCoordinates = (x, y, info, translate = true) => {
+	if (Array.isArray(x)) {
+		y = x[1];
+		x = x[0];
+	}
+
+	if (translate) {
+		x -= info.map_min[0];
+		y -= info.map_min[1];
+	}
+
+	return [
+		(x / (info.map_max[0] - info.map_min[0])) * canvas.width * camera.zoom + (translate ? camera.position[0] : 0),
+		(y / (info.map_max[1] - info.map_min[1])) * canvas.height * camera.zoom + (translate ? camera.position[1] : 0)
+	];
+};
+
+const gridToCanvasCoordinates = (x, y, info, translate) => {
+	if (Array.isArray(x)) {
+		y = x[1];
+		x = x[0];
+	}
+
+	const [w, h] = [info.map_max[0] - info.map_min[0], info.map_max[1] - info.map_min[1]];
+
+	x += info.map_min[0] / w;
+	y += info.map_min[1] / h;
+
+	return worldToCanvasCoordinates(x * w, y * h, info, translate);
+};
+
+const gridToWorldCoordinates = (x, y, info, translate) => gridToCanvasCoordinates(canvasToWorldCoordinates(x, y, info), null, info, translate);
 
 const cycle = async () => {
 	try {
@@ -72,48 +121,19 @@ const draw = async () => {
 
 			const drawSize = Math.min(width, height) / 1000;
 
-			const worldToCanvasCoordinates = (x, y, translate = true) => {
-				if (Array.isArray(x)) {
-					y = x[1];
-					x = x[0];
-				}
-
-				if (translate) {
-					x -= info.map_min[0];
-					y -= info.map_min[1];
-				}
-
-				return [
-					(x / (info.map_max[0] - info.map_min[0])) * width * camera.zoom + (translate ? camera.position[0] : 0),
-					(y / (info.map_max[1] - info.map_min[1])) * height * camera.zoom + (translate ? camera.position[1] : 0)
-				];
-			};
-
-			const gridToCanvasCoordinates = (x, y, translate) => {
-				if (Array.isArray(x)) {
-					y = x[1];
-					x = x[0];
-				}
-
-				const [w, h] = [info.map_max[0] - info.map_min[0], info.map_max[1] - info.map_min[1]];
-
-				x += info.map_min[0] / w;
-				y += info.map_min[1] / h;
-
-				return worldToCanvasCoordinates(x * w, y * h, translate);
-			};
-
 			canvas.width = width;
 			canvas.height = height;
 			ctx.clearRect(0, 0, width, height);
 
-			const [sx, sy] = worldToCanvasCoordinates(info.map_min);
-			const [ex, ey] = worldToCanvasCoordinates(info.map_max);
+			ctx.font = `${10 * devicePixelRatio}px Arial`;
+
+			const [sx, sy] = worldToCanvasCoordinates(info.map_min, null, data.info);
+			const [ex, ey] = worldToCanvasCoordinates(info.map_max, null, data.info);
 			ctx.drawImage(map, sx, sy, ex - sx, ey - sy);
 
 			ctx.beginPath();
 
-			const steps = worldToCanvasCoordinates(info.grid_steps, null, false);
+			const steps = worldToCanvasCoordinates(info.grid_steps, null, data.info, false);
 			for (let x = camera.position[0] % steps[0]; x <= width; x += steps[0]) { ctx.moveTo(x, 0); ctx.lineTo(x, height); }
 			for (let y = camera.position[1] % steps[1]; y <= height; y += steps[1]) { ctx.moveTo(0, y); ctx.lineTo(width, y); }
 
@@ -127,9 +147,9 @@ const draw = async () => {
 				ctx.fillStyle = obj.color;
 				ctx.lineWidth = drawSize;
 
-				const [x, y] = gridToCanvasCoordinates(obj.x ?? 0, obj.y ?? 0);
-				const [sx, sy] = gridToCanvasCoordinates(obj.sx ?? 0, obj.sy ?? 0);
-				const [ex, ey] = gridToCanvasCoordinates(obj.ex ?? 0, obj.ey ?? 0);
+				const [x, y] = gridToCanvasCoordinates(obj.x ?? 0, obj.y ?? 0, data.info);
+				const [sx, sy] = gridToCanvasCoordinates(obj.sx ?? 0, obj.sy ?? 0, data.info);
+				const [ex, ey] = gridToCanvasCoordinates(obj.ex ?? 0, obj.ey ?? 0, data.info);
 
 				switch (obj.icon) {
 					case "Player":
@@ -278,6 +298,40 @@ const draw = async () => {
 						break;
 				}
 			}
+
+			if (lastClick) {
+				const player = objects.find((obj) => obj.icon == "Player");
+				if (!window.logged) {
+					window.logged = true;
+					console.log(player);
+				}
+
+				if (player) {
+					const [pcx, pcy] = gridToCanvasCoordinates(player.x, player.y, data.info);
+					const [px, py] = gridToWorldCoordinates(player.x, player.y, data.info);
+					const [cx, cy] = worldToCanvasCoordinates(lastClick, null, data.info);
+
+					const dx = lastClick[0] - px;
+					const dy = lastClick[1] - py;
+					const dist = Math.hypot(dx, dy);
+
+					const angle = (Math.atan2(dy, dx) * 180 / Math.PI + 90) % 360;
+
+					ctx.beginPath();
+					ctx.moveTo(pcx, pcy);
+					ctx.lineTo(cx, cy);
+					ctx.strokeStyle = "#F00";
+					ctx.lineWidth = 2;
+					ctx.stroke();
+
+					ctx.fillStyle = "#FFF";
+					ctx.fillText(
+						`Dist: ${Math.round(dist)} | ${angle.toFixed(1)}°`,
+						cx + 5,
+						cy - 5
+					);
+				}
+			}
 		};
 	} catch (e) {
 		console.error(e);
@@ -293,6 +347,15 @@ addEventListener("DOMContentLoaded", () => {
 
 	ctx.imageSmoothingEnabled = false;
 	canvas.style.imageRendering = "pixelated";
+
+	canvas.addEventListener("click", event => {
+		if (data && data.info && data.objects && map) {
+			const rect = canvas.getBoundingClientRect();
+			const cx = (event.clientX - rect.left) * devicePixelRatio;
+			const cy = (event.clientY - rect.top) * devicePixelRatio;
+			lastClick = canvasToWorldCoordinates(cx, cy, data.info);
+		}
+	});
 
 	cycle();
 	draw();

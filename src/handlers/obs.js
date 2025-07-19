@@ -65,9 +65,9 @@ const captureProcess = {
 		},
 		process: null
 	},
-	screenshare: {
+	screenshare1: {
 		active: false,
-		name: "Screen capture",
+		name: "Screen capture 1",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.screenshare.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
@@ -83,6 +83,41 @@ const captureProcess = {
 				"-video_size", "3024x1964",
 				"-pixel_format", "uyvy422",
 				"-i", `${deviceList.video.indexOf("Capture screen 0")}:`,
+
+				"-c:v", "h264_videotoolbox",
+				"-preset", "ultrafast",
+				"-profile:v", "high",
+				"-b:v", "16M",
+				"-realtime", "1",
+				"-g", "30",
+
+				"-flush_packets", "1",
+				"-muxdelay", "0",
+				"-muxpreload", "0",
+				"-f", "mpegts",
+				`udp://${target[config.client.host] ?? config.client.host}:2001`
+			], { stdio: "inherit" });
+		},
+		process: null
+	},
+	screenshare2: {
+		active: false,
+		name: "Screen capture 2",
+		spawn: (logger, config) => {
+			logger.info("Starting process:", captureProcess.screenshare.name);
+			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
+				"-hide_banner",
+				"-loglevel", "warning",
+
+				"-flags", "low_delay",
+				"-fflags", "nobuffer",
+
+				"-f", "avfoundation",
+				"-capture_cursor", "1",
+				"-framerate", "60",
+				"-video_size", "3024x1964",
+				"-pixel_format", "uyvy422",
+				"-i", `${deviceList.video.indexOf("Capture screen 1")}:`,
 
 				"-c:v", "h264_videotoolbox",
 				"-preset", "ultrafast",
