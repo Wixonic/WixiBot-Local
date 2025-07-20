@@ -115,7 +115,7 @@ const captureProcess = {
 				"-f", "avfoundation",
 				"-capture_cursor", "1",
 				"-framerate", "60",
-				"-video_size", "3024x1964",
+				"-video_size", "3840x2160",
 				"-pixel_format", "uyvy422",
 				"-i", `${deviceList.video.indexOf("Capture screen 1")}:`,
 
@@ -147,23 +147,35 @@ const captureProcess = {
 				"-fflags", "nobuffer+genpts",
 				"-flags", "low_delay",
 
+				"-probesize", "32M",
+				"-analyzeduration", "30M",
+
 				"-f", "avfoundation",
 				"-framerate", "30",
-				"-video_size", "1920x1080",
+				"-video_size", "1280x720",
 				"-pixel_format", "uyvy422",
 				"-i", `${deviceList.video.findIndex((value) => value.startsWith("Caméra du "))}:`,
 
-				"-x264-params", "keyint=30:min-keyint=30:repeat-headers=1:force-cfr=1",
-				"-bsf:v", "h264_metadata=aud=insert",
+				"-vf", "format=yuv420p,scale=1280:720",
 
+				"-an",
 				"-c:v", "libx264",
 				"-preset", "ultrafast",
 				"-tune", "zerolatency",
-				"-g", "30",
-				"-pix_fmt", "yuv420p",
+				"-crf", "25",
+				"-profile:v", "baseline",
+				"-level", "4.1",
+				"-g", "60",
+				"-keyint_min", "60",
+
+				"-use_wallclock_as_timestamps", "1",
+				"-vsync", "1",
+
+				"-x264-params", "repeat-headers=1:scenecut=0:force-cfr=1:nal-hrd=cbr",
 
 				"-f", "mpegts",
-				`udp://${target[config.client.host] ?? config.client.host}:2002`
+				"udp://localhost:2002"
+				// `udp://${target[config.client.host] ?? config.client.host}:2002`
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -176,10 +188,13 @@ const captureProcess = {
 			return childProcess.spawn("ffplay", [
 				"-hide_banner",
 				"-loglevel", "warning",
+
 				"-flags", "low_delay",
 				"-fflags", "nobuffer",
+
 				"-nodisp",
 				"-vn",
+
 				"-f", "mpegts",
 				"udp://@:2003"
 			], { stdio: "inherit" });
@@ -244,7 +259,7 @@ const handler = async (logger, client, discord, server, config) => {
 					process.once(signal, async (reason, code) => {
 						if (!cp.process.killed) {
 							cp.process.removeAllListeners("exit");
-							cp.process.kill(signal);
+							cp.process.kill("SIGTERM");
 						}
 					});
 				}

@@ -25,22 +25,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 		let menu = NSMenu()
 
-		audioMenuItem = NSMenuItem(title: "Audio", action: #selector(toggleAudio(_:)))
+		audioMenuItem = NSMenuItem(title: "Audio", action: #selector(toggleAudio(_:)), keyEquivalent: "")
 		audioMenuItem.state = audioEnabled ? .on : .off
 		audioMenuItem.target = self
 		menu.addItem(audioMenuItem)
 
-        screen1MenuItem = NSMenuItem(title: "Screenshare 1", action: #selector(toggleScreen1(_:)))
+        screen1MenuItem = NSMenuItem(title: "Screenshare 1", action: #selector(toggleScreen1(_:)), keyEquivalent: "")
         screen1MenuItem.state = screen1Enabled ? .on : .off
         screen1MenuItem.target = self
         menu.addItem(screen1MenuItem)
 
-        screen2MenuItem = NSMenuItem(title: "Screenshare 2", action: #selector(toggleScreen2(_:)))
+        screen2MenuItem = NSMenuItem(title: "Screenshare 2", action: #selector(toggleScreen2(_:)), keyEquivalent: "")
         screen2MenuItem.state = screen2Enabled ? .on : .off
         screen2MenuItem.target = self
         menu.addItem(screen2MenuItem)
 
-        cameraMenuItem = NSMenuItem(title: "Camera", action: #selector(toggleCamera(_:)))
+        cameraMenuItem = NSMenuItem(title: "Camera", action: #selector(toggleCamera(_:)), keyEquivalent: "")
         cameraMenuItem.state = cameraEnabled ? .on : .off
         cameraMenuItem.target = self
         menu.addItem(cameraMenuItem)
@@ -59,7 +59,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func toggleScreen1(_ sender: NSMenuItem) {
         screen1Enabled.toggle()
-        screen1MenuItem.state = screenEnabled ? .on : .off
+        screen1MenuItem.state = screen1Enabled ? .on : .off
         sendToggleRequest(id: "screenshare1", status: screen1Enabled)
     }
 

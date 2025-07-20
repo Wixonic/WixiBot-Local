@@ -82,7 +82,7 @@ const config = {
 		token: secrets.roblox.token
 	},
 	server: {
-		port: 1000
+		port: 1001
 	},
 	spotify: {
 		id: secrets.spotify.id,
