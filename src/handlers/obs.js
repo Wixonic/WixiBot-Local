@@ -69,7 +69,7 @@ const captureProcess = {
 		active: false,
 		name: "Screen capture 1",
 		spawn: (logger, config) => {
-			logger.info("Starting process:", captureProcess.screenshare.name);
+			logger.info("Starting process:", captureProcess.screenshare1.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
 				"-loglevel", "warning",
@@ -104,7 +104,7 @@ const captureProcess = {
 		active: false,
 		name: "Screen capture 2",
 		spawn: (logger, config) => {
-			logger.info("Starting process:", captureProcess.screenshare.name);
+			logger.info("Starting process:", captureProcess.screenshare2.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
 				"-loglevel", "warning",
