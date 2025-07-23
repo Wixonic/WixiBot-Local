@@ -50,7 +50,6 @@ const captureProcess = {
 				"-framerate", "60",
 				"-i", `:${deviceList.audio.indexOf("BlackHole")}`,
 
-				"-filter_complex", "volume=0.5",
 				"-c:a", "aac",
 				"-b:a", "320k",
 				"-ac", "2",
