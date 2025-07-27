@@ -61,7 +61,10 @@ class Server {
 
 			this.http.on("clientError", (e) => this.logger.warn("[HTTP]", "Client error:", e));
 			this.http.on("close", () => this.logger.warn("[HTTP]", "Server closed"));
-			this.http.on("error", (e) => this.logger.error("[HTTP]", "Server error:", e));
+			this.http.on("error", (e) => {
+				this.logger.error("[HTTP]", "Server error:", e);
+				process.exit(1);
+			});
 			this.http.on("connection", () => this.logger.debug("[HTTP]", "TCP stream established"));
 			this.http.on("request", this.app);
 
