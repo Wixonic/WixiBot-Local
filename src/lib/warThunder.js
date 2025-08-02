@@ -74,7 +74,7 @@ const get = async (logger, config) => {
 			secure: false
 		});
 
-		fs.writeFileSync("./warthunder.test.data/info.json", JSON.stringify(info), "utf-8");
+		fs.writeFileSync("./warthunder_test_data/info.json", JSON.stringify(info), "utf-8");
 
 		await wait(config.waitingTime);
 
@@ -84,7 +84,7 @@ const get = async (logger, config) => {
 			secure: false
 		});
 
-		fs.writeFileSync("./warthunder.test.data/objs.json", JSON.stringify(objs), "utf-8");
+		fs.writeFileSync("./warthunder_test_data/objs.json", JSON.stringify(objs), "utf-8");
 
 		await wait(config.waitingTime);
 
@@ -113,7 +113,7 @@ const get = async (logger, config) => {
 				secure: false
 			});
 
-			fs.writeFileSync("./warthunder.test.data/indicators.json", JSON.stringify(indicators), "utf-8");
+			fs.writeFileSync("./warthunder_test_data/indicators.json", JSON.stringify(indicators), "utf-8");
 
 			if (indicators.error) throw indicators.error;
 

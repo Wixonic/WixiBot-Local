@@ -151,9 +151,37 @@ const draw = async () => {
 				const [sx, sy] = gridToCanvasCoordinates(obj.sx ?? 0, obj.sy ?? 0, data.info);
 				const [ex, ey] = gridToCanvasCoordinates(obj.ex ?? 0, obj.ey ?? 0, data.info);
 
+				switch (obj.type) {
+					case "airfield":
+						{
+							const s = drawSize * 3;
+
+							ctx.save();
+							ctx.lineWidth = s + drawSize;
+							ctx.beginPath();
+							ctx.moveTo(sx, sy);
+							ctx.lineTo(ex, ey);
+							ctx.closePath();
+							ctx.stroke();
+							ctx.restore();
+
+							ctx.save();
+							ctx.strokeStyle = ctx.fillStyle;
+							ctx.lineWidth = s;
+							ctx.beginPath();
+							ctx.moveTo(sx, sy);
+							ctx.lineTo(ex, ey);
+							ctx.closePath();
+							ctx.stroke();
+							ctx.restore();
+						}
+						break;
+				}
+
 				switch (obj.icon) {
 					case "Player":
 						{
+							const s = drawSize * 8;
 							ctx.fillStyle = "#FFF";
 							ctx.strokeStyle = "#000";
 
@@ -191,6 +219,73 @@ const draw = async () => {
 						}
 						break;
 
+					case "bombing_point":
+						{
+							const sL = drawSize * 25;
+							const sl = drawSize * 2.5;
+
+							for (let i = 1; i <= 2; ++i) {
+								const radius = sL / i / 2;
+
+								ctx.beginPath();
+								ctx.arc(x, y, radius, 0, Math.PI * 2);
+								ctx.arc(x, y, radius - sl, 0, Math.PI * 2);
+								ctx.closePath();
+
+								ctx.fill("evenodd");
+								ctx.stroke();
+
+								ctx.save();
+								ctx.strokeStyle = ctx.fillStyle;
+								ctx.lineWidth = sl;
+								ctx.beginPath();
+								ctx.arc(x, y, radius - sl / 2, 0, Math.PI * 2);
+								ctx.stroke();
+								ctx.restore();
+							}
+
+							ctx.beginPath();
+
+							ctx.moveTo(x + sL / 16, y - sl / 4);
+							ctx.lineTo(x + sL / 2, y - sl / 4);
+							ctx.lineTo(x + sL / 2, y + sl / 4);
+							ctx.lineTo(x + sL / 16, y + sl / 4);
+
+							ctx.moveTo(x - sL / 16, y - sl / 4);
+							ctx.lineTo(x - sL / 2, y - sl / 4);
+							ctx.lineTo(x - sL / 2, y + sl / 4);
+							ctx.lineTo(x - sL / 16, y + sl / 4);
+
+							ctx.moveTo(x - sl / 4, y - sL / 16);
+							ctx.lineTo(x - sl / 4, y - sL / 2);
+							ctx.lineTo(x + sl / 4, y - sL / 2);
+							ctx.lineTo(x + sl / 4, y - sL / 16);
+
+							ctx.moveTo(x + sl / 4, y + sL / 16);
+							ctx.lineTo(x + sl / 4, y + sL / 2);
+							ctx.lineTo(x - sl / 4, y + sL / 2);
+							ctx.lineTo(x - sl / 4, y + sL / 16);
+
+							ctx.closePath();
+
+							ctx.fill();
+						}
+						break;
+
+					case "defending_point":
+						{
+							const s = drawSize * 10;
+							ctx.beginPath();
+							ctx.moveTo(x, y - s);
+							ctx.lineTo(x + s, y);
+							ctx.lineTo(x, y + s);
+							ctx.lineTo(x - s, y);
+							ctx.closePath();
+							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
 					case "respawn_base_tank":
 						{
 							const s = drawSize * 1.5;
@@ -198,13 +293,34 @@ const draw = async () => {
 						}
 						break;
 
+					case "respawn_base_bomber":
+						{
+							const s = drawSize * 1.5;
+							ctx.fillRect(x - s / 2, y - s / 2, s, s);
+						}
+						break;
+
+					case "Ground":
+						{
+							const s = drawSize * 5;
+							ctx.beginPath();
+							ctx.moveTo(x - s / 2, y - s / 2);
+							ctx.lineTo(x + s / 2, y - s / 2);
+							ctx.lineTo(x + s / 2, y + s / 2);
+							ctx.lineTo(x - s / 2, y + s / 2);
+							ctx.closePath();
+							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
 					case "LightTank":
 						{
 							ctx.beginPath();
-							ctx.moveTo(x - s / 2, y - s / 6);
-							ctx.lineTo(x + s / 2, y - s / 6);
-							ctx.lineTo(x + s / 2, y + s / 6);
-							ctx.lineTo(x - s / 2, y + s / 6);
+							ctx.moveTo(x - s / 2, y - s / 5);
+							ctx.lineTo(x + s / 2, y - s / 5);
+							ctx.lineTo(x + s / 2, y + s / 5);
+							ctx.lineTo(x - s / 2, y + s / 5);
 							ctx.closePath();
 							ctx.fill();
 							ctx.stroke();
@@ -251,18 +367,28 @@ const draw = async () => {
 						}
 						break;
 
+					case "TankDestroyer":
+						{
+
+						}
+						break;
+
 					case "SPAA":
 						{
+							const s = drawSize * 8;
 							ctx.beginPath();
 							ctx.moveTo(x - s / 2, y);
 							ctx.lineTo(x - s * 3 / 7, y);
 							ctx.lineTo(x - s * 3 / 7, y - s / 4);
+
 							ctx.lineTo(x - s / 20, y - s / 4);
 							ctx.lineTo(x - s / 20, y);
 							ctx.lineTo(x + s / 20, y);
 							ctx.lineTo(x + s / 20, y - s / 4);
+
 							ctx.lineTo(x + s * 3 / 7, y - s / 4);
 							ctx.lineTo(x + s * 3 / 7, y);
+
 							ctx.lineTo(x + s / 2, y);
 							ctx.lineTo(x + s / 2, y + s / 3);
 							ctx.lineTo(x - s / 2, y + s / 3);
@@ -289,14 +415,58 @@ const draw = async () => {
 						}
 						break;
 
+					case "Fighter":
+						{
+							ctx.beginPath();
+							ctx.moveTo(x - s / 2, y);
+							ctx.lineTo(x, y + s / 2);
+							ctx.lineTo(x + s / 2, y);
+							ctx.lineTo(x, y - s / 2);
+							ctx.closePath();
+							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
+					case "Assault":
+						{
+							const s = drawSize * 12;
+							ctx.beginPath();
+							ctx.moveTo(x - s / 2, y);
+							ctx.lineTo(x, y + s / 4);
+							ctx.lineTo(x + s / 2, y);
+							ctx.lineTo(x, y - s / 4);
+							ctx.closePath();
+							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
+					case "Bomber":
+						{
+							const s = drawSize * 8;
+							ctx.beginPath();
+							ctx.moveTo(x - s / 2, y);
+							ctx.lineTo(x - s / 2, y - s / 2);
+							ctx.lineTo(x + s / 2, y - s / 2);
+							ctx.lineTo(x + s / 2, y);
+							ctx.lineTo(x, y + s / 2);
+							ctx.closePath();
+							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
 					default:
 						{
 							ctx.fillStyle = "#F0F";
 							ctx.lineWidth = 0;
-							ctx.fillRect(x - s / 2, y - s / 2, s, s);
+							ctx.fillRect(x - s / 4, y - s / 4, s / 2, s / 2);
 						}
 						break;
 				}
+
+				ctx.restore();
 			}
 
 			if (lastClick) {
@@ -335,6 +505,7 @@ const draw = async () => {
 		};
 	} catch (e) {
 		console.error(e);
+		lastClick = null;
 		await wait(1000);
 	}
 

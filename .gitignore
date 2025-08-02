@@ -1,5 +1,6 @@
 dist/
 node_modules/
+warthunder_test_data/
 
 .DS_Store
 secrets.js*
