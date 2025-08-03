@@ -207,7 +207,7 @@ const draw = async () => {
 
 					case "capture_zone":
 						{
-							const s = drawSize * 15;
+							const s = drawSize * 10;
 							ctx.beginPath();
 							ctx.moveTo(x, y - s);
 							ctx.lineTo(x + s, y);
@@ -293,6 +293,13 @@ const draw = async () => {
 						}
 						break;
 
+					case "respawn_base_fighter":
+						{
+							const s = drawSize * 1.5;
+							ctx.fillRect(x - s / 2, y - s / 2, s, s);
+						}
+						break;
+
 					case "respawn_base_bomber":
 						{
 							const s = drawSize * 1.5;
@@ -310,6 +317,31 @@ const draw = async () => {
 							ctx.lineTo(x - s / 2, y + s / 2);
 							ctx.closePath();
 							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
+					case "Tracked":
+						{
+							const s = drawSize * 5;
+							ctx.beginPath();
+							ctx.moveTo(x - s / 2, y - s / 2);
+							ctx.lineTo(x + s / 2, y - s / 2);
+							ctx.lineTo(x + s / 2, y + s / 2);
+							ctx.lineTo(x - s / 2, y + s / 2);
+							ctx.closePath();
+							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
+					case "Wheeled":
+						{
+							const s = drawSize * 6;
+							ctx.beginPath();
+							ctx.arc(x, y, s / 2, 0, Math.PI * 2);
+							ctx.closePath();
+							ctx.fill("evenodd");
 							ctx.stroke();
 						}
 						break;
@@ -451,6 +483,66 @@ const draw = async () => {
 							ctx.lineTo(x + s / 2, y - s / 2);
 							ctx.lineTo(x + s / 2, y);
 							ctx.lineTo(x, y + s / 2);
+							ctx.closePath();
+							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
+					case "Ship":
+						{
+							const s = drawSize * 8;
+							ctx.beginPath();
+							ctx.moveTo(x - s / 2, y - s / 5);
+
+							ctx.lineTo(x, y - s / 5);
+							ctx.lineTo(x - s / 2, y - s / 1.5);
+							ctx.lineTo(x + s / 2, y - s / 1.5);
+							ctx.lineTo(x, y - s / 5);
+
+							ctx.lineTo(x + s / 2, y - s / 5);
+							ctx.lineTo(x + s / 2, y + s / 5);
+							ctx.lineTo(x - s / 2, y + s / 5);
+							ctx.closePath();
+							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
+					case "TorpedoBoat":
+						{
+							const s = drawSize * 8;
+							ctx.beginPath();
+							ctx.moveTo(x - s / 2, y - s / 5);
+
+							ctx.lineTo(x, y - s / 5);
+							ctx.lineTo(x - s / 2, y - s / 1.5);
+							ctx.lineTo(x + s / 2, y - s / 1.5);
+							ctx.lineTo(x, y - s / 5);
+
+							ctx.lineTo(x + s / 2, y - s / 5);
+							ctx.lineTo(x + s / 2, y + s / 5);
+							ctx.lineTo(x - s / 2, y + s / 5);
+							ctx.closePath();
+							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
+					case "Boat":
+						{
+							const s = drawSize * 8;
+							ctx.beginPath();
+							ctx.moveTo(x - s / 2, y - s / 5);
+
+							ctx.lineTo(x, y - s / 5);
+							ctx.lineTo(x - s / 2, y - s / 1.5);
+							ctx.lineTo(x + s / 2, y - s / 1.5);
+							ctx.lineTo(x, y - s / 5);
+
+							ctx.lineTo(x + s / 2, y - s / 5);
+							ctx.lineTo(x + s / 2, y + s / 5);
+							ctx.lineTo(x - s / 2, y + s / 5);
 							ctx.closePath();
 							ctx.fill();
 							ctx.stroke();
