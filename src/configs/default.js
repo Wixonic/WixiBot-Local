@@ -94,6 +94,11 @@ const config = {
 	},
 	warThunder: {
 		paths: {
+			mission: "/mission.json",
+			messages: {
+				chat: "/gamechat",
+				hud: "/hudmsg"
+			},
 			map: {
 				image: "/map.img",
 				info: "/map_info.json",

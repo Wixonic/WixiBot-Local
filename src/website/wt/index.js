@@ -68,7 +68,7 @@ const worldToCanvasCoordinates = (x, y, info, translate = true) => {
 	];
 };
 
-const gridToCanvasCoordinates = (x, y, info, translate) => {
+const gridToWorldCoordinates = (x, y, info) => {
 	if (Array.isArray(x)) {
 		y = x[1];
 		x = x[0];
@@ -79,10 +79,10 @@ const gridToCanvasCoordinates = (x, y, info, translate) => {
 	x += info.map_min[0] / w;
 	y += info.map_min[1] / h;
 
-	return worldToCanvasCoordinates(x * w, y * h, info, translate);
+	return [x * w, y * w];
 };
 
-const gridToWorldCoordinates = (x, y, info, translate) => gridToCanvasCoordinates(canvasToWorldCoordinates(x, y, info), null, info, translate);
+const gridToCanvasCoordinates = (x, y, info, translate) => worldToCanvasCoordinates(gridToWorldCoordinates(x, y, info), null, info, translate);
 
 const cycle = async () => {
 	try {
@@ -97,13 +97,13 @@ const cycle = async () => {
 		]);
 
 		data = dataResponse.response;
-		if (performance.now() < 1000) console.log(data);
+		if (performance.now() < 750) console.log(data);
 		map = await createImageBitmap(imageResponse.response);
 	} catch (e) {
 		console.error("Cycle failed:", e);
 	}
 
-	setTimeout(cycle, 1000);
+	setTimeout(cycle, 750);
 };
 
 const draw = async () => {
@@ -308,6 +308,20 @@ const draw = async () => {
 						break;
 
 					case "Ground":
+						{
+							const s = drawSize * 5;
+							ctx.beginPath();
+							ctx.moveTo(x - s / 2, y - s / 2);
+							ctx.lineTo(x + s / 2, y - s / 2);
+							ctx.lineTo(x + s / 2, y + s / 2);
+							ctx.lineTo(x - s / 2, y + s / 2);
+							ctx.closePath();
+							ctx.fill();
+							ctx.stroke();
+						}
+						break;
+
+					case "Structure":
 						{
 							const s = drawSize * 5;
 							ctx.beginPath();
@@ -563,25 +577,21 @@ const draw = async () => {
 
 			if (lastClick) {
 				const player = objects.find((obj) => obj.icon == "Player");
-				if (!window.logged) {
-					window.logged = true;
-					console.log(player);
-				}
 
 				if (player) {
 					const [pcx, pcy] = gridToCanvasCoordinates(player.x, player.y, data.info);
 					const [px, py] = gridToWorldCoordinates(player.x, player.y, data.info);
-					const [cx, cy] = worldToCanvasCoordinates(lastClick, null, data.info);
+					const [cx, cy] = canvasToWorldCoordinates(lastClick, null, data.info);
 
-					const dx = lastClick[0] - px;
-					const dy = lastClick[1] - py;
+					const dx = cx - px;
+					const dy = cy - py;
 					const dist = Math.hypot(dx, dy);
 
 					const angle = (Math.atan2(dy, dx) * 180 / Math.PI + 90) % 360;
 
 					ctx.beginPath();
 					ctx.moveTo(pcx, pcy);
-					ctx.lineTo(cx, cy);
+					ctx.lineTo(lastClick[0], lastClick[1]);
 					ctx.strokeStyle = "#F00";
 					ctx.lineWidth = 2;
 					ctx.stroke();
@@ -589,8 +599,8 @@ const draw = async () => {
 					ctx.fillStyle = "#FFF";
 					ctx.fillText(
 						`Dist: ${Math.round(dist)} | ${angle.toFixed(1)}°`,
-						cx + 5,
-						cy - 5
+						lastClick[0] + 5,
+						lastClick[1] - 5
 					);
 				}
 			}
@@ -611,12 +621,12 @@ addEventListener("DOMContentLoaded", () => {
 	ctx.imageSmoothingEnabled = false;
 	canvas.style.imageRendering = "pixelated";
 
-	canvas.addEventListener("click", event => {
+	canvas.addEventListener("click", (event) => {
 		if (data && data.info && data.objects && map) {
 			const rect = canvas.getBoundingClientRect();
 			const cx = (event.clientX - rect.left) * devicePixelRatio;
 			const cy = (event.clientY - rect.top) * devicePixelRatio;
-			lastClick = canvasToWorldCoordinates(cx, cy, data.info);
+			lastClick = [cx, cy];
 		}
 	});
 

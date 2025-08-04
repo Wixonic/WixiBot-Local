@@ -1,3 +1,4 @@
+const { execSync } = require("child_process");
 const express = require("express");
 const http = require("http");
 const path = require("path");
@@ -89,6 +90,10 @@ class Server {
 			});
 
 			this.ws.on("error", (e) => this.logger.error("[WebSocket]", "Server error:", e));
+
+			try {
+				execSync(`kill -9 $(lsof -ti :${this.port})`);
+			} catch { }
 
 			this.http.listen(this.port, () => {
 				this.logger.info(`Running on :${this.port}`);

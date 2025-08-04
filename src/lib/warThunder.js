@@ -1,8 +1,19 @@
 const fs = require("fs");
+const path = require("path");
 const { JSDOM } = require("jsdom");
 const sharp = require("sharp");
 
-const request = require("./request.js");
+// TEST
+const r = require("./request.js");
+const request = async (logger, options) => {
+	const response = await r(logger, options);
+	const filePath = path.join(__dirname, "..", "warthunder_test_data", options.url.pathname);
+	const dirPath = path.dirname(filePath);
+	if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
+	fs.writeFileSync(filePath, JSON.stringify(response), "utf-8");
+	return response;
+};
+// const request = require("./request.js");
 const { wait } = require("./utils.js");
 
 /**
@@ -15,13 +26,14 @@ const emptyLogger = {
 	warn: () => null
 };
 
+
 /**
  * @param {import("@wixonic/logger").Logger} logger
  * @param {string} unit
  */
 const getUnitData = async (logger, unit) => {
 	const html = await request(emptyLogger, {
-		url: "https://wiki.warthunder.com/unit/" + unit,
+		url: new URL(path.join("unit", unit), "https://wiki.warthunder.com"),
 		type: "text",
 		method: "GET",
 		headers: {
@@ -66,6 +78,8 @@ const get = async (logger, config) => {
 	let map = Buffer.from("");
 	let details = "Unknown unit";
 	let unit = "Unknown unit";
+	let mission = {};
+	let messages = {};
 
 	try {
 		info = await request(emptyLogger, {
@@ -74,8 +88,6 @@ const get = async (logger, config) => {
 			secure: false
 		});
 
-		fs.writeFileSync("./warthunder_test_data/info.json", JSON.stringify(info), "utf-8");
-
 		await wait(config.waitingTime);
 
 		objs = await request(emptyLogger, {
@@ -83,8 +95,6 @@ const get = async (logger, config) => {
 			type: "json",
 			secure: false
 		});
-
-		fs.writeFileSync("./warthunder_test_data/objs.json", JSON.stringify(objs), "utf-8");
 
 		await wait(config.waitingTime);
 
@@ -112,8 +122,6 @@ const get = async (logger, config) => {
 				type: "json",
 				secure: false
 			});
-
-			fs.writeFileSync("./warthunder_test_data/indicators.json", JSON.stringify(indicators), "utf-8");
 
 			if (indicators.error) throw indicators.error;
 
@@ -159,6 +167,46 @@ const get = async (logger, config) => {
 		}
 	}
 
+	await wait(config.waitingTime);
+
+	if (errors.length == 0) {
+		try {
+			mission = await request(emptyLogger, {
+				url: new URL(config.paths.mission, `http://localhost:${config.port}`),
+				type: "json",
+				secure: false
+			});
+
+			if (mission?.status != "running") errors.push("Mission not running");
+		} catch (e) {
+			errors.push(`Mission: ${e}`);
+		}
+	}
+
+	await wait(config.waitingTime);
+
+	if (errors.length == 0) {
+		try {
+			messages.chat = await request(emptyLogger, {
+				url: new URL(config.paths.messages.chat + "?lastId=0", `http://localhost:${config.port}`),
+				type: "json",
+				secure: false
+			});
+
+			await wait(config.waitingTime);
+
+			messages.hud = await request(emptyLogger, {
+				url: new URL(config.paths.messages.hud + "?lastEvt=0&lastDmg=0", `http://localhost:${config.port}`),
+				type: "json",
+				secure: false
+			});
+		} catch (e) {
+			errors.push(`Messages: ${e}`);
+		}
+	}
+
+	if (errors.length != 0) console.log(errors);
+
 	return {
 		errors,
 		info,
@@ -167,7 +215,9 @@ const get = async (logger, config) => {
 		map,
 		valid: errors.length == 0,
 		details,
-		unit
+		unit,
+		mission,
+		messages
 	};
 };
 

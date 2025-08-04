@@ -28,10 +28,16 @@ export interface SpotifyConfig {
 
 export interface WarThunderConfig {
 	paths: {
+		mission: string;
 		map: {
 			image: string;
 			info: string;
 			objects: string;
+		};
+
+		messages: {
+			chat: string;
+			hud: string;
 		};
 
 		vehicle: {
