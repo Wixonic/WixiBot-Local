@@ -56,7 +56,7 @@ class Server {
 
 			this.app.use((req, res) => {
 				this.logger.warn(`404: ${req.method} ${req.url}`);
-				res.status(404).sendFile(path.join(websitePath, "404.html"));
+				res.status(404).sendFile(path.join(websitePath, "lib", "404.html"));
 			});
 
 
