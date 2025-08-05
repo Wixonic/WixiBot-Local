@@ -205,8 +205,6 @@ const get = async (logger, config) => {
 		}
 	}
 
-	if (errors.length != 0) console.log(errors);
-
 	return {
 		errors,
 		info,
