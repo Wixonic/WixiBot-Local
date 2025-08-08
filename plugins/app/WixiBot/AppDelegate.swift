@@ -10,11 +10,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	var cameraEnabled: Bool = false
 	var screen1Enabled: Bool = false
 	var screen2Enabled: Bool = false
+	var microphoneBroadcastEnabled: Bool = false
+	var broadcastEnabled: Bool = false
     
 	var audioMenuItem: NSMenuItem!
 	var cameraMenuItem: NSMenuItem!
 	var screen1MenuItem: NSMenuItem!
 	var screen2MenuItem: NSMenuItem!
+	var microphoneBroadcastMenuItem: NSMenuItem!
+	var broadcastMenuItem: NSMenuItem!
 
 	func applicationDidFinishLaunching(_ notification: Notification) {
 		statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -44,6 +48,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         cameraMenuItem.state = cameraEnabled ? .on : .off
         cameraMenuItem.target = self
         menu.addItem(cameraMenuItem)
+		
+		microphoneBroadcastMenuItem = NSMenuItem(title: "Microphone", action: #selector(toggleMicrophoneBroadcast(_:)), keyEquivalent: "")
+		microphoneBroadcastMenuItem.state = microphoneBroadcastEnabled ? .on : .off
+		microphoneBroadcastMenuItem.target = self
+		menu.addItem(microphoneBroadcastMenuItem)
+		
+		broadcastMenuItem = NSMenuItem(title: "Broadcast", action: #selector(toggleBroadcast(_:)), keyEquivalent: "")
+		broadcastMenuItem.state = broadcastEnabled ? .on : .off
+		broadcastMenuItem.target = self
+		menu.addItem(broadcastMenuItem)
 
 		menu.addItem(NSMenuItem(title: "Quit", action: #selector(terminate), keyEquivalent: "q"))
 		statusItem.menu = menu
@@ -74,6 +88,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         cameraMenuItem.state = cameraEnabled ? .on : .off
         sendToggleRequest(id: "camera", status: cameraEnabled)
     }
+	
+	@objc func toggleMicrophoneBroadcast(_ sender: NSMenuItem) {
+		microphoneBroadcastEnabled.toggle()
+		microphoneBroadcastMenuItem.state = microphoneBroadcastEnabled ? .on : .off
+		sendToggleRequest(id: "microphone", status: microphoneBroadcastEnabled)
+	}
+	
+	@objc func toggleBroadcast(_ sender: NSMenuItem) {
+		broadcastEnabled.toggle()
+		broadcastMenuItem.state = broadcastEnabled ? .on : .off
+		sendToggleRequest(id: "broadcast", status: broadcastEnabled)
+	}
 
     func sendToggleRequest(id: String, status: Bool) {
         guard let url = URL(string: "http://localhost:1000/obs/settings/?id=\(id)") else { return }
