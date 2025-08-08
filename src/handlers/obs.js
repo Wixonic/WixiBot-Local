@@ -180,7 +180,7 @@ const captureProcess = {
 		process: null
 	},
 	microphone: {
-		active: true,
+		active: false,
 		name: "Microphone streaming",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.microphone.name);
