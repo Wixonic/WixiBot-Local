@@ -6,7 +6,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var backgroundTaskProcess: Process?
     var backgroundTaskPID: Int32?
 	
-	var audioEnabled: Bool = true
+	var audioEnabled: Bool = false
 	var cameraEnabled: Bool = false
 	var screen1Enabled: Bool = false
 	var screen2Enabled: Bool = false

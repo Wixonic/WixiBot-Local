@@ -35,7 +35,7 @@ const updateDeviceList = () => {
  */
 const captureProcess = {
 	audio: {
-		active: true,
+		active: false,
 		name: "Audio capture",
 		spawn: (logger, config) => {
 			logger.info("Starting process:", captureProcess.audio.name);
