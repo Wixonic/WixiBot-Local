@@ -1,4 +1,5 @@
 const childProcess = require("child_process");
+const { default: path } = require("path");
 
 /**
  * @type {{audio: string[], video: string[]}}
@@ -195,6 +196,17 @@ const captureProcess = {
 
 				"-f", "mpegts",
 				"udp://@:2003"
+			], { stdio: "inherit" });
+		},
+		process: null
+	},
+	broadcast: {
+		active: false,
+		name: "Broadcast",
+		spawn: (logger, config) => {
+			logger.info("Starting process:", captureProcess.broadcast.name);
+			return childProcess.spawn("node", [
+				path.join(__dirname, "..", "proto.micbroadcast.js")
 			], { stdio: "inherit" });
 		},
 		process: null
