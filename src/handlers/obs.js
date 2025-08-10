@@ -59,7 +59,7 @@ const captureProcess = {
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${target[config.client.host] ?? config.client.host}:2000`
+				`udp://${target[config.client.host]}:2000`
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -94,7 +94,7 @@ const captureProcess = {
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${target[config.client.host] ?? config.client.host}:2001`
+				`udp://${target[config.client.host]}:2001`
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -129,7 +129,7 @@ const captureProcess = {
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${target[config.client.host] ?? config.client.host}:2001`
+				`udp://${target[config.client.host]}:2001`
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -173,8 +173,7 @@ const captureProcess = {
 				"-x264-params", "repeat-headers=1:scenecut=0:force-cfr=1:nal-hrd=cbr",
 
 				"-f", "mpegts",
-				"udp://localhost:2002"
-				// `udp://${target[config.client.host] ?? config.client.host}:2002`
+				`udp://${target[config.client.host]}:2002`
 			], { stdio: "inherit" });
 		},
 		process: null
