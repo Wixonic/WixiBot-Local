@@ -1,36 +1,36 @@
 {
-	"name": "wixibot-local",
-	"displayName": "WixiBot Local",
-	"description": "WixiLand Management Agency's local server",
-	"author": "Wixonic <contact@wixonic.fr> (https://wixonic.fr)",
-	"version": "1.0.0",
-	"license": "Wix Non-Commercial License",
-	"repository": "github:Wixonic/WixiBot-Local",
-	"funding": {
-		"type": "patreon",
-		"url": "https://www.patreon.com/wixonic"
-	},
-	"main": "main.js",
-	"scripts": {
-		"test": "config=test dev=true node --trace-warnings ./main.js",
-		"start": "node --no-warnings ./main.js"
-	},
-	"engines": {
-		"node": "24"
-	},
-	"dependencies": {
-		"@tensorflow/tfjs-node": "^4.22.0",
-		"@vladmandic/face-api": "^1.7.15",
-		"@wixonic/logger": "^1.1.0",
-		"applescript": "^1.0.0",
-		"canvas": "^3.1.0",
-		"discord.js-selfbot-v13": "^3.6.1",
-		"express": "^5.1.0",
-		"jsdom": "^26.1.0",
-		"sharp": "^0.34.2",
-		"ws": "^8.18.3"
-	},
-	"devDependencies": {
-		"@types/node": "^24.0.10"
-	}
+  "name": "wixibot-local",
+  "displayName": "WixiBot Local",
+  "description": "WixiLand Management Agency's local server",
+  "author": "Wixonic <contact@wixonic.fr> (https://wixonic.fr)",
+  "version": "1.0.0",
+  "license": "Wix Non-Commercial License",
+  "repository": "github:Wixonic/WixiBot-Local",
+  "funding": {
+    "type": "patreon",
+    "url": "https://www.patreon.com/wixonic"
+  },
+  "main": "main.js",
+  "scripts": {
+    "test": "config=test dev=true node --trace-warnings ./main.js",
+    "start": "node --no-warnings ./main.js"
+  },
+  "engines": {
+    "node": "24"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "@vladmandic/face-api": "^1.7.15",
+    "@wixonic/logger": "^1.1.0",
+    "applescript": "^1.0.0",
+    "canvas": "^3.1.2",
+    "discord.js-selfbot-v13": "^3.7.0",
+    "express": "^5.1.0",
+    "jsdom": "^26.1.0",
+    "sharp": "^0.34.3",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1"
+  }
 }
