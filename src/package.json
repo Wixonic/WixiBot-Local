@@ -24,6 +24,7 @@
     "@wixonic/logger": "^1.1.0",
     "applescript": "^1.0.0",
     "canvas": "^3.1.2",
+    "cors": "^2.8.5",
     "discord.js-selfbot-v13": "^3.7.0",
     "express": "^5.1.0",
     "jsdom": "^26.1.0",
