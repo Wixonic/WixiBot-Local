@@ -1,13 +1,14 @@
 browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	if (request.action === "send") {
+	if (request.action == "send") {
 		const xhr = new XMLHttpRequest();
 
 		xhr.open(request.method, request.url, true);
+		xhr.setRequestHeader("Authorization", `WixKey ${window.__wixkey}`);
 		xhr.setRequestHeader("Content-Type", "application/json");
 
 		xhr.addEventListener("readystatechange", () => {
-			if (xhr.readyState === 4) {
-				if (xhr.status >= 200 && xhr.status < 300) sendResponse({ data: "Sent" });
+			if (xhr.readyState == 4) {
+				if (xhr.status == 204) sendResponse({ data: "Sent" });
 				else sendResponse({ error: xhr.statusText || `HTTP ${xhr.status}` });
 			}
 		});

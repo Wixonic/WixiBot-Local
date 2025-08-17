@@ -95,11 +95,9 @@ const extensions = [
 					paused: data.paused,
 					time: (cache.youtube.value ?? 0) + Math.floor((performance.now() - (cache.youtube.date ?? 0)) / 1000),
 					duration: data.duration,
-					thumbnail: (data.thumbnailUrl ?? [])[0],
-					url: `https://www.youtube.com/watch?v=${data.embedUrl.slice("https://www.youtube.com/embed/".length)}`
+					thumbnail: data.thumbnailUrl,
+					url: data["@id"]
 				});
-
-				console.log((cache.youtube.value ?? 0) + Math.floor((performance.now() - (cache.youtube.date ?? 0)) / 1000));
 
 				onUnload.path = "/rpc/youtube/";
 				onUnload.data = {
@@ -146,22 +144,8 @@ const check = () => {
 	setTimeout(check, 10000);
 };
 
-window.addEventListener("load", () => {
-	check();
-});
+window.addEventListener("load", check);
 
 window.addEventListener("beforeunload", async () => {
-	if (onUnload.path) {
-		const response = await browser.runtime.sendMessage({
-			action: "send",
-			method: "DELETE",
-			url: new URL(onUnload.path, "http://server.wixonic.fr").toString(),
-			data: onUnload.data
-		});
-
-		if (response) {
-			if (response.error) console.error("Error:", response.error);
-			else console.log("Response:", response.data);
-		}
-	}
+	if (onUnload.path) await send("DELETE", onUnload.path, onUnload.data);
 });

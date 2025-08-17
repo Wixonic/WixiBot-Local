@@ -12,7 +12,8 @@
 	},
 	"background": {
 		"scripts": [
-			"background.js"
+			"background.js",
+			"secrets.js"
 		]
 	},
 	"content_scripts": [
