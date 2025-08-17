@@ -1,6 +1,7 @@
 const { execSync } = require("child_process");
 const cors = require("cors");
 const express = require("express");
+const fs = require("fs");
 const http = require("http");
 const path = require("path");
 const ws = require("ws");
@@ -8,12 +9,10 @@ const ws = require("ws");
 class Server {
 	/**
 	 * @param {import("@wixonic/logger").Logger} logger
-	 * @param {import("../types.d.ts").ServerConfig} settings
+	 * @param {import("../types.d.ts").Settings} settings
 	 */
 	constructor(logger, settings) {
-		/**
-		 * @type {import("@wixonic/logger").Logger}
-		 */
+		/** @type {import("@wixonic/logger").Logger} */
 		this.logger = {
 			debug: (...any) => logger.debug("[Server]", ...any),
 			error: (...any) => logger.error("[Server]", ...any),
@@ -21,15 +20,21 @@ class Server {
 			warn: (...any) => logger.warn("[Server]", ...any)
 		};
 
+		this.settings = settings;
+
 		this.app = express();
 
+		/** @type {http.Server} */
 		this.http = http.createServer();
 
 		this.ws = new ws.Server({
 			noServer: true
 		});
 
-		this.port = settings.port;
+		this.wsHandlers = [];
+		this.loopHandlers = [];
+
+		this.port = this.settings.port;
 	};
 
 	/**
@@ -38,21 +43,84 @@ class Server {
 	init() {
 		const websitePath = path.join(__dirname, "..", "website");
 
-		return new Promise((resolve) => {
+		return new Promise(async (resolve) => {
+			this.app.use(cors({
+				credentials: true,
+				origin: (origin, callback) => callback(null, origin ?? true)
+			}));
+
 			this.app.use((req, res, next) => {
 				const origin = req.headers.origin;
 				this.logger.debug(`Request: ${req.method + (origin ? " " + origin : "")} | ${req.url}`);
 				next();
 			});
 
-
-			this.app.use(cors({
-				credentials: true,
-				origin: (origin, callback) => callback(null, origin ?? true)
-			}));
-
-			this.app.use(express.text({ limit: "1gb", type: "*/*" }));
 			this.app.use(express.static(websitePath));
+			this.app.use(express.text({ limit: "1gb", type: "*/*" }));
+
+			const handlers = fs.readdirSync(path.join(websitePath, "handlers"), { recursive: true });
+			for (const handlerFile of handlers) {
+				if (handlerFile.endsWith(".js")) {
+					/** @type {import("../types.d.ts").HandlerInfo} */
+					const handler = require(path.join(websitePath, "handlers", handlerFile));
+					const handlerName = handlerFile.replace(".js", "");
+
+					for (const method in handler.handlers) {
+						if (method != "ws") this.app[method](handler.path, (req, res) => handler.handlers[method](this.logger, this.settings, req, res));
+						else this.wsHandlers[handler.path] = handler.handlers.ws;
+						this.logger.debug("Added handler for", handlerName, "at", handler.path, "with method", method);
+					}
+
+					if (handler.loop) {
+						this.loopHandlers[handler.path] = {
+							delay: handler.loop.delay,
+							idle: true,
+							lastUpdated: 0,
+							name: handlerName,
+							process: handler.loop.process
+						};
+
+						this.logger.debug("Added loop handler for", handlerName);
+					}
+				}
+			}
+
+			const loopUpdate = async () => {
+				const now = Date.now();
+				const promises = [];
+
+				for (const path in this.loopHandlers) {
+					const loop = this.loopHandlers[path];
+					if (typeof loop.process == "function" && loop.lastUpdated + (loop.idle ? 60 * 1000 : loop.delay) <= now) {
+						this.loopHandlers[path].lastUpdated = now;
+
+						const handlerLogger = {
+							debug: (...args) => this.logger.debug(`[${loop.name} init]`, ...args),
+							error: (...args) => this.logger.error(`[${loop.name} init]`, ...args),
+							info: (...args) => this.logger.info(`[${loop.name} init]`, ...args),
+							warn: (...args) => this.logger.warn(`[${loop.name} init]`, ...args)
+						};
+
+						promises.push((async () => {
+							try {
+								const status = await loop.process(handlerLogger, this.settings);
+								if (status != loop.idle) {
+									handlerLogger.debug(`Now ${status ? "idle" : "active"}`);
+									this.loopHandlers[path].idle = status;
+								}
+							} catch (e) {
+								handlerLogger.warn("Failed to process:", e);
+								handlerLogger.debug("Now idle");
+								this.loopHandlers[path].idle = true;
+							}
+						})());
+					}
+				}
+
+				if (promises.length > 0) await Promise.all(promises);
+
+				setTimeout(loopUpdate, Math.max(0, 500 - (Date.now() - now)));
+			};
 
 			this.app.use((req, res) => {
 				this.logger.warn(`404: ${req.method} ${req.url}`);
@@ -62,16 +130,17 @@ class Server {
 
 			this.http.on("clientError", (e) => this.logger.warn("[HTTP]", "Client error:", e));
 			this.http.on("close", () => this.logger.warn("[HTTP]", "Server closed"));
-			this.http.on("error", (e) => {
-				this.logger.error("[HTTP]", "Server error:", e);
-				process.exit(1);
-			});
+			this.http.on("error", (e) => this.logger.error("[HTTP]", "Server error:", e));
 			this.http.on("connection", () => this.logger.debug("[HTTP]", "TCP stream established"));
 			this.http.on("request", this.app);
 
 			this.http.on("upgrade", (req, socket, head) => {
-				this.logger.debug("Upgrading to WebSocket");
-				this.ws.handleUpgrade(req, socket, head, (ws) => this.ws.emit("connection", ws, req));
+				this.logger.debug("Upgrading to WebSocket at:", req.url ?? "unknown URL");
+				this.ws.handleUpgrade(req, socket, head, async (ws) => {
+					this.ws.emit("connection", ws, req);
+					const handler = this.wsHandlers[req.url];
+					if (handler) await handler(this.logger, this.settings, ws);
+				});
 			});
 
 
@@ -92,11 +161,16 @@ class Server {
 			this.ws.on("error", (e) => this.logger.error("[WebSocket]", "Server error:", e));
 
 			try {
-				execSync(`kill -9 $(lsof -ti :${this.port})`);
+				execSync(`kill -9 $(lsof -ti :${this.port})`, {
+					stdio: "ignore"
+				});
 			} catch { }
 
 			this.http.listen(this.port, () => {
 				this.logger.info(`Running on :${this.port}`);
+
+				loopUpdate();
+
 				resolve();
 			});
 		});

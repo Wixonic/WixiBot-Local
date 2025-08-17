@@ -1,5 +1,5 @@
 const childProcess = require("child_process");
-const { default: path } = require("path");
+const path = require("path");
 
 /**
  * @type {{audio: string[], video: string[]}}
@@ -214,74 +214,63 @@ const captureProcess = {
 };
 
 /**
- * @param {import("@wixonic/logger").Logger} logger
- * @param {import("../lib/client.js")} client
- * @param {import("../lib/discord.js")} discord
- * @param {import("../lib/server.js")} server
- * @param {import("../types.d.ts").Config} config
+ * @type {import("../../types.d.ts").HandlerInfo}
  */
-const init = async (logger, client, discord, server, config) => {
-	server.app.get("/obs/settings/", (req, res) => {
-		const { id } = req.query;
+const info = {
+	path: "/obs/settings/",
+	handlers: {
+		get: (logger, settings, req, res) => {
+			const { id } = req.query;
 
-		if (!id || !captureProcess[id]) return res.status(400).send("Invalid or missing process ID");
+			if (!id || !captureProcess[id]) return res.status(400).send("Invalid or missing process ID");
 
-		res.json({ id, active: captureProcess[id].active });
-	});
+			res.json({ id, active: captureProcess[id].active });
+		},
+		post: (logger, settings, req, res) => {
+			let body = "";
+			req.on("data", (chunk) => body += chunk.toString());
 
-	server.app.post("/obs/settings/", (req, res) => {
-		let body = "";
-		req.on("data", (chunk) => body += chunk.toString());
+			req.on("end", async () => {
+				try {
+					const response = JSON.parse(body);
+					const { id } = req.query;
+					const { status } = response;
 
-		req.on("end", async () => {
-			try {
-				const response = JSON.parse(body);
-				const { id } = req.query;
-				const { status } = response;
+					if (!id || !captureProcess[id]) return res.status(400).send("Invalid or missing process ID");
+					captureProcess[id].active = status;
 
-				if (!id || !captureProcess[id]) return res.status(400).send("Invalid or missing process ID");
-				captureProcess[id].active = status;
-
-				res.json({ id, active: captureProcess[id].active });
-			} catch {
-				res.status(400).send("Invalid status value");
-			}
-		});
-	});
-};
-
-/**
- * @param {import("@wixonic/logger").Logger} logger
- * @param {import("../lib/client.js")} client
- * @param {import("../lib/discord.js")} discord
- * @param {import("../lib/server.js")} server
- * @param {import("../types.d.ts").Config} config
- */
-const handler = async (logger, client, discord, server, config) => {
-	updateDeviceList();
-
-	for (const cp of Object.values(captureProcess)) {
-		if (!cp.process || cp.process.killed) {
-			if (cp.active) {
-				cp.process = cp.spawn(logger, config);
-
-				for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
-					process.once(signal, async (reason, code) => {
-						if (!cp.process.killed) {
-							cp.process.removeAllListeners("exit");
-							cp.process.kill("SIGTERM");
-						}
-					});
+					res.json({ id, active: captureProcess[id].active });
+				} catch {
+					res.status(400).send("Invalid status value");
 				}
+			});
+		}
+	},
+	loop: {
+		delay: 1 * 1000,
+		process: (logger, settings) => {
+			updateDeviceList();
+
+			for (const cp of Object.values(captureProcess)) {
+				if (!cp.process || cp.process.killed) {
+					if (cp.active) {
+						cp.process = cp.spawn(logger, config);
+
+						for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
+							process.once(signal, async (reason, code) => {
+								if (!cp.process.killed) {
+									cp.process.removeAllListeners("exit");
+									cp.process.kill("SIGTERM");
+								}
+							});
+						}
+					}
+				} else if (!cp.process.killed && !cp.active) cp.process.kill("SIGTERM");
 			}
-		} else if (!cp.process.killed && !cp.active) cp.process.kill("SIGTERM");
+
+			return true;
+		}
 	}
-
-	return true;
 };
 
-module.exports = {
-	delay: 1 * 1000,
-	init,
-	process: handler
-};
+module.exports = info;

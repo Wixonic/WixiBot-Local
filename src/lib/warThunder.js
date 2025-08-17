@@ -68,9 +68,9 @@ const getUnitData = async (logger, unit) => {
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
- * @param {import("../types.d.ts").WarThunderConfig} config
+ * @param {import("../types.d.ts").Settings} settings
  */
-const get = async (logger, config) => {
+const get = async (logger, settings) => {
 	const errors = [];
 	let info = {};
 	let objs = {};
@@ -83,23 +83,23 @@ const get = async (logger, config) => {
 
 	try {
 		info = await request(emptyLogger, {
-			url: new URL(config.paths.map.info, `http://localhost:${config.port}`),
+			url: new URL(settings.warthunder.paths.map.info, `http://localhost:${settings.warthunder.port}`),
 			type: "json",
 			secure: false
 		});
 
-		await wait(config.waitingTime);
+		await wait(settings.warthunder.waitingTime);
 
 		objs = await request(emptyLogger, {
-			url: new URL(config.paths.map.objects, `http://localhost:${config.port}`),
+			url: new URL(settings.warthunder.paths.map.objects, `http://localhost:${settings.warthunder.port}`),
 			type: "json",
 			secure: false
 		});
 
-		await wait(config.waitingTime);
+		await wait(settings.warthunder.waitingTime);
 
 		const imageResponse = await request(emptyLogger, {
-			url: new URL(config.paths.map.image, `http://localhost:${config.port}`),
+			url: new URL(settings.warthunder.paths.map.image, `http://localhost:${settings.warthunder.port}`),
 			type: "raw",
 			secure: false
 		});
@@ -113,12 +113,12 @@ const get = async (logger, config) => {
 		logger.warn(`Image: ${e}`);
 	}
 
-	await wait(config.waitingTime);
+	await wait(settings.warthunder.waitingTime);
 
 	if (errors.length == 0) {
 		try {
 			indicators = await request(emptyLogger, {
-				url: new URL(config.paths.vehicle.indicators, `http://localhost:${config.port}`),
+				url: new URL(settings.warthunder.paths.vehicle.indicators, `http://localhost:${settings.warthunder.port}`),
 				type: "json",
 				secure: false
 			});
@@ -135,11 +135,11 @@ const get = async (logger, config) => {
 						break;
 
 					case "air":
-						await wait(config.waitingTime);
+						await wait(settings.warthunder.waitingTime);
 
 						try {
 							const state = await request(emptyLogger, {
-								url: new URL(config.paths.vehicle.state, `http://localhost:${config.port}`),
+								url: new URL(settings.warthunder.paths.vehicle.state, `http://localhost:${settings.warthunder.port}`),
 								type: "json",
 								secure: false
 							});
@@ -167,12 +167,12 @@ const get = async (logger, config) => {
 		}
 	}
 
-	await wait(config.waitingTime);
+	await wait(settings.warthunder.waitingTime);
 
 	if (errors.length == 0) {
 		try {
 			mission = await request(emptyLogger, {
-				url: new URL(config.paths.mission, `http://localhost:${config.port}`),
+				url: new URL(settings.warthunder.paths.mission, `http://localhost:${settings.warthunder.port}`),
 				type: "json",
 				secure: false
 			});
@@ -183,20 +183,20 @@ const get = async (logger, config) => {
 		}
 	}
 
-	await wait(config.waitingTime);
+	await wait(settings.warthunder.waitingTime);
 
 	if (errors.length == 0) {
 		try {
 			messages.chat = await request(emptyLogger, {
-				url: new URL(config.paths.messages.chat + "?lastId=0", `http://localhost:${config.port}`),
+				url: new URL(settings.warthunder.paths.messages.chat + "?lastId=0", `http://localhost:${settings.warthunder.port}`),
 				type: "json",
 				secure: false
 			});
 
-			await wait(config.waitingTime);
+			await wait(settings.warthunder.waitingTime);
 
 			messages.hud = await request(emptyLogger, {
-				url: new URL(config.paths.messages.hud + "?lastEvt=0&lastDmg=0", `http://localhost:${config.port}`),
+				url: new URL(settings.warthunder.paths.messages.hud + "?lastEvt=0&lastDmg=0", `http://localhost:${settings.warthunder.port}`),
 				type: "json",
 				secure: false
 			});

@@ -1,94 +1,36 @@
-import { ActivitiesOptions, CustomStatus, RichPresence, SpotifyRPC } from "discord.js-selfbot-v13";
-
-export interface ClientConfig {
-	host: string;
-};
-
-export interface DiscordClient {
-	id: string;
-	assets: Record<string, string>;
-};
-
-export interface DiscordConfig {
-	application: {
-		clients: Record<string, DiscordClient>;
-	};
-
-	token: string;
-};
-
-export interface ServerConfig {
-	port: number;
-};
-
-export interface SpotifyConfig {
-	id: string;
-	secret: string;
-};
-
-export interface WarThunderConfig {
-	paths: {
-		mission: string;
-		map: {
-			image: string;
-			info: string;
-			objects: string;
-		};
-
-		messages: {
-			chat: string;
-			hud: string;
-		};
-
-		vehicle: {
-			indicators: string;
-			state: string;
-		};
-	};
-
-	port: number;
-	waitingTime: number;
-};
-
-export interface Config {
-	client: ClientConfig;
-	discord: DiscordConfig;
-	server: ServerConfig;
-	spotify: SpotifyConfig;
-	warThunder: WarThunderConfig;
-};
-
-
-export interface ClientSecrets {
-};
-
-export interface DiscordSecrets {
-	token: string;
-};
-
-export interface RobloxSecrets {
-	id: string;
-	token: string;
-};
-
-export interface SpotifySecrets {
-	id: string;
-	secret: string;
-};
-
-export interface SteamSecrets {
-	id: string;
-	token: string;
-};
-
 export interface Secrets {
-	client: ClientSecrets;
-	discord: DiscordSecrets;
-	roblox: RobloxSecrets;
-	spotify: SpotifySecrets;
-	steam: SteamSecrets;
 	wixkey: string;
 };
+
+export interface Settings {
+	host: string;
+	port: number;
+	secrets: Secrets;
+	warthunder: {
+		paths: {
+			mission: string;
+			map: {
+				image: string;
+				info: string;
+				objects: string;
+			};
+
+			messages: {
+				chat: string;
+				hud: string;
+			};
+
+			vehicle: {
+				indicators: string;
+				state: string;
+			};
+		};
+
+		port: number;
+		waitingTime: number;
+	};
+};
+
 
 export type RequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
 export type RequestResponseType = "headers" | "json" | "raw" | "text";
@@ -102,6 +44,7 @@ export interface RequestOptions {
 	type: RequestResponseType;
 	url: URL | string;
 };
+
 
 export interface Song {
 	state: "PLAYING" | "PAUSED" | "STOPPED";
@@ -119,4 +62,37 @@ export interface Song {
 	path?: string;
 };
 
-export type Activity = ActivitiesOptions | RichPresence | SpotifyRPC | CustomStatus;
+type HttpHandler = (
+	logger: import("@wixonic/logger").Logger,
+	settings: Settings,
+	req: import("express").Request,
+	res: import("express").Response
+) => Promise<void>;
+
+type WSHandler = (
+	logger: import("@wixonic/logger").Logger,
+	settings: Settings,
+	ws: import("ws").WebSocket
+) => Promise<void>;
+
+type LoopHandler = (
+	logger: import("@wixonic/logger").Logger,
+	settings: Settings
+) => Promise<boolean>;
+
+export interface HandlerInfo {
+	path: string;
+	handlers: {
+		get: HttpHandler?;
+		post: HttpHandler?;
+		put: HttpHandler?;
+		patch: HttpHandler?;
+		delete: HttpHandler?;
+		options: HttpHandler?;
+		ws: WSHandler?;
+	};
+	loop: {
+		delay: number;
+		process: LoopHandler;
+	}
+};

@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"name": "SafariRPC",
 	"description": "Safari Extension for WixiBot",
-	"version": "0.13.0",
+	"version": "0.14.0",
 	"icons": {
 		"48": "images/icon-48.png",
 		"96": "images/icon-96.png",
@@ -30,7 +30,7 @@
 	},
 	"permissions": [
 		"activeTab",
-		"http://localhost:1000/",
+		"https://server.wixonic.fr",
 		"background"
 	]
 }

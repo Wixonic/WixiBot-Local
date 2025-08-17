@@ -6,84 +6,6 @@ const cache = {
 	}
 };
 
-const chess = {
-	regexp: /^https:\/\/www\.chess\.com\/game\/(\d+)/m, // https://www.chess.com/game/:id
-	previousBoard: null,
-
-	fetchBoard: () => {
-		const boardEl = document.querySelector("wc-chess-board");
-		const pieceEls = boardEl?.querySelectorAll(".piece");
-
-		const board = [];
-
-		for (const pieceEl of (pieceEls ?? [])) {
-			const piece = {};
-
-			for (const value of pieceEl.classList.values()) {
-				const pre = "square-";
-				if (value.startsWith(pre)) {
-					piece.column = value.at(pre.length);
-					piece.line = value.at(pre.length + 1);
-				} else if (value.length == 2) {
-					piece.color = value[0];
-					piece.type = value[1];
-				}
-			}
-
-			board.push(piece);
-		}
-
-		return board;
-	},
-
-	generateFEN: (board) => {
-		const emptyBoard = Array.from({ length: 8 }, () => Array(8).fill(null));
-
-		for (const { column, line, color, type } of board) {
-			const symbol = color === "w" ? type.toUpperCase() : type.toLowerCase();
-			emptyBoard[8 - parseInt(line)][parseInt(column) - 1] = symbol;
-		}
-
-		const boardFEN = emptyBoard.map((row) => {
-			let emptyCount = 0;
-			return row.map((cell) => {
-				if (cell === null) {
-					emptyCount++;
-					return "";
-				} else {
-					const res = (emptyCount > 0 ? emptyCount : "") + cell;
-					emptyCount = 0;
-					return res;
-				}
-			}).join("") + (emptyCount > 0 ? emptyCount : "");
-		}).join("/");
-
-		return `${boardFEN} ${document.querySelector(".clock-black").classList.contains("clock-player-turn") ? "b" : "w"} - - 0 1`;
-	},
-
-	update: () => {
-		const regexpResults = chess.regexp.exec(location.href);
-
-		if (regexpResults?.length > 0) {
-			const board = chess.fetchBoard();
-
-			if (JSON.stringify(board) != JSON.stringify(chess.previousBoard)) {
-				const FEN = chess.generateFEN(board);
-
-				send("POST", "/chess/", {
-					board,
-					FEN,
-					url: `https://www.chess.com/game/${regexpResults[1]}`
-				});
-
-				chess.previousBoard = board;
-			}
-
-			setTimeout(() => chess.update(), 100);
-		} else setTimeout(() => chess.update(), 2000);
-	}
-};
-
 const onUnload = {
 	data: null,
 	path: null
@@ -185,16 +107,6 @@ const extensions = [
 				};
 			}
 		}
-	}, {
-		// https://www.chess.com/game/:id
-		matches: [chess.regexp],
-		run: (_, id) => {
-			send("POST", "/rpc/chess/", {
-				url: `https://www.chess.com/game/${id}`
-			});
-
-			onUnload.path = "/rpc/chess/";
-		}
 	}
 ];
 
@@ -202,7 +114,7 @@ const send = async (method = "POST", path = "/", data = {}) => {
 	const response = await browser.runtime.sendMessage({
 		action: "send",
 		method,
-		url: new URL(path, "http://localhost:1000").toString(),
+		url: new URL(path, "https://server.wixonic.fr").toString(),
 		data
 	});
 
@@ -244,7 +156,7 @@ window.addEventListener("beforeunload", async () => {
 		const response = await browser.runtime.sendMessage({
 			action: "send",
 			method: "DELETE",
-			url: new URL(onUnload.path, "http://localhost:1000").toString(),
+			url: new URL(onUnload.path, "http://server.wixonic.fr").toString(),
 			data: onUnload.data
 		});
 
