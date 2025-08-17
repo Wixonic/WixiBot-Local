@@ -105,10 +105,9 @@ def update():
     }
 
     try:
-        headers = {
+        response = requests.post("https://server.wixonic.fr/rpc/blender/", data=json.dumps(data), headers={
             "Authorization": "WixKey YOUR_ACCESS_TOKEN"
-        }
-        response = requests.post("https://server.wixonic.fr/rpc/blender/", data=json.dumps(data), headers=headers)
+        })
         if response.status_code != 200:
             print(f"Failed to send data: {response.status_code}, {response.text}")
     except requests.RequestException as e:
