@@ -7,7 +7,7 @@ from bpy.app.handlers import persistent
 bl_info = {
     "name": "BlenderRPC",
     "author": "Wixonic",
-    "version": (1, 1, 3),
+    "version": (1, 2, 0),
     "blender": (2, 8, 0),
     "description": "Blender add-on for WixiBot",
     "category": "System"
