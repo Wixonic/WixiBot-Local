@@ -48,19 +48,14 @@ const extensions = [
 			/^https:\/\/(?:[\w-]+\.)*youtube.com\/watch/m
 		],
 		run: (_) => {
-			const dataScripts = document.querySelectorAll(`script[type="application/ld+json"]`);
+			const dataScript = document.body.querySelector(`script[type="application/ld+json"]`);
 			let data = {};
 
-			for (let x = 0; x < (dataScripts ?? []).length; ++x) {
-				try {
-					const dataScript = JSON.parse(dataScripts[x].innerHTML);
+			try {
+				const dataScriptContent = JSON.parse(dataScript.innerHTML);
 
-					if (dataScript["@type"] == "VideoObject") {
-						data = dataScript;
-						break;
-					}
-				} catch { }
-			}
+				if (dataScriptContent["@type"] == "VideoObject") data = dataScriptContent;
+			} catch { }
 
 			const convertToSeconds = (time) => {
 				time = time.split(":");
@@ -95,7 +90,7 @@ const extensions = [
 					paused: data.paused,
 					time: (cache.youtube.value ?? 0) + Math.floor((performance.now() - (cache.youtube.date ?? 0)) / 1000),
 					duration: data.duration,
-					thumbnail: data.thumbnailUrl,
+					thumbnail: data.thumbnailUrl[0],
 					url: data["@id"]
 				});
 
