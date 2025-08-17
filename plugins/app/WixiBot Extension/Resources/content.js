@@ -148,7 +148,6 @@ const check = () => {
 
 window.addEventListener("load", () => {
 	check();
-	chess.update();
 });
 
 window.addEventListener("beforeunload", async () => {
