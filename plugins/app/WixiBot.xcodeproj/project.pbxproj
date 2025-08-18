@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B1D79D52E53D635004152D8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B1D79D42E53D635004152D8 /* AVFoundation.framework */; };
 		4B46E5212D7132B80097C0C0 /* WixiBot Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4B46E5202D7132B80097C0C0 /* WixiBot Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B1D79D42E53D635004152D8 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		4B46E5042D7132B70097C0C0 /* WixiBot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WixiBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B46E5202D7132B80097C0C0 /* WixiBot Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "WixiBot Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -73,6 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B1D79D52E53D635004152D8 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,11 +89,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B1D79D32E53D635004152D8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4B1D79D42E53D635004152D8 /* AVFoundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		4B46E4FB2D7132B70097C0C0 = {
 			isa = PBXGroup;
 			children = (
 				4B46E5062D7132B70097C0C0 /* WixiBot */,
 				4B46E5242D7132B80097C0C0 /* WixiBot Extension */,
+				4B1D79D32E53D635004152D8 /* Frameworks */,
 				4B46E5052D7132B70097C0C0 /* Products */,
 			);
 			sourceTree = "<group>";
