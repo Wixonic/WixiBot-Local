@@ -45,8 +45,11 @@ const request = (logger, options = {}) => {
 				req.on("timeout", () => reject("Connection got timed out"));
 
 				req.on("response", (res) => {
+					req.removeAllListeners();
+
 					if (res.statusCode == 204) resolve(null);
 					else {
+						logger.debug(res.statusCode);
 						if (options.type == "headers") resolve(res.headers);
 						else {
 							const chunks = [];
@@ -55,7 +58,6 @@ const request = (logger, options = {}) => {
 								logger.debug("[Request]", "Rejected while response:", reason);
 
 								res.removeAllListeners();
-								req.removeAllListeners();
 
 								resolve({
 									error: reason,
@@ -69,7 +71,6 @@ const request = (logger, options = {}) => {
 							res.on("data", (chunk) => chunks.push(chunk));
 							res.on("end", () => {
 								res.removeAllListeners();
-								req.removeAllListeners();
 
 								switch (options.type) {
 									case "json":
