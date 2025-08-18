@@ -9,11 +9,6 @@ const deviceList = {
 	video: []
 };
 
-const target = {
-	"server.wixonic.fr": "10.0.0.1",
-	"localhost:999": "localhost"
-};
-
 const trimName = (name) => name.split("(")[0].replace(/\s\n\t/, " ").trim();
 
 const updateDeviceList = () => {
@@ -32,13 +27,13 @@ const updateDeviceList = () => {
 };
 
 /**
- * @type {{[name: string]: {spawn: (logger: import("@wixonic/logger").Logger, config: import("../types.d.ts").Config) => childProcess.ChildProcess, process: childProcess.ChildProcess?, active: boolean, name: string}}}
+ * @type {{[name: string]: {spawn: (logger: import("@wixonic/logger").Logger, settings: import("../../types.d.ts").Settings) => childProcess.ChildProcess, process: childProcess.ChildProcess?, active: boolean, name: string}}}
  */
 const captureProcess = {
 	audio: {
 		active: false,
 		name: "Audio capture",
-		spawn: (logger, config) => {
+		spawn: (logger, settings) => {
 			logger.info("Starting process:", captureProcess.audio.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
@@ -60,7 +55,7 @@ const captureProcess = {
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${target[config.client.host]}:2000`
+				"udp://10.0.0.1:2000"
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -68,7 +63,7 @@ const captureProcess = {
 	screenshare1: {
 		active: false,
 		name: "Screen capture 1",
-		spawn: (logger, config) => {
+		spawn: (logger, settings) => {
 			logger.info("Starting process:", captureProcess.screenshare1.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
@@ -95,7 +90,7 @@ const captureProcess = {
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${target[config.client.host]}:2001`
+				"udp://10.0.0.1:2001"
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -103,7 +98,7 @@ const captureProcess = {
 	screenshare2: {
 		active: false,
 		name: "Screen capture 2",
-		spawn: (logger, config) => {
+		spawn: (logger, settings) => {
 			logger.info("Starting process:", captureProcess.screenshare2.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
@@ -130,7 +125,7 @@ const captureProcess = {
 				"-muxdelay", "0",
 				"-muxpreload", "0",
 				"-f", "mpegts",
-				`udp://${target[config.client.host]}:2001`
+				"udp://10.0.0.1:2001"
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -138,7 +133,7 @@ const captureProcess = {
 	camera: {
 		active: false,
 		name: "Camera capture",
-		spawn: (logger, config) => {
+		spawn: (logger, settings) => {
 			logger.info("Starting process:", captureProcess.camera.name);
 			return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
 				"-hide_banner",
@@ -174,7 +169,7 @@ const captureProcess = {
 				"-x264-params", "repeat-headers=1:scenecut=0:force-cfr=1:nal-hrd=cbr",
 
 				"-f", "mpegts",
-				`udp://${target[config.client.host]}:2002`
+				"udp://10.0.0.1:2002"
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -182,7 +177,7 @@ const captureProcess = {
 	microphone: {
 		active: false,
 		name: "Microphone streaming",
-		spawn: (logger, config) => {
+		spawn: (logger, settings) => {
 			logger.info("Starting process:", captureProcess.microphone.name);
 			return childProcess.spawn("ffplay", [
 				"-hide_banner",
@@ -195,7 +190,7 @@ const captureProcess = {
 				"-vn",
 
 				"-f", "mpegts",
-				"udp://@:2003"
+				"udp://10.0.0.1:2003"
 			], { stdio: "inherit" });
 		},
 		process: null
@@ -203,11 +198,9 @@ const captureProcess = {
 	broadcast: {
 		active: false,
 		name: "Broadcast",
-		spawn: (logger, config) => {
+		spawn: (logger, settings) => {
 			logger.info("Starting process:", captureProcess.broadcast.name);
-			return childProcess.spawn("node", [
-				path.join(__dirname, "..", "proto.micbroadcast.js")
-			], { stdio: "inherit" });
+			return null;
 		},
 		process: null
 	}
@@ -222,40 +215,46 @@ const info = {
 		get: (logger, settings, req, res) => {
 			const { id } = req.query;
 
-			if (!id || !captureProcess[id]) return res.status(400).send("Invalid or missing process ID");
+			if (!id || !captureProcess[id]) return res.status(400).json({
+				error: "Invalid or missing process ID"
+			});
 
-			res.json({ id, active: captureProcess[id].active });
+			res.status(200).json({
+				id,
+				active: captureProcess[id].active
+			});
 		},
 		post: (logger, settings, req, res) => {
-			let body = "";
-			req.on("data", (chunk) => body += chunk.toString());
+			try {
+				const { id } = req.query;
+				const { status } = JSON.parse(req.body);
 
-			req.on("end", async () => {
-				try {
-					const response = JSON.parse(body);
-					const { id } = req.query;
-					const { status } = response;
+				if (!id || !captureProcess[id]) return res.status(400).json({
+					error: "Invalid or missing process ID"
+				});
+				captureProcess[id].active = status;
 
-					if (!id || !captureProcess[id]) return res.status(400).send("Invalid or missing process ID");
-					captureProcess[id].active = status;
-
-					res.json({ id, active: captureProcess[id].active });
-				} catch (e) {
-					logger.warn("[obs/settings]", e);
-					res.status(400).send("Invalid status value");
-				}
-			});
+				res.status(200).json({
+					id,
+					active: captureProcess[id].active
+				});
+			} catch (e) {
+				logger.warn("[obs/settings]", e);
+				res.status(400).json({
+					error: "Invalid status value"
+				});
+			}
 		}
 	},
 	loop: {
-		delay: 1 * 1000,
+		delay: 2 * 1000,
 		process: (logger, settings) => {
 			updateDeviceList();
 
 			for (const cp of Object.values(captureProcess)) {
 				if (!cp.process || cp.process.killed) {
 					if (cp.active) {
-						cp.process = cp.spawn(logger, config);
+						cp.process = cp.spawn(logger, settings);
 
 						for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
 							process.once(signal, async (reason, code) => {
@@ -269,7 +268,7 @@ const info = {
 				} else if (!cp.process.killed && !cp.active) cp.process.kill("SIGTERM");
 			}
 
-			return true;
+			return false;
 		}
 	}
 };

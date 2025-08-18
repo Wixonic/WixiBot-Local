@@ -29,32 +29,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 		let menu = NSMenu()
 
-		audioMenuItem = NSMenuItem(title: "Audio", action: #selector(toggleAudio(_:)), keyEquivalent: "")
+		audioMenuItem = NSMenuItem(title: "Audio", action: #selector(toggleAudio(_:)), keyEquivalent: "a")
 		audioMenuItem.state = audioEnabled ? .on : .off
 		audioMenuItem.target = self
 		menu.addItem(audioMenuItem)
 
-        screen1MenuItem = NSMenuItem(title: "Screenshare 1", action: #selector(toggleScreen1(_:)), keyEquivalent: "")
+        screen1MenuItem = NSMenuItem(title: "Screenshare 1", action: #selector(toggleScreen1(_:)), keyEquivalent: "s")
         screen1MenuItem.state = screen1Enabled ? .on : .off
         screen1MenuItem.target = self
         menu.addItem(screen1MenuItem)
 
-        screen2MenuItem = NSMenuItem(title: "Screenshare 2", action: #selector(toggleScreen2(_:)), keyEquivalent: "")
+        screen2MenuItem = NSMenuItem(title: "Screenshare 2", action: #selector(toggleScreen2(_:)), keyEquivalent: "s2")
         screen2MenuItem.state = screen2Enabled ? .on : .off
         screen2MenuItem.target = self
         menu.addItem(screen2MenuItem)
 
-        cameraMenuItem = NSMenuItem(title: "Camera", action: #selector(toggleCamera(_:)), keyEquivalent: "")
+        cameraMenuItem = NSMenuItem(title: "Camera", action: #selector(toggleCamera(_:)), keyEquivalent: "c")
         cameraMenuItem.state = cameraEnabled ? .on : .off
         cameraMenuItem.target = self
         menu.addItem(cameraMenuItem)
 		
-		microphoneBroadcastMenuItem = NSMenuItem(title: "Microphone", action: #selector(toggleMicrophoneBroadcast(_:)), keyEquivalent: "")
+		microphoneBroadcastMenuItem = NSMenuItem(title: "Microphone", action: #selector(toggleMicrophoneBroadcast(_:)), keyEquivalent: "m")
 		microphoneBroadcastMenuItem.state = microphoneBroadcastEnabled ? .on : .off
 		microphoneBroadcastMenuItem.target = self
 		menu.addItem(microphoneBroadcastMenuItem)
 		
-		broadcastMenuItem = NSMenuItem(title: "Broadcast", action: #selector(toggleBroadcast(_:)), keyEquivalent: "")
+		broadcastMenuItem = NSMenuItem(title: "Broadcast", action: #selector(toggleBroadcast(_:)), keyEquivalent: "b")
 		broadcastMenuItem.state = broadcastEnabled ? .on : .off
 		broadcastMenuItem.target = self
 		menu.addItem(broadcastMenuItem)
@@ -106,6 +106,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let body: [String: Bool] = ["status": status]
