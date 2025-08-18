@@ -51,6 +51,8 @@ const captureProcess = {
 				"-ac", "2",
 				"-ar", "48000",
 
+				"-tune", "zerolatency",
+
 				"-flush_packets", "1",
 				"-muxdelay", "0",
 				"-muxpreload", "0",
