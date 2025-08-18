@@ -1,5 +1,4 @@
 const childProcess = require("child_process");
-const path = require("path");
 
 /**
  * @type {{audio: string[], video: string[]}}
