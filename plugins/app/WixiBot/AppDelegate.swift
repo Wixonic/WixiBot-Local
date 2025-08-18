@@ -39,7 +39,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         screen1MenuItem.target = self
         menu.addItem(screen1MenuItem)
 
-        screen2MenuItem = NSMenuItem(title: "Screenshare 2", action: #selector(toggleScreen2(_:)), keyEquivalent: "s2")
+        screen2MenuItem = NSMenuItem(title: "Screenshare 2", action: #selector(toggleScreen2(_:)), keyEquivalent: "")
         screen2MenuItem.state = screen2Enabled ? .on : .off
         screen2MenuItem.target = self
         menu.addItem(screen2MenuItem)
