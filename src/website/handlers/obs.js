@@ -196,9 +196,8 @@ const captureProcess = {
 /**
  * @param {import("@wixonic/logger").Logger} logger
  * @param {CaptureProcess} cp
- * @param {import("../../types.d.ts").Settings} settings
  */
-const startProcess = (logger, cp, settings) => {
+const startProcess = (logger, cp) => {
 	const cpLogger = {
 		debug: (...args) => logger.debug(`[${cp.name}]`, ...args),
 		error: (...args) => logger.error(`[${cp.name}]`, ...args),
