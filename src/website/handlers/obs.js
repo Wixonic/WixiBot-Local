@@ -257,18 +257,13 @@ const info = {
 			for (const cp of Object.values(captureProcess)) {
 				if (!cp.process || cp.process.killed) {
 					if (cp.active) {
-						cp.process = cp.spawn(logger, settings);
-
-						for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
-							process.once(signal, async (reason, code) => {
-								if (!cp.process.killed) {
-									cp.process.removeAllListeners("exit");
-									cp.process.kill("SIGTERM");
-								}
-							});
-						}
+						cp.process = cp.spawn(logger);
+						cp.process.on("error", (error) => logger.warn("Child Process Error:", error));
 					}
-				} else if (!cp.process.killed && !cp.active) cp.process.kill("SIGTERM");
+				} else if (!cp.process.killed && !cp.active) {
+					logger.info("Killing process:", cp.process.name);
+					cp.process.kill("SIGTERM");
+				}
 			}
 
 			return false;
