@@ -1,7 +1,4 @@
-import bpy
-import json
-import requests
-import time
+import bpy, json, logging, pathlib, requests, time
 from bpy.app.handlers import persistent
 
 bl_info = {
@@ -105,9 +102,14 @@ def update():
     }
 
     try:
-        response = requests.post("https://server.wixonic.fr/rpc/blender/", data=json.dumps(data), headers={
-            "Authorization": "WixKey YOUR_ACCESS_TOKEN"
+        with open(pathlib.Path(__file__).parent.resolve() / "secrets.json", "r") as f:
+            secrets = json.load(f)
+            ACCESS_TOKEN = secrets.get("wixkey")
+
+        response = requests.post("https://server.wixonic.fr/rpc/blender/", json=data, headers={
+            "Authorization": f"WixKey {ACCESS_TOKEN}"
         })
+
         if response.status_code != 200:
             print(f"Failed to send data: {response.status_code}, {response.text}")
     except requests.RequestException as e:
