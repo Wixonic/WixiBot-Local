@@ -188,6 +188,7 @@ const captureProcess = {
 				"-flags", "low_delay",
 				"-fflags", "nobuffer",
 
+				"-autoexit",
 				"-nodisp",
 				"-vn",
 
