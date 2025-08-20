@@ -152,7 +152,6 @@ const captureProcess = {
 		spawn: () => childProcess.spawn("ffplay", [
 			...defaultOutputArgs,
 
-			"-autoexit",
 			"-nodisp",
 			"-vn",
 
