@@ -34,27 +34,9 @@ const updateDeviceList = (logger) => {
 const defaultInputArgs = [
 	"-hide_banner",
 	"-loglevel", "repeat+level+warning",
-	"-fflags", "nobuffer+genpts",
+	"-fflags", "genpts",
 	"-flags", "low_delay"
 ];
-
-const defaultOutputArgs = [
-	"-hide_banner",
-	"-loglevel", "repeat+level+warning",
-	"-fflags", "nobuffer",
-	"-probesize", "32",
-	"-analyzeduration", "0",
-	"-autoexit"
-];
-
-/** @param {number} port */
-const udpOutput = (port) => ([
-	"-flush_packets", "1",
-	"-muxdelay", "0",
-	"-muxpreload", "0",
-	"-f", "mpegts",
-	`udp://10.0.0.1:${port}`
-]);
 
 const h264VideotoolboxArgs = (bitrate = "16M", gop = 30) => ([
 	"-c:v", "h264_videotoolbox",
@@ -63,6 +45,30 @@ const h264VideotoolboxArgs = (bitrate = "16M", gop = 30) => ([
 	"-profile:v", "high",
 	"-b:v", bitrate,
 	"-g", String(gop),
+]);
+
+/** @param {number} port */
+const udpInput = (port) => ([
+	"-muxdelay", "0.1",
+	"-muxpreload", "0.1",
+	"-f", "mpegts",
+	`udp://10.0.0.1:${port}?buffer_size=65535`
+]);
+
+const defaultOutputArgs = [
+	"-hide_banner",
+	"-loglevel", "repeat+level+warning",
+	"-flags", "low_delay",
+	"-probesize", "32k",
+	"-analyzeduration", "500000",
+	"-sync", "audio",
+	"-autoexit"
+];
+
+/** @param {number} port */
+const udpOutput = (port) => ([
+	"-f", "mpegts",
+	`udp://10.0.0.1:${port}?listen=1&fifo_size=50000&overrun_nonfatal=1`
 ]);
 
 /** @typedef {{spawn: () => childProcess.ChildProcess, process: childProcess.ChildProcess?, active: boolean, name: string}} CaptureProcess */
@@ -88,7 +94,7 @@ const captureProcess = {
 
 				"-af", "volume=0.5",
 
-				...udpOutput(2000)
+				...udpInput(2000)
 			]);
 		},
 		process: null
@@ -108,7 +114,7 @@ const captureProcess = {
 				"-i", `${deviceIndex}:`,
 
 				...h264VideotoolboxArgs("16M", 30),
-				...udpOutput(2001)
+				...udpInput(2001)
 			]);
 		},
 		process: null
@@ -128,7 +134,7 @@ const captureProcess = {
 				"-i", `${deviceIndex}:`,
 
 				...h264VideotoolboxArgs("16M", 30),
-				...udpOutput(2001)
+				...udpInput(2001)
 			]);
 		},
 		process: null
@@ -136,38 +142,7 @@ const captureProcess = {
 	camera: {
 		active: false,
 		name: "Camera capture",
-		spawn: () => {
-			const deviceIndex = deviceList.video.findIndex((value) => value.startsWith("Caméra du "));
-			if (deviceIndex == -1) return null;
-			else return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
-				...defaultInputArgs,
-
-				"-probesize", "32M",
-				"-analyzeduration", "30M",
-
-				"-f", "avfoundation",
-				"-framerate", "30", "-video_size", "1280x720", "-pixel_format", "uyvy422",
-				"-i", `${deviceIndex}:`,
-
-				"-vf", "format=yuv420p",
-
-				"-an",
-				"-c:v", "libx264",
-				"-preset", "ultrafast",
-				"-crf", "25",
-				"-profile:v", "baseline",
-				"-level", "4.1",
-				"-g", "60",
-				"-keyint_min", "60",
-
-				"-use_wallclock_as_timestamps", "1",
-				"-vsync", "1",
-
-				"-x264-params", "repeat-headers=1:scenecut=0:force-cfr=1:nal-hrd=cbr",
-
-				...udpOutput(2002)
-			]);
-		},
+		spawn: () => null,
 		process: null
 	},
 	microphone: {
@@ -180,8 +155,7 @@ const captureProcess = {
 			"-nodisp",
 			"-vn",
 
-			"-f", "mpegts",
-			"udp://10.0.0.1:2003?listen=1"
+			...udpOutput(2003)
 		]),
 		process: null
 	},
@@ -287,7 +261,7 @@ const info = {
 		}
 	},
 	loop: {
-		delay: 2 * 1000,
+		delay: 1 * 1000,
 		process: (logger, settings) => {
 			updateDeviceList(logger);
 
