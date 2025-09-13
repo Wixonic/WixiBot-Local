@@ -136,7 +136,7 @@ def register():
     bpy.app.handlers.render_cancel.append(render_ended)
     bpy.app.handlers.render_write.append(render_frame)
     
-    print(f"BlenderRPC@{bl_info.version} registered")
+    print(f'BlenderRPC@{bl_info["version"]} registered')
 
 def unregister():
     bpy.app.handlers.load_post.remove(start_timer)
@@ -145,7 +145,7 @@ def unregister():
     bpy.app.handlers.render_cancel.remove(render_ended)
     bpy.app.handlers.render_write.remove(render_frame)
     
-    print(f"BlenderRPC@{bl_info.version} unregistered")
+    print(f'BlenderRPC@{bl_info["version"]} unregistered')
 
 if __name__ == "__main__":
     register()
