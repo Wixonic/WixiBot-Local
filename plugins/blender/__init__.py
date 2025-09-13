@@ -1,10 +1,10 @@
-import bpy, json, logging, pathlib, requests, time
+import bpy, json, logging, pathlib, requests, time, threading
 from bpy.app.handlers import persistent
 
 bl_info = {
     "name": "BlenderRPC",
     "author": "Wixonic",
-    "version": (1, 2, 0),
+    "version": (1, 2, 1),
     "blender": (2, 8, 0),
     "description": "Blender add-on for WixiBot",
     "category": "System"
@@ -90,6 +90,26 @@ def render_frame(dummy):
     
     print("Render frame")
 
+def send_data(data):
+    try:
+        secrets_path = pathlib.Path(__file__).parent.resolve() / "secrets.json"
+        with open(secrets_path, "r") as f:
+            secrets = json.load(f)
+            ACCESS_TOKEN = secrets.get("wixkey")
+
+        response = requests.post("https://server.wixonic.fr/rpc/blender/", json=data, headers={
+            "Authorization": f"WixKey {ACCESS_TOKEN}"
+        }, timeout=5)
+
+        if response.status_code != 200:
+            print(f"Failed to send data: {response.status_code}, {response.text}")
+    except requests.RequestException as e:
+        print(f"Request error: {e}")
+    except FileNotFoundError:
+        print("secrets.json not found.")
+    except Exception as e:
+        print(f"An error occurred in the thread: {e}")
+
 def update():
     data = {
         "small_image": small_image,
@@ -101,19 +121,9 @@ def update():
         "start_time": start_time
     }
 
-    try:
-        with open(pathlib.Path(__file__).parent.resolve() / "secrets.json", "r") as f:
-            secrets = json.load(f)
-            ACCESS_TOKEN = secrets.get("wixkey")
-
-        response = requests.post("https://server.wixonic.fr/rpc/blender/", json=data, headers={
-            "Authorization": f"WixKey {ACCESS_TOKEN}"
-        })
-
-        if response.status_code != 200:
-            print(f"Failed to send data: {response.status_code}, {response.text}")
-    except requests.RequestException as e:
-        print(f"Request error: {e}")
+    thread = threading.Thread(target=send_data, args=(data,))
+    thread.daemon = True
+    thread.start()
     
     return update_delay
 
@@ -126,7 +136,7 @@ def register():
     bpy.app.handlers.render_cancel.append(render_ended)
     bpy.app.handlers.render_write.append(render_frame)
     
-    print("Blender RPC registered")
+    print(f"BlenderRPC@{bl_info.version} registered")
 
 def unregister():
     bpy.app.handlers.load_post.remove(start_timer)
@@ -135,7 +145,7 @@ def unregister():
     bpy.app.handlers.render_cancel.remove(render_ended)
     bpy.app.handlers.render_write.remove(render_frame)
     
-    print("Blender RPC unregistered")
+    print(f"BlenderRPC@{bl_info.version} unregistered")
 
 if __name__ == "__main__":
     register()
