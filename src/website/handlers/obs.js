@@ -271,11 +271,16 @@ const info = {
 	loop: {
 		delay: 1 * 1000,
 		process: (logger, settings) => {
-			updateDeviceList(logger);
+			let updated = false;
 
 			for (const cp of Object.values(captureProcess)) {
-				if (cp.active && !cp.process) startProcess(logger, cp, settings);
-				else if (!cp.active && cp.process) stopProcess(logger, cp);
+				if (cp.active && !cp.process) {
+					if (!updated) {
+						updated = true;
+						updateDeviceList(logger);
+					}
+					startProcess(logger, cp, settings);
+				} else if (!cp.active && cp.process) stopProcess(logger, cp);
 			}
 
 			return false;
