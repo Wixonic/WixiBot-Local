@@ -143,7 +143,19 @@ const captureProcess = {
 	camera: {
 		active: false,
 		name: "Camera capture",
-		spawn: () => null,
+		spawn: () => {
+			const deviceIndex = deviceList.video.indexOf("Caméra du MacBook Pro");
+			if (deviceIndex == -1) return null;
+			else return childProcess.spawn("ffmpeg", [
+				...defaultInputArgs,
+
+				"-f", "avfoundation",
+				"-framerate", "30", "-video_size", "1920x1080", "-pixel_format", "uyvy422",
+				"-i", `${deviceIndex}:`,
+
+				...udpOutput(2002)
+			]);
+		},
 		process: null
 	},
 	microphone: {
