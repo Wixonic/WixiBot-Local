@@ -144,7 +144,7 @@ const captureProcess = {
 		active: false,
 		name: "Camera capture",
 		spawn: () => {
-			const deviceIndex = deviceList.video.indexOf("Caméra du MacBook Pro");
+			const deviceIndex = deviceList.video.findIndex((value) => value.includes("MacBook"));
 			if (deviceIndex == -1) return null;
 			else return childProcess.spawn("ffmpeg", [
 				...defaultInputArgs,
