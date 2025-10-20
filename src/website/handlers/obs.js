@@ -159,7 +159,7 @@ const captureProcess = {
 				"-pix_fmt", "yuv420p",
 				"-g", "30",
 
-				...udpOutput(2002)
+				...udpInput(2002)
 			]);
 		},
 		process: null
