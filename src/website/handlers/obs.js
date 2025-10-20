@@ -52,7 +52,7 @@ const udpInput = (port) => ([
 	"-muxdelay", "0.1",
 	"-muxpreload", "0.1",
 	"-f", "mpegts",
-	`udp://10.0.0.1:${port}?buffer_size=65535`
+	`udp://10.0.0.1:${port}?buffer_size=65535&pkt_size=1316`
 ]);
 
 const defaultOutputArgs = [
@@ -69,7 +69,7 @@ const defaultOutputArgs = [
 /** @param {number} port */
 const udpOutput = (port) => ([
 	"-f", "mpegts",
-	`udp://10.0.0.1:${port}?listen=1&fifo_size=8192&overrun_nonfatal=1`
+	`udp://10.0.0.1:${port}?listen=1`
 ]);
 
 /** @typedef {{spawn: () => childProcess.ChildProcess, process: childProcess.ChildProcess?, active: boolean, name: string}} CaptureProcess */
@@ -150,8 +150,14 @@ const captureProcess = {
 				...defaultInputArgs,
 
 				"-f", "avfoundation",
-				"-framerate", "30", "-video_size", "1920x1080", "-pixel_format", "uyvy422",
+				"-framerate", "30", "-video_size", "1280x720", "-pixel_format", "uyvy422",
 				"-i", `${deviceIndex}:`,
+
+				"-c:v", "libx264",
+				"-preset", "ultrafast",
+				"-tune", "zerolatency",
+				"-pix_fmt", "yuv420p",
+				"-g", "30",
 
 				...udpOutput(2002)
 			]);
