@@ -122,11 +122,6 @@ class Server {
 				setTimeout(loopUpdate, Math.max(0, 500 - (Date.now() - now)));
 			};
 
-			this.app.use((req, res) => {
-				this.logger.warn(`404: ${req.method} ${req.url}`);
-				res.status(404).sendFile(path.join(websitePath, "lib", "404.html"));
-			});
-
 
 			this.http.on("clientError", (e) => this.logger.warn("[HTTP]", "Client error:", e));
 			this.http.on("close", () => this.logger.warn("[HTTP]", "Server closed"));
