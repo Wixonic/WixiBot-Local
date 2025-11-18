@@ -6,18 +6,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var backgroundTaskProcess: Process?
     var backgroundTaskPID: Int32?
 	
-	var audioEnabled: Bool = false
-	var cameraEnabled: Bool = false
-	var screen1Enabled: Bool = false
-	var screen2Enabled: Bool = false
-	var microphoneBroadcastEnabled: Bool = false
 	var broadcastEnabled: Bool = false
     
-	var audioMenuItem: NSMenuItem!
-	var cameraMenuItem: NSMenuItem!
-	var screen1MenuItem: NSMenuItem!
-	var screen2MenuItem: NSMenuItem!
-	var microphoneBroadcastMenuItem: NSMenuItem!
 	var broadcastMenuItem: NSMenuItem!
 
 	func applicationDidFinishLaunching(_ notification: Notification) {
@@ -29,31 +19,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 		let menu = NSMenu()
 
-		audioMenuItem = NSMenuItem(title: "Audio", action: #selector(toggleAudio(_:)), keyEquivalent: "a")
-		audioMenuItem.state = audioEnabled ? .on : .off
-		audioMenuItem.target = self
-		menu.addItem(audioMenuItem)
-
-        screen1MenuItem = NSMenuItem(title: "Screenshare 1", action: #selector(toggleScreen1(_:)), keyEquivalent: "s")
-        screen1MenuItem.state = screen1Enabled ? .on : .off
-        screen1MenuItem.target = self
-        menu.addItem(screen1MenuItem)
-
-        screen2MenuItem = NSMenuItem(title: "Screenshare 2", action: #selector(toggleScreen2(_:)), keyEquivalent: "")
-        screen2MenuItem.state = screen2Enabled ? .on : .off
-        screen2MenuItem.target = self
-        menu.addItem(screen2MenuItem)
-
-        cameraMenuItem = NSMenuItem(title: "Camera", action: #selector(toggleCamera(_:)), keyEquivalent: "c")
-        cameraMenuItem.state = cameraEnabled ? .on : .off
-        cameraMenuItem.target = self
-        menu.addItem(cameraMenuItem)
-		
-		microphoneBroadcastMenuItem = NSMenuItem(title: "Microphone", action: #selector(toggleMicrophoneBroadcast(_:)), keyEquivalent: "m")
-		microphoneBroadcastMenuItem.state = microphoneBroadcastEnabled ? .on : .off
-		microphoneBroadcastMenuItem.target = self
-		menu.addItem(microphoneBroadcastMenuItem)
-		
 		broadcastMenuItem = NSMenuItem(title: "Broadcast", action: #selector(toggleBroadcast(_:)), keyEquivalent: "b")
 		broadcastMenuItem.state = broadcastEnabled ? .on : .off
 		broadcastMenuItem.target = self
@@ -65,37 +30,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		runZshScript()
 	}
 
-    @objc func toggleAudio(_ sender: NSMenuItem) {
-		audioEnabled.toggle()
-		audioMenuItem.state = audioEnabled ? .on : .off
-		sendToggleRequest(id: "audio", status: audioEnabled)
-	}
-
-    @objc func toggleScreen1(_ sender: NSMenuItem) {
-        screen1Enabled.toggle()
-        screen1MenuItem.state = screen1Enabled ? .on : .off
-        sendToggleRequest(id: "screenshare1", status: screen1Enabled)
-    }
-
-    @objc func toggleScreen2(_ sender: NSMenuItem) {
-        screen2Enabled.toggle()
-        screen2MenuItem.state = screen2Enabled ? .on : .off
-        sendToggleRequest(id: "screenshare2", status: screen2Enabled)
-    }
-
-    @objc func toggleCamera(_ sender: NSMenuItem) {
-        cameraEnabled.toggle()
-        cameraMenuItem.state = cameraEnabled ? .on : .off
-        sendToggleRequest(id: "camera", status: cameraEnabled)
-    }
-	
-	@objc func toggleMicrophoneBroadcast(_ sender: NSMenuItem) {
-		microphoneBroadcastEnabled.toggle()
-		microphoneBroadcastMenuItem.state = microphoneBroadcastEnabled ? .on : .off
-		sendToggleRequest(id: "microphone", status: microphoneBroadcastEnabled)
-	}
-	
-	@objc func toggleBroadcast(_ sender: NSMenuItem) {
+    @objc func toggleBroadcast(_ sender: NSMenuItem) {
 		broadcastEnabled.toggle()
 		broadcastMenuItem.state = broadcastEnabled ? .on : .off
 		sendToggleRequest(id: "broadcast", status: broadcastEnabled)
