@@ -1,10 +1,10 @@
-const { addActivity, removeActivity } = require("../../lib/activity.js");
-const { getCurrentTrackInfo } = require("../../lib/music.js");
+const { addActivity, removeActivity } = require("../lib/activity.js");
+const { getCurrentTrackInfo } = require("../lib/music.js");
 
 let currentSong = null;
 
 /**
- * @type {import("../../types.d.ts").HandlerInfo}
+ * @type {import("../types").HandlerInfo}
  */
 const info = {
 	path: "/music/",
@@ -14,8 +14,11 @@ const info = {
 		process: async (logger, settings) => {
 			let song = await getCurrentTrackInfo();
 
-			if (song?.state === "PAUSED" && currentSong) {
-				song = { ...currentSong, state: "PAUSED" };
+			if (song?.state == "PAUSED" && currentSong) {
+				song = {
+					...currentSong,
+					state: "PAUSED"
+				};
 			}
 
 			const needsUpdate = () => {

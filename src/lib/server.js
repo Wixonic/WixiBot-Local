@@ -41,6 +41,7 @@ class Server {
 	 * @returns {Promise<void>}
 	 */
 	init() {
+		const handlersPath = path.join(__dirname, "..", "handlers");
 		const websitePath = path.join(__dirname, "..", "website");
 
 		return new Promise(async (resolve) => {
@@ -58,11 +59,11 @@ class Server {
 			this.app.use(express.static(websitePath));
 			this.app.use(express.text({ limit: "1gb", type: "*/*" }));
 
-			const handlers = fs.readdirSync(path.join(websitePath, "handlers"), { recursive: true });
+			const handlers = fs.readdirSync(handlersPath, { recursive: true });
 			for (const handlerFile of handlers) {
 				if (handlerFile.endsWith(".js")) {
 					/** @type {import("../types.d.ts").HandlerInfo} */
-					const handler = require(path.join(websitePath, "handlers", handlerFile));
+					const handler = require(path.join(handlersPath, handlerFile));
 					const handlerName = handlerFile.replace(".js", "");
 
 					for (const method in handler.handlers) {

@@ -14,7 +14,7 @@ const trimName = (name) => name.split("(")[0].replace(/\s\n\t/, " ").trim();
 /** @param {import("@wixonic/logger").Logger} logger */
 const updateDeviceList = (logger) => {
 	try {
-		const result = childProcess.spawnSync("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
+		const result = childProcess.spawnSync("ffmpeg", [
 			"-f", "avfoundation",
 			"-list_devices", "true",
 			"-i", ""
@@ -31,157 +31,12 @@ const updateDeviceList = (logger) => {
 	}
 };
 
-const defaultInputArgs = [
-	"-hide_banner",
-	"-loglevel", "repeat+level+warning",
-	"-fflags", "nobuffer+genpts",
-	"-flags", "low_delay"
-];
-
-const h264VideotoolboxArgs = (bitrate = "16M", gop = 30) => ([
-	"-c:v", "h264_videotoolbox",
-	"-preset", "ultrafast",
-	"-realtime", "1",
-	"-profile:v", "high",
-	"-b:v", bitrate,
-	"-g", String(gop),
-]);
-
-/** @param {number} port */
-const udpInput = (port) => ([
-	"-muxdelay", "0.1",
-	"-muxpreload", "0.1",
-	"-f", "mpegts",
-	`udp://10.0.0.1:${port}?buffer_size=65535&pkt_size=1316`
-]);
-
-const defaultOutputArgs = [
-	"-hide_banner",
-	"-loglevel", "repeat+level+warning",
-	"-fflags", "nobuffer",
-	"-flags", "low_delay",
-	"-probesize", "32",
-	"-analyzeduration", "50000",
-	"-sync", "audio",
-	"-autoexit"
-];
-
-/** @param {number} port */
-const udpOutput = (port) => ([
-	"-f", "mpegts",
-	`udp://10.0.0.1:${port}?listen=1`
-]);
-
 /** @typedef {{spawn: () => childProcess.ChildProcess, process: childProcess.ChildProcess?, active: boolean, name: string}} CaptureProcess */
 
 /**
  * @type {{[name: string]: CaptureProcess}}
  */
 const captureProcess = {
-	audio: {
-		active: false,
-		name: "Audio capture",
-		spawn: () => {
-			const deviceIndex = deviceList.audio.indexOf("BlackHole");
-			if (deviceIndex == -1) return null;
-			else return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
-				...defaultInputArgs,
-
-				"-f", "avfoundation",
-				"-framerate", "60",
-				"-i", `:${deviceIndex}`,
-
-				"-c:a", "aac", "-b:a", "320k", "-ac", "2", "-ar", "48000",
-
-				"-af", "volume=0.5",
-
-				...udpInput(2000)
-			]);
-		},
-		process: null
-	},
-	screenshare1: {
-		active: false,
-		name: "Screen capture 1",
-		spawn: () => {
-			const deviceIndex = deviceList.video.indexOf("Capture screen 0");
-			if (deviceIndex == -1) return null;
-			else return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
-				...defaultInputArgs,
-
-				"-f", "avfoundation",
-				"-capture_cursor", "1",
-				"-framerate", "60", "-video_size", "3024x1964", "-pixel_format", "uyvy422",
-				"-i", `${deviceIndex}:`,
-
-				...h264VideotoolboxArgs("16M", 30),
-				...udpInput(2001)
-			]);
-		},
-		process: null
-	},
-	screenshare2: {
-		active: false,
-		name: "Screen capture 2",
-		spawn: () => {
-			const deviceIndex = deviceList.video.indexOf("Capture screen 1");
-			if (deviceIndex == -1) return null;
-			else return childProcess.spawn("/usr/local/ffmpeg-4.1/bin/ffmpeg", [
-				...defaultInputArgs,
-
-				"-f", "avfoundation",
-				"-capture_cursor", "1",
-				"-framerate", "60", "-video_size", "3840x2160", "-pixel_format", "uyvy422",
-				"-i", `${deviceIndex}:`,
-
-				...h264VideotoolboxArgs("16M", 30),
-				...udpInput(2001)
-			]);
-		},
-		process: null
-	},
-	camera: {
-		active: false,
-		name: "Camera capture",
-		spawn: () => {
-			const deviceIndex = deviceList.video.findIndex((value) => value.includes("MacBook"));
-			if (deviceIndex == -1) return null;
-			else return childProcess.spawn("ffmpeg", [
-				...defaultInputArgs,
-
-				"-f", "avfoundation",
-				"-framerate", "30", "-video_size", "1280x720", "-pixel_format", "uyvy422",
-				"-i", `${deviceIndex}:`,
-
-				"-c:v", "libx264",
-				"-preset", "ultrafast",
-				"-tune", "zerolatency",
-				"-pix_fmt", "yuv420p",
-				"-g", "30",
-
-				...udpInput(2002)
-			]);
-		},
-		process: null
-	},
-	microphone: {
-		active: false,
-		name: "Microphone streaming",
-		spawn: () => childProcess.spawn("ffplay", [
-			...defaultOutputArgs,
-
-			"-nodisp",
-			"-vn",
-
-			...udpOutput(2003)
-		], {
-			env: {
-				...process.env,
-				"SDL_AUDIO_SAMPLES": "1024"
-			}
-		}),
-		process: null
-	},
 	broadcast: {
 		active: false,
 		name: "Broadcast",
@@ -239,7 +94,7 @@ const stopProcess = (logger, cp) => {
 
 	const killTimeout = setTimeout(() => {
 		if (!cp.process.killed) {
-			cpLogger.warn(`Did not respond to SIGTERM.Forcing kill with SIGKILL.`);
+			cpLogger.warn(`Did not respond to SIGTERM. Forcing kill with SIGKILL.`);
 			cp.process.kill("SIGKILL");
 		}
 	}, 3000);
@@ -247,10 +102,10 @@ const stopProcess = (logger, cp) => {
 };
 
 /**
- * @type {import("../../types.d.ts").HandlerInfo}
+ * @type {import("../../types").HandlerInfo}
  */
 const info = {
-	path: "/obs/settings/",
+	path: "/process/",
 	handlers: {
 		get: (logger, settings, req, res) => {
 			const { id } = req.query;
