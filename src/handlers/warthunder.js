@@ -1,8 +1,8 @@
-const { addActivity, sendData, removeActivity } = require("../../lib/activity.js");
-const wt = require("../../lib/warthunder.js");
+const { addActivity, sendData, removeActivity } = require("../lib/activity.js");
+const wt = require("../lib/warthunder.js");
 
 /**
- * @type {import("../../types.d.ts").HandlerInfo}
+ * @type {import("../types.d.ts").HandlerInfo}
  */
 const info = {
 	path: "/warthunder/",
