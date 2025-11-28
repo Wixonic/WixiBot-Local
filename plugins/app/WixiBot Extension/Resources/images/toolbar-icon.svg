@@ -1,14 +1,1 @@
-<?xml version="1.0" standalone="no"?>
-
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144" width="512" height="512">
-	<g fill-rule="evenodd">
-
-		<path d="M22,22 h100 a20,20 0 0 1 20,20 v60 a20,20 0 0 1 -20,20 h-100 a20,20 0 0 1 -20,-20 v-60 a20,20 0 0 1 20,-20 z M22,25 h100 a17,17 0 0 1 17,17 v60 a17,17 0 0 1 -17,17 h-100 a17,17 0 0 1 -17,-17 v-60 a17,17 0 0 1 17,-17 z" />
-		<path d="M22,42 h100 v60 h-100 z M24,44 h96 v56 h-96 z" />
-
-	</g>
-
-	<circle cx="52" cy="72" r="10"></circle>
-	<circle cx="92" cy="72" r="10"></circle>
-
-</svg>
+<svg height="512" viewBox="0 0 144 144" width="512" xmlns="http://www.w3.org/2000/svg"><g fill-rule="evenodd"><path d="m22 22h100a20 20 0 0 1 20 20v60a20 20 0 0 1 -20 20h-100a20 20 0 0 1 -20-20v-60a20 20 0 0 1 20-20zm0 3h100a17 17 0 0 1 17 17v60a17 17 0 0 1 -17 17h-100a17 17 0 0 1 -17-17v-60a17 17 0 0 1 17-17z"/><path d="m22 42h100v60h-100zm2 2h96v56h-96z"/></g><circle cx="52" cy="72" r="10"/><circle cx="92" cy="72" r="10"/></svg>
