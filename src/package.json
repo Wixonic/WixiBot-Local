@@ -22,7 +22,7 @@
 		"@wixonic/logger": "^1.1.0",
 		"applescript": "^1.0.0",
 		"cors": "^2.8.5",
-		"express": "^5.1.0",
+		"express": "^5.2.1",
 		"jsdom": "^26.1.0",
 		"sharp": "^0.34.5",
 		"ws": "^8.18.3"
