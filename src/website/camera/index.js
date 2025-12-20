@@ -325,12 +325,12 @@ const loop = async () => {
 
 				const targetEye = isSmiling ? 2 : (isBlinking ? 1 : 0);
 
-				if (leftEye.currentEye !== targetEye) {
+				if (leftEye.currentEye !=== targetEye) {
 					leftEye.currentEye = targetEye;
 					leftEye.material = eyeMaterials[targetEye];
 				}
 
-				if (rightEye.currentEye !== targetEye) {
+				if (rightEye.currentEye !=== targetEye) {
 					rightEye.currentEye = targetEye;
 					rightEye.material = eyeMaterials[targetEye];
 				}

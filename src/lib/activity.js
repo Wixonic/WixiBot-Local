@@ -30,7 +30,7 @@ const sendData = (logger, settings, method, path, contentType, data) => request(
 		"Content-Type": contentType
 	},
 	method,
-	secure: process.env.dev != "true",
+	secure: process.env.dev !== "true",
 	type: "json",
 	url: new URL(path, settings.host),
 	body: data

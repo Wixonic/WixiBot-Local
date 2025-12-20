@@ -108,14 +108,14 @@ const get = async (logger, settings) => {
 		if (objs.error) errors.push(`Map Objects: ${objs.error}`);
 		if (imageResponse.error) errors.push(`Map: ${imageResponse.error}`);
 
-		if (errors.length == 0) map = await sharp(Buffer.concat(imageResponse)).toFormat("png").toBuffer();
+		if (errors.length === 0) map = await sharp(Buffer.concat(imageResponse)).toFormat("png").toBuffer();
 	} catch (e) {
 		logger.warn(`Image: ${e}`);
 	}
 
 	await wait(settings.warthunder.waitingTime);
 
-	if (errors.length == 0) {
+	if (errors.length === 0) {
 		try {
 			indicators = await request(emptyLogger, {
 				url: new URL(settings.warthunder.paths.vehicle.indicators, `http://localhost:${settings.warthunder.port}`),
@@ -125,7 +125,7 @@ const get = async (logger, settings) => {
 
 			if (indicators.error) throw indicators.error;
 
-			if (indicators?.type == "dummy_plane") errors.push("Not spawned");
+			if (indicators?.type === "dummy_plane") errors.push("Not spawned");
 			else {
 				switch (indicators?.army) {
 					case "tank":
@@ -169,7 +169,7 @@ const get = async (logger, settings) => {
 
 	await wait(settings.warthunder.waitingTime);
 
-	if (errors.length == 0) {
+	if (errors.length === 0) {
 		try {
 			mission = await request(emptyLogger, {
 				url: new URL(settings.warthunder.paths.mission, `http://localhost:${settings.warthunder.port}`),
@@ -177,7 +177,7 @@ const get = async (logger, settings) => {
 				secure: false
 			});
 
-			if (mission?.status != "running") errors.push("Mission not running");
+			if (mission?.status !== "running") errors.push("Mission not running");
 		} catch (e) {
 			errors.push(`Mission: ${e}`);
 		}
@@ -185,7 +185,7 @@ const get = async (logger, settings) => {
 
 	await wait(settings.warthunder.waitingTime);
 
-	if (errors.length == 0) {
+	if (errors.length === 0) {
 		try {
 			messages.chat = await request(emptyLogger, {
 				url: new URL(settings.warthunder.paths.messages.chat + "?lastId=0", `http://localhost:${settings.warthunder.port}`),
@@ -211,7 +211,7 @@ const get = async (logger, settings) => {
 		objs,
 		indicators,
 		map,
-		valid: errors.length == 0,
+		valid: errors.length === 0,
 		details,
 		unit,
 		mission,

@@ -578,7 +578,7 @@ const draw = async () => {
 			}
 
 			if (lastClick) {
-				const player = objects.find((obj) => obj.icon == "Player");
+				const player = objects.find((obj) => obj.icon === "Player");
 
 				if (player) {
 					const [pcx, pcy] = gridToCanvasCoordinates(player.x, player.y, data.info);

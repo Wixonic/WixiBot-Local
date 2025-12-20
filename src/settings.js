@@ -2,8 +2,8 @@ const secrets = require("./secrets.js");
 
 /** @type {import("./types.d.ts").Settings} */
 const settings = {
-	host: process.env.dev == "true" ? "http://localhost:999" : "https://server.wixonic.fr",
-	port: process.env.dev == "true" ? 998 : 1000,
+	host: process.env.dev === "true" ? "http://localhost:999" : "https://server.wixonic.fr",
+	port: process.env.dev === "true" ? 998 : 1000,
 	secrets,
 	warthunder: {
 		paths: {

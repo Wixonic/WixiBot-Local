@@ -39,12 +39,12 @@ const connectWebSocket = (micProcess) => {
 			ws.once("message", (message) => {
 				console.log("First message received:", message.toString("hex"));
 
-				if (message[0] == 0x00) {
+				if (message[0] === 0x00) {
 					console.log("Server answered");
 
 					micProcess.stderr.on("data", (e) => console.error("sox error:", e.toString()));
 					micProcess.stdout.on("data", (chunk) => {
-						if (ws.readyState == WebSocket.OPEN) ws.send(chunk);
+						if (ws.readyState === WebSocket.OPEN) ws.send(chunk);
 						else {
 							ws.close(0x00);
 							connectWebSocket(micProcess);
@@ -82,13 +82,13 @@ const handleMicCrash = async () => {
 
 		micProcess.on("close", (code, signal) => {
 			console.log(`sox process exited with code ${code} and signal ${signal}`);
-			if (code == 0) process.exit();
+			if (code === 0) process.exit();
 			else setTimeout(() => handleMicCrash(device), 1000);
 		});
 
 		for (const signal of ["SIGINT", "SIGTERM", "SIGHUP", "uncaughtException", "unhandledRejection", "exit"]) {
 			process.on(signal, () => {
-				if (ws.readyState == WebSocket.OPEN) ws.close();
+				if (ws.readyState === WebSocket.OPEN) ws.close();
 				micProcess.kill();
 				process.exit();
 			});

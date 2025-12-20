@@ -24,7 +24,7 @@ const request = (method, url, type = "", mimeType = "text/plain", body, cache = 
 		if (cachedResponse || cache > 0) {
 			const data = JSON.parse(cachedResponse);
 
-			if (cache == 0 || Date.now() - data.timestamp < cache * 1000) resolve(data);
+			if (cache === 0 || Date.now() - data.timestamp < cache * 1000) resolve(data);
 			else throw "Expired";
 		} else throw "Uncached";
 	} catch (e) {

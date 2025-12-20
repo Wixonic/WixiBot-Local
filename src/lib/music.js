@@ -25,7 +25,7 @@ else
 end if`;
 
 	applescript.execString(script, (e, result) => {
-		if (e || result[0] == "STOPPED") {
+		if (e || result[0] === "STOPPED") {
 			resolve(null);
 		} else {
 			const [
@@ -39,9 +39,9 @@ end if`;
 
 			resolve({
 				state,
-				track: trackName == "" ? "unknown track" : trackName,
-				artist: artistName == "" ? "unknown artist" : artistName,
-				album: albumName == "" ? "unknown album" : albumName,
+				track: trackName === "" ? "unknown track" : trackName,
+				artist: artistName === "" ? "unknown artist" : artistName,
+				album: albumName === "" ? "unknown album" : albumName,
 				startedAt: Math.floor(Date.now() * 1e-3 - startedAt) * 1e3,
 				duration: Math.floor(duration * 1e3)
 			});
