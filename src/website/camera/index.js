@@ -31,7 +31,7 @@ let headTargetPosition, headTargetQuaternion, leftEyeTargetPosition, rightEyeTar
 
 const models = {};
 let lastDetect = 0;
-let timestamp = 0;
+
 
 const initCanvas = async () => {
 	canvas2D = document.querySelector("#canvas2D");
@@ -41,6 +41,17 @@ const initCanvas = async () => {
 	video = document.querySelector("video");
 
 	const cameraSelect = document.getElementById("camera");
+
+	try {
+		const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+		if (video.srcObject) {
+			video.srcObject.getTracks().forEach(track => track.stop());
+		}
+		video.srcObject = stream;
+	} catch (e) {
+		console.error("Failed to get camera permission:", e);
+		return;
+	}
 
 	let devices = [];
 	try {
@@ -59,15 +70,16 @@ const initCanvas = async () => {
 		cameraSelect.appendChild(option);
 	});
 
-	const defaultDeviceId = videoDevices[0].deviceId;
-	cameraSelect.value = defaultDeviceId;
+	const currentTrack = video.srcObject.getVideoTracks()[0];
+	const currentDeviceId = currentTrack.getSettings().deviceId;
+	cameraSelect.value = currentDeviceId;
 
 	cameraSelect.addEventListener("change", async () => {
 		const selectedDeviceId = cameraSelect.value;
 		await switchCamera(selectedDeviceId);
 	});
 
-	await startCamera(defaultDeviceId);
+	// await startCamera(defaultDeviceId);
 
 	video.addEventListener("loadedmetadata", () => video.play());
 	video.addEventListener("error", (event) => {
@@ -206,8 +218,7 @@ const loop = async () => {
 			lastDetect = now;
 
 			try {
-				timestamp++;
-				const results = await models.faceLandmarker.detectForVideo(video, timestamp);
+				const results = await models.faceLandmarker.detectForVideo(video, now);
 				if (results && results.faceLandmarks.length > 0) {
 					models.faceLandmarker.result = results;
 				} else {
@@ -325,12 +336,12 @@ const loop = async () => {
 
 				const targetEye = isSmiling ? 2 : (isBlinking ? 1 : 0);
 
-				if (leftEye.currentEye !=== targetEye) {
+				if (leftEye.currentEye !== targetEye) {
 					leftEye.currentEye = targetEye;
 					leftEye.material = eyeMaterials[targetEye];
 				}
 
-				if (rightEye.currentEye !=== targetEye) {
+				if (rightEye.currentEye !== targetEye) {
 					rightEye.currentEye = targetEye;
 					rightEye.material = eyeMaterials[targetEye];
 				}
