@@ -34,7 +34,9 @@ const request = (logger, options = {}) => {
 				reject = (reason = "Unknown reason") => {
 					logger.debug("[Request]", "Rejected while request:", reason);
 
-					req.removeAllListeners();
+					req.on("error", () => null);
+					req.destroy();
+
 					resolve({
 						error: reason
 					});
