@@ -1,6 +1,6 @@
 const applescript = require("applescript");
 
-const getCurrentTrackInfo = () => new Promise((resolve) => {
+const getCurrentTrackInfo = () => {
 	const script = `
 if application "Music" is running then
 	tell application "Music"
@@ -74,7 +74,7 @@ end if`;
 	});
 
 	return Promise.race([execution, timeout]);
-});
+};
 
 module.exports = {
 	getCurrentTrackInfo
