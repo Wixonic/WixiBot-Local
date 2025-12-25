@@ -14,13 +14,10 @@ const info = {
 		process: async (logger, settings) => {
 			let song = await getCurrentTrackInfo();
 
-			if (song?.state === "PAUSED" && currentSong) {
-				song = {
-					...currentSong,
-					state: "PAUSED"
-				};
+			if (song === undefined) {
+				logger.warn("[Music] Failed to fetch track info");
+				return false;
 			}
-
 			const needsUpdate = () => {
 				if (song === null && currentSong === null) return false;
 				if (song === null || currentSong === null) return true;
