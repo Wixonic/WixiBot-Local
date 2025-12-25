@@ -4,7 +4,7 @@ const { getCurrentTrackInfo } = require("../lib/music.js");
 let currentSong = null;
 
 /**
- * @type {import("../types").HandlerInfo}
+ * @type {import("../types.d.ts").HandlerInfo}
  */
 const info = {
 	path: "/music/",
@@ -29,13 +29,18 @@ const info = {
 			};
 
 			if (needsUpdate()) {
-				if (song === null) await removeActivity(logger, settings, "music");
-				else await addActivity(logger, settings, "music", song);
+				let result;
+				if (song === null) result = await removeActivity(logger, settings, "music");
+				else result = await addActivity(logger, settings, "music", song);
 
-				currentSong = song;
+				if (!result?.error) {
+					currentSong = song;
+				} else {
+					logger.warn("[Music] Failed to update activity:", result.error);
+				}
 			}
 
-			return currentSong === null;
+			return false;
 		}
 	}
 };
