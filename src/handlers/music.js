@@ -2,6 +2,7 @@ const { addActivity, removeActivity } = require("../lib/activity.js");
 const { getCurrentTrackInfo } = require("../lib/music.js");
 
 let currentSong = null;
+let lastUpdate = 0;
 
 /**
  * @type {import("../types.d.ts").HandlerInfo}
@@ -25,7 +26,8 @@ const info = {
 				return currentSong.state !== song.state ||
 					currentSong.track !== song.track ||
 					currentSong.artist !== song.artist ||
-					Math.floor(currentSong.startedAt / 2000) !== Math.floor(song.startedAt / 2000);
+					Math.floor(currentSong.startedAt / 2000) !== Math.floor(song.startedAt / 2000) ||
+					Date.now() - lastUpdate > 20 * 1000;
 			};
 
 			if (needsUpdate()) {
@@ -35,6 +37,7 @@ const info = {
 
 				if (!result?.error) {
 					currentSong = song;
+					lastUpdate = Date.now();
 				} else {
 					logger.warn("[Music] Failed to update activity:", result.error);
 				}
