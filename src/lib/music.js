@@ -1,7 +1,10 @@
 const applescript = require("applescript");
 
+const Performance = require("./performance.js");
+
 const getCurrentTrackInfo = () => {
-	const script = `
+	return Performance.measure("Music", "Get Current Track", () => {
+		const script = `
 if application "Music" is running then
 	tell application "Music"
 		try
@@ -40,40 +43,41 @@ else
 	return {"STOPPED", "", "", "", 0, 0}
 end if`;
 
-	const timeout = new Promise((resolve) => setTimeout(() => resolve(undefined), 5000));
+		const timeout = new Promise((resolve) => setTimeout(() => resolve(undefined), 5000));
 
-	const execution = new Promise((resolve) => {
-		applescript.execString(script, (e, result) => {
-			if (e) {
-				console.error("AppleScript error:", e);
-				resolve(undefined);
-			} else if (result[0] === "STOPPED") {
-				resolve(null);
-			} else if (result[0] === "ERROR") {
-				resolve(undefined);
-			} else {
-				const [
-					state,
-					trackName,
-					artistName,
-					albumName,
-					startedAt,
-					duration
-				] = result;
+		const execution = new Promise((resolve) => {
+			applescript.execString(script, (e, result) => {
+				if (e) {
+					console.error("AppleScript error:", e);
+					resolve(undefined);
+				} else if (result[0] === "STOPPED") {
+					resolve(null);
+				} else if (result[0] === "ERROR") {
+					resolve(undefined);
+				} else {
+					const [
+						state,
+						trackName,
+						artistName,
+						albumName,
+						startedAt,
+						duration
+					] = result;
 
-				resolve({
-					state,
-					track: trackName === "" ? "unknown track" : trackName,
-					artist: artistName === "" ? "unknown artist" : artistName,
-					album: albumName === "" ? "unknown album" : albumName,
-					startedAt: Math.floor(Date.now() * 1e-3 - startedAt) * 1e3,
-					duration: Math.floor(duration * 1e3)
-				});
-			}
+					resolve({
+						state,
+						track: trackName === "" ? "unknown track" : trackName,
+						artist: artistName === "" ? "unknown artist" : artistName,
+						album: albumName === "" ? "unknown album" : albumName,
+						startedAt: Math.floor(Date.now() * 1e-3 - startedAt) * 1e3,
+						duration: Math.floor(duration * 1e3)
+					});
+				}
+			});
 		});
-	});
 
-	return Promise.race([execution, timeout]);
+		return Promise.race([execution, timeout]);
+	});
 };
 
 module.exports = {
