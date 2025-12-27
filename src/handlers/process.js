@@ -1,4 +1,5 @@
 const childProcess = require("child_process");
+const WebSocket = require("ws");
 
 /**
  * @type {{audio: string[], video: string[]}}
@@ -52,7 +53,7 @@ const updateDeviceList = (logger) => {
 	});
 };
 
-/** @typedef {{spawn: () => childProcess.ChildProcess, process: childProcess.ChildProcess?, active: boolean, name: string}} CaptureProcess */
+/** @typedef {{spawn: (settings: import("../../types.d.ts").Settings, logger: import("@wixonic/logger").Logger) => childProcess.ChildProcess, process: childProcess.ChildProcess?, active: boolean, binaryOutput?: boolean, name: string}} CaptureProcess */
 
 /**
  * @type {{[name: string]: CaptureProcess}}
@@ -63,14 +64,63 @@ const captureProcess = {
 		name: "Broadcast",
 		spawn: () => null,
 		process: null
+	},
+	micbroadcast: {
+		active: false,
+		binaryOutput: true,
+		name: "Mic Broadcast",
+		spawn: (settings, logger) => {
+			const sox = childProcess.spawn("sox", [
+				"-t", "coreaudio", "BlackHole WixiBot",
+				"-b", "16",
+				"-c", "2",
+				"-r", "48000",
+				"-t", "raw",
+				"-e", "signed-integer",
+				"-q",
+				"-",
+				"vol", "0.5"
+			]);
+
+			const ws = new WebSocket("wss://server.wixonic.fr", {
+				rejectUnauthorized: false
+			});
+
+			ws.on("open", () => {
+				logger.info("WebSocket connected");
+				ws.send(Buffer.from([0x01, ...Buffer.from(settings.secrets.wixkey)]));
+
+				sox.stdout.on("data", (chunk) => {
+					if (ws.readyState === WebSocket.OPEN) ws.send(chunk);
+				});
+			});
+
+			ws.on("error", (e) => {
+				logger.warn("WebSocket error:", e);
+				sox.kill();
+			});
+
+			ws.on("close", (code, reason) => {
+				logger.warn("WebSocket closed:", code, reason);
+				sox.kill();
+			});
+
+			sox.on("close", () => {
+				if (ws.readyState === WebSocket.OPEN) ws.close();
+			});
+
+			return sox;
+		},
+		process: null
 	}
 };
 
 /**
  * @param {import("@wixonic/logger").Logger} logger
  * @param {CaptureProcess} cp
+ * @param {import("../../types.d.ts").Settings} settings
  */
-const startProcess = (logger, cp) => {
+const startProcess = (logger, cp, settings) => {
 	const cpLogger = {
 		debug: (...args) => logger.debug(`[${cp.name}]`, ...args),
 		error: (...args) => logger.error(`[${cp.name}]`, ...args),
@@ -79,7 +129,7 @@ const startProcess = (logger, cp) => {
 	};
 
 	cpLogger.info("Starting");
-	cp.process = cp.spawn();
+	cp.process = cp.spawn(settings, cpLogger);
 
 	if (cp.process instanceof childProcess.ChildProcess) {
 		cp.process.on("close", () => {
@@ -92,7 +142,9 @@ const startProcess = (logger, cp) => {
 			cp.process = null;
 		});
 		cp.process.stderr?.on("data", (data) => cpLogger.warn(data.toString().trim()));
-		cp.process.stdout?.on("data", (data) => cpLogger.debug(data.toString().trim()));
+		cp.process.stdout?.on("data", (data) => {
+			if (!cp.binaryOutput) cpLogger.debug(data.toString().trim());
+		});
 	}
 };
 
@@ -123,7 +175,7 @@ const stopProcess = (logger, cp) => {
 };
 
 /**
- * @type {import("../../types").HandlerInfo}
+ * @type {import("../../types.d.ts").HandlerInfo}
  */
 const info = {
 	path: "/process/",
