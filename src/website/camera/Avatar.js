@@ -8,24 +8,36 @@ export class Avatar {
 		this.rightEye = null;
 		this.eyeMaterials = [];
 
-		// Constants
 		this.eyesInitialPosition = new THREE.Vector3(0.07, 0, 0.245);
-		this.eyeMovementCoeff = { x: 10, y: 10 };
-		this.blinkingFactor = 0.25;
+		this.eyeMovementCoeff = { x: 15, y: 15 };
+		this.blinkState = { left: false, right: false };
+		this.blinkingThresholdOn = 0.6;
+		this.blinkingThresholdOff = 0.4;
+		this.eyesSyncThreshold = 0.2;
 		this.smilingFactor = 0.3;
 
-		// Lerp Coeffs
 		this.eyeBaseCoeff = 0.1;
 		this.headPositionBaseCoeff = 0.05;
 		this.headQuaternionBaseCoeff = 0.15;
+		this.blendShapeBaseCoeff = {
+			9: 0.5, // eyeBlinkLeft
+			10: 0.5, // eyeBlinkRight
+			44: 0.5, // mouthSmileLeft
+			45: 0.5  // mouthSmileRight
+		};
 
-		// State targets
+		this.smoothedBlendShapes = {
+			9: 0, // eyeBlinkLeft
+			10: 0, // eyeBlinkRight
+			44: 0, // mouthSmileLeft
+			45: 0  // mouthSmileRight
+		};
+
 		this.headTargetPosition = new THREE.Vector3();
 		this.headTargetQuaternion = new THREE.Quaternion();
 		this.leftEyeTargetPosition = new THREE.Vector3();
 		this.rightEyeTargetPosition = new THREE.Vector3();
 
-		// Caching vectors to avoid allocation in loop
 		this.dummyVector = new THREE.Vector3();
 	}
 
@@ -34,7 +46,6 @@ export class Avatar {
 		await this._loadTextures();
 		this._setupEyes();
 
-		// Initialize targets
 		this.leftEyeTargetPosition.copy(this.leftEye.position);
 		this.rightEyeTargetPosition.copy(this.rightEye.position);
 	}
@@ -76,7 +87,6 @@ export class Avatar {
 		this.leftEye = new THREE.Mesh(eyeGeometry, this.eyeMaterials[0]);
 		this.rightEye = new THREE.Mesh(eyeGeometry, this.eyeMaterials[0]);
 
-		// Store initial positions relative to parent (Head)
 		this.leftEye.initialX = -this.eyesInitialPosition.x;
 		this.leftEye.initialY = this.eyesInitialPosition.y;
 		this.leftEye.initialZ = this.eyesInitialPosition.z;
@@ -109,7 +119,7 @@ export class Avatar {
 			this.headTargetPosition.set(
 				Math.min(Math.max(-m[12], -15), 15) / 15,
 				Math.min(Math.max(m[13], -12), 12) / 25,
-				Math.min((m[14] + 45) / 15, 0.5)
+				Math.min((m[14] + 45) / 15, 1.15)
 			);
 
 			const headTargetRotation = new THREE.Euler(
@@ -144,23 +154,45 @@ export class Avatar {
 		}
 
 		if (face.blendShapes?.categories) {
-			const blinkLeft = face.blendShapes.categories[9]?.score || 0;
-			const blinkRight = face.blendShapes.categories[10]?.score || 0;
-			const smile = (face.blendShapes.categories[44]?.score + face.blendShapes.categories[45]?.score) / 2 || 0;
+			const smooth = (idx, factor) => {
+				const raw = face.blendShapes.categories[idx]?.score || 0;
+				const alpha = factor || 0.2;
+				this.smoothedBlendShapes[idx] = THREE.MathUtils.lerp(this.smoothedBlendShapes[idx], raw, alpha);
+				return this.smoothedBlendShapes[idx];
+			};
 
-			const isBlinking = blinkLeft > this.blinkingFactor || blinkRight > this.blinkingFactor;
-			const isSmiling = !isBlinking && smile > this.smilingFactor;
+			const blinkLeft = smooth(9, this.blendShapeBaseCoeff[9]);
+			const blinkRight = smooth(10, this.blendShapeBaseCoeff[10]);
+			const smile = (smooth(44, 0.1) + smooth(45, 0.1)) / 2;
 
-			const targetState = isSmiling ? 2 : (isBlinking ? 1 : 0);
+			const updateState = (currentState, score) => {
+				if (!currentState && score > this.blinkingThresholdOn) return true;
+				if (currentState && score < this.blinkingThresholdOff) return false;
+				return currentState;
+			};
 
-			if (this.leftEye.currentEyeState !== targetState) {
-				this.leftEye.currentEyeState = targetState;
-				this.leftEye.material = this.eyeMaterials[targetState];
+			this.blinkState.left = updateState(this.blinkState.left, blinkLeft);
+			this.blinkState.right = updateState(this.blinkState.right, blinkRight);
+
+			let renderLeft = this.blinkState.left;
+			let renderRight = this.blinkState.right;
+
+			if (renderLeft && blinkRight > this.eyesSyncThreshold) renderRight = true;
+			if (renderRight && blinkLeft > this.eyesSyncThreshold) renderLeft = true;
+
+			const isSmiling = smile > this.smilingFactor;
+
+			const targetStateLeft = isSmiling ? 2 : (renderLeft ? 1 : 0);
+			const targetStateRight = isSmiling ? 2 : (renderRight ? 1 : 0);
+
+			if (this.leftEye.currentEyeState !== targetStateLeft) {
+				this.leftEye.currentEyeState = targetStateLeft;
+				this.leftEye.material = this.eyeMaterials[targetStateLeft];
 			}
 
-			if (this.rightEye.currentEyeState !== targetState) {
-				this.rightEye.currentEyeState = targetState;
-				this.rightEye.material = this.eyeMaterials[targetState];
+			if (this.rightEye.currentEyeState !== targetStateRight) {
+				this.rightEye.currentEyeState = targetStateRight;
+				this.rightEye.material = this.eyeMaterials[targetStateRight];
 			}
 		}
 	}
