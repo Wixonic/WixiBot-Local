@@ -17,7 +17,7 @@ export class Avatar {
 		this.smilingFactor = 0.3;
 
 		this.eyeBaseCoeff = 0.1;
-		this.headPositionBaseCoeff = 0.05;
+		this.headPositionBaseCoeff = 0.02;
 		this.headQuaternionBaseCoeff = 0.15;
 		this.blendShapeBaseCoeff = {
 			9: 0.5, // eyeBlinkLeft
@@ -119,7 +119,7 @@ export class Avatar {
 			this.headTargetPosition.set(
 				Math.min(Math.max(-m[12], -15), 15) / 15,
 				Math.min(Math.max(m[13], -12), 12) / 25,
-				Math.min((m[14] + 45) / 15, 0.6)
+				Math.min((m[14] + 45) / 15, 0)
 			);
 
 			const headTargetRotation = new THREE.Euler(
