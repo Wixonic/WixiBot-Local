@@ -43,6 +43,13 @@ class App {
 		this.faceTracker = new FaceTracker();
 		await this.faceTracker.init();
 
+		document.body.addEventListener("click", (e) => {
+			const container = document.getElementById("container");
+			if (container && !container.contains(e.target)) {
+				container.classList.toggle("hidden");
+			}
+		});
+
 		this.isRunning = true;
 		this.loop();
 	}

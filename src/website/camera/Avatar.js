@@ -8,7 +8,7 @@ export class Avatar {
 		this.rightEye = null;
 		this.eyeMaterials = [];
 
-		this.eyesInitialPosition = new THREE.Vector3(0.07, 0, 0.245);
+		this.eyesInitialPosition = new THREE.Vector3(0.07, 0.22, 0.245);
 		this.eyeMovementCoeff = { x: 15, y: 15 };
 		this.blinkState = { left: false, right: false };
 		this.blinkingThresholdOn = 0.6;
@@ -119,7 +119,7 @@ export class Avatar {
 			this.headTargetPosition.set(
 				Math.min(Math.max(-m[12], -15), 15) / 15,
 				Math.min(Math.max(m[13], -12), 12) / 25,
-				Math.min((m[14] + 45) / 15, 1.15)
+				Math.min((m[14] + 45) / 15, 0.6)
 			);
 
 			const headTargetRotation = new THREE.Euler(
