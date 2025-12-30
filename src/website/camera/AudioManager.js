@@ -15,14 +15,30 @@ export class AudioManager {
 			await this.setDevice(null);
 			await this.enumerateDevices();
 
+			const options = Array.from(this.selectElement.options);
+			let selectedId = options.length > 0 ? options[0].value : null;
+
+			// 1. Cache
 			const savedDeviceId = localStorage.getItem("selectedMicrophoneId");
-			if (savedDeviceId) {
-				const options = Array.from(this.selectElement.options);
-				const deviceExists = options.some(opt => opt.value === savedDeviceId);
-				if (deviceExists) {
-					this.selectElement.value = savedDeviceId;
-					await this.setDevice(savedDeviceId);
+			const savedOption = options.find(opt => opt.value === savedDeviceId);
+
+			if (savedOption) {
+				selectedId = savedDeviceId;
+			} else {
+				// 2. Smart Selection
+				const waveMic = options.find(opt => opt.text.toLowerCase().includes("wave"));
+				const macbookMic = options.find(opt => opt.text.toLowerCase().includes("macbook"));
+
+				if (waveMic) {
+					selectedId = waveMic.value;
+				} else if (macbookMic) {
+					selectedId = macbookMic.value;
 				}
+			}
+
+			if (selectedId) {
+				this.selectElement.value = selectedId;
+				await this.setDevice(selectedId);
 			}
 
 			this.selectElement.addEventListener("change", async (e) => {

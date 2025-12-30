@@ -10,6 +10,7 @@ export class CameraManager {
 
 		if (this.select) {
 			this.select.addEventListener("change", async () => {
+				localStorage.setItem("selectedCameraId", this.select.value);
 				await this.startCamera(this.select.value);
 			});
 		}
@@ -57,6 +58,29 @@ export class CameraManager {
 			option.textContent = device.label || `Camera ${index + 1}`;
 			this.select.appendChild(option);
 		});
+
+		// Smart selection logic
+		if (videoDevices.length > 0) {
+			let selectedId = videoDevices[0].deviceId; // Default to first
+
+			const savedId = localStorage.getItem("selectedCameraId");
+			const savedDevice = videoDevices.find(d => d.deviceId === savedId);
+
+			if (savedDevice) {
+				selectedId = savedDevice.deviceId;
+			} else {
+				const macbookCam = videoDevices.find(d => d.label.toLowerCase().includes("macbook"));
+				const genericCam = videoDevices.find(d => d.label.toLowerCase().includes("cam"));
+
+				if (macbookCam) {
+					selectedId = macbookCam.deviceId;
+				} else if (genericCam) {
+					selectedId = genericCam.deviceId;
+				}
+			}
+
+			this.select.value = selectedId;
+		}
 	}
 
 	async startCamera(deviceId = null) {
@@ -65,7 +89,7 @@ export class CameraManager {
 		}
 
 		const constraints = {
-			video: deviceId ? { deviceId: { exact: deviceId }, width: { ideal: 1920 }, height: { ideal: 1080 } } : { width: { ideal: 1920 }, height: { ideal: 1080 } },
+			video: deviceId ? { deviceId: { exact: deviceId }, width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 1280 }, height: { ideal: 720 } },
 			audio: false
 		};
 

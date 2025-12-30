@@ -128,7 +128,7 @@ class App {
 		};
 
 		// Initial start
-		resetTimer();
+		// resetTimer(); // Start hidden, wait for interaction
 
 		// Listen for activity
 		document.body.addEventListener("mousemove", resetTimer);

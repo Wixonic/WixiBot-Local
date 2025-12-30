@@ -21,8 +21,8 @@ export class Avatar {
 		this.smilingFactor = 0.3;
 
 		this.eyeBaseCoeff = 0.1;
-		this.headPositionBaseCoeff = 0.02;
-		this.headQuaternionBaseCoeff = 0.15;
+		this.headPositionBaseCoeff = 0.1;
+		this.headQuaternionBaseCoeff = 0.1;
 		this.blendShapeBaseCoeff = {
 			9: 0.5, // eyeBlinkLeft
 			10: 0.5, // eyeBlinkRight

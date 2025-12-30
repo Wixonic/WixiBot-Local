@@ -9,7 +9,7 @@ export class SceneManager {
 		this.camera = null;
 		this.renderer = null;
 
-		this.cameraPosition = [0, 0, 0.4];
+		this.cameraPosition = [0, 0.15, 0.7];
 		this.primaryLightPos = [4, 5, 10];
 		this.secondaryLightPos = [-5, 2, 5];
 

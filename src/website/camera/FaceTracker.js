@@ -4,7 +4,7 @@ export class FaceTracker {
 	constructor() {
 		this.faceLandmarker = null;
 		this.lastDetectTime = 0;
-		this.detectionFps = 60;
+		this.detectionFps = 30;
 	}
 
 	async init() {
@@ -14,14 +14,14 @@ export class FaceTracker {
 			this.faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
 				baseOptions: {
 					modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task",
-					delegate: "CPU"
+					delegate: "GPU"
 				},
 				numFaces: 1,
 				runningMode: "VIDEO",
 				outputFaceBlendshapes: true,
 				outputFacialTransformationMatrixes: true,
-				minDetectionConfidence: 0.8,
-				minTrackingConfidence: 0.8
+				minDetectionConfidence: 0.6,
+				minTrackingConfidence: 0.6
 			});
 			console.log("FaceLandmarker initialized");
 		} catch (e) {
