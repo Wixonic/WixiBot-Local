@@ -13,6 +13,7 @@ export class SceneManager {
 		this.primaryLightPos = [4, 5, 10];
 		this.secondaryLightPos = [-5, 2, 5];
 
+
 		this.resizeObserver = null;
 	}
 

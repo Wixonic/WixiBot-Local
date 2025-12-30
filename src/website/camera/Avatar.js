@@ -3,10 +3,14 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 export class Avatar {
 	constructor() {
+		this.emissionFactor = 5;
+
 		this.head = null;
 		this.leftEye = null;
 		this.rightEye = null;
 		this.eyeMaterials = [];
+
+		this.soundIndicators = [];
 
 		this.eyesInitialPosition = new THREE.Vector3(0.07, 0.22, 0.245);
 		this.eyeMovementCoeff = { x: 15, y: 15 };
@@ -44,7 +48,9 @@ export class Avatar {
 	async init() {
 		await this._loadModel();
 		await this._loadTextures();
+		await this._loadTextures();
 		this._setupEyes();
+		this._setupSoundIndicator();
 
 		this.leftEyeTargetPosition.copy(this.leftEye.position);
 		this.rightEyeTargetPosition.copy(this.rightEye.position);
@@ -61,31 +67,33 @@ export class Avatar {
 
 	async _loadTextures() {
 		const textureLoader = new THREE.TextureLoader();
-		const paths = ["./eye/default/", "./eye/blink/", "./eye/happy/"];
+		const paths = ["./eye/default", "./eye/blink", "./eye/happy"];
 
 		for (const path of paths) {
-			try {
-				const [color, alpha] = await Promise.all([
-					textureLoader.loadAsync(path + "color.png"),
-					textureLoader.loadAsync(path + "alpha.png")
-				]);
+			const texture = await textureLoader.loadAsync(path + ".png");
 
-				this.eyeMaterials.push(new THREE.MeshBasicMaterial({
-					map: color,
-					alphaMap: alpha,
-					transparent: true
-				}));
-			} catch (e) {
-				console.error(`Failed to load texture ${path}:`, e);
-				this.eyeMaterials.push(new THREE.MeshBasicMaterial({ color: 0xff0000 }));
-			}
+			this.eyeMaterials.push(new THREE.MeshBasicMaterial({
+				map: texture,
+				transparent: true,
+				polygonOffset: true,
+				polygonOffsetFactor: -1,
+				depthWrite: false
+			}));
 		}
 	}
 
 	_setupEyes() {
 		const eyeGeometry = new THREE.PlaneGeometry(0.1, 0.1);
-		this.leftEye = new THREE.Mesh(eyeGeometry, this.eyeMaterials[0]);
-		this.rightEye = new THREE.Mesh(eyeGeometry, this.eyeMaterials[0]);
+
+		this.leftEye = new THREE.Group();
+		this.rightEye = new THREE.Group();
+
+		for (let i = 0; i < this.emissionFactor; i++) {
+			const leftMesh = new THREE.Mesh(eyeGeometry, this.eyeMaterials[0]);
+			const rightMesh = new THREE.Mesh(eyeGeometry, this.eyeMaterials[0]);
+			this.leftEye.add(leftMesh);
+			this.rightEye.add(rightMesh);
+		}
 
 		this.leftEye.initialX = -this.eyesInitialPosition.x;
 		this.leftEye.initialY = this.eyesInitialPosition.y;
@@ -103,6 +111,35 @@ export class Avatar {
 
 		this.head.add(this.leftEye);
 		this.head.add(this.rightEye);
+	}
+
+	_setupSoundIndicator() {
+		const loader = new THREE.TextureLoader();
+		loader.load("./sound_indicator.png", (texture) => {
+			const geometry = new THREE.PlaneGeometry(0.386, 0.206);
+			const material = new THREE.MeshBasicMaterial({
+				map: texture,
+				transparent: true,
+				opacity: 0,
+				blending: THREE.AdditiveBlending,
+				depthWrite: false
+			});
+
+			this.soundIndicators = [];
+			for (let i = 0; i < this.emissionFactor; i++) {
+				const mesh = new THREE.Mesh(geometry, material);
+				mesh.position.set(0, 0.2, 0.241);
+				this.head.add(mesh);
+				this.soundIndicators.push(mesh);
+			}
+		});
+	}
+
+	updateSoundIndicator(volume) {
+		if (this.soundIndicators && this.soundIndicators.length > 0) {
+			const easedVolume = 1 - Math.pow(1 - volume, 3);
+			this.soundIndicators[0].material.opacity = easedVolume;
+		}
 	}
 
 	update(faceData, delta) {
@@ -187,12 +224,16 @@ export class Avatar {
 
 			if (this.leftEye.currentEyeState !== targetStateLeft) {
 				this.leftEye.currentEyeState = targetStateLeft;
-				this.leftEye.material = this.eyeMaterials[targetStateLeft];
+				this.leftEye.children.forEach((mesh) => {
+					mesh.material = this.eyeMaterials[targetStateLeft];
+				});
 			}
 
 			if (this.rightEye.currentEyeState !== targetStateRight) {
 				this.rightEye.currentEyeState = targetStateRight;
-				this.rightEye.material = this.eyeMaterials[targetStateRight];
+				this.rightEye.children.forEach((mesh) => {
+					mesh.material = this.eyeMaterials[targetStateRight];
+				});
 			}
 		}
 	}

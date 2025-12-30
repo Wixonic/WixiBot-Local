@@ -1,7 +1,8 @@
+import { AudioManager } from "./AudioManager.js";
+import { Avatar } from "./Avatar.js";
 import { CameraManager } from "./CameraManager.js";
 import { FaceTracker } from "./FaceTracker.js";
 import { SceneManager } from "./SceneManager.js";
-import { Avatar } from "./Avatar.js";
 
 class App {
 	constructor() {
@@ -9,6 +10,7 @@ class App {
 		this.faceTracker = null;
 		this.sceneManager = null;
 		this.avatar = null;
+		this.audioManager = null;
 
 		this.canvas2D = document.getElementById("canvas2D");
 		this.ctx2D = this.canvas2D.getContext("2d");
@@ -28,7 +30,6 @@ class App {
 			document.getElementById("canvas2D")
 		);
 		this.sceneManager.init();
-
 		this.avatar = new Avatar();
 		await this.avatar.init();
 		if (this.avatar.head) {
@@ -39,6 +40,10 @@ class App {
 		const cameraSelect = document.getElementById("camera");
 		this.cameraManager = new CameraManager(videoElement, cameraSelect);
 		await this.cameraManager.init();
+
+		const microphoneSelect = document.getElementById("microphone");
+		this.audioManager = new AudioManager(microphoneSelect);
+		await this.audioManager.init();
 
 		this.faceTracker = new FaceTracker();
 		await this.faceTracker.init();
@@ -91,6 +96,11 @@ class App {
 
 		if (this.avatar) {
 			this.avatar.update(this.latestFaceData, delta);
+		}
+
+		if (this.audioManager && this.avatar) {
+			const volume = this.audioManager.getVolume();
+			this.avatar.updateSoundIndicator(volume);
 		}
 
 		if (this.sceneManager) {
