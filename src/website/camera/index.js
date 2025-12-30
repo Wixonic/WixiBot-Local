@@ -48,12 +48,7 @@ class App {
 		this.faceTracker = new FaceTracker();
 		await this.faceTracker.init();
 
-		document.body.addEventListener("click", (e) => {
-			const container = document.getElementById("container");
-			if (container && !container.contains(e.target)) {
-				container.classList.toggle("hidden");
-			}
-		});
+		this.setupUIAutoHiding();
 
 		this.isRunning = true;
 		this.loop();
@@ -108,6 +103,37 @@ class App {
 		}
 
 		requestAnimationFrame(this.loop);
+	}
+	setupUIAutoHiding() {
+		const container = document.getElementById("container");
+		if (!container) return;
+
+		let hideTimeout;
+
+		const showUI = () => {
+			container.classList.remove("hidden");
+		};
+
+		const resetTimer = () => {
+			showUI();
+			clearTimeout(hideTimeout);
+			hideTimeout = setTimeout(() => {
+				// Don't hide if a child element has focus (e.g. select is open/focused)
+				if (container.contains(document.activeElement)) {
+					resetTimer(); // try again later
+				} else {
+					container.classList.add("hidden");
+				}
+			}, 3000);
+		};
+
+		// Initial start
+		resetTimer();
+
+		// Listen for activity
+		document.body.addEventListener("mousemove", resetTimer);
+		document.body.addEventListener("click", resetTimer);
+		document.body.addEventListener("keydown", resetTimer);
 	}
 }
 
