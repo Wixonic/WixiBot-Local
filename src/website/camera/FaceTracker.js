@@ -4,7 +4,7 @@ export class FaceTracker {
 	constructor() {
 		this.faceLandmarker = null;
 		this.lastDetectTime = 0;
-		this.detectionFps = 30;
+		this.detectionFps = 60;
 	}
 
 	async init() {
