@@ -3,7 +3,7 @@
 	"displayName": "WixiBot Local",
 	"description": "WixiLand Management Agency's local server",
 	"author": "Wixonic <contact@wixonic.fr> (https://wixonic.fr)",
-	"version": "1.0.0.rc-1",
+	"version": "1.0.0.rc-2",
 	"license": "Wix Non-Commercial License",
 	"repository": "github:Wixonic/WixiBot-Local",
 	"funding": {
@@ -25,7 +25,7 @@
 		"express": "5.2.1",
 		"jsdom": "27.4.0",
 		"sharp": "0.34.5",
-		"ws": "8.18.3"
+		"ws": "8.19.0"
 	},
 	"devDependencies": {
 		"@types/node": "24.10.4"
