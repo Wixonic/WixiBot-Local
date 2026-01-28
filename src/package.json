@@ -21,13 +21,13 @@
 	"dependencies": {
 		"@wixonic/logger": "1.1.0",
 		"applescript": "1.0.0",
-		"cors": "2.8.5",
+		"cors": "2.8.6",
 		"express": "5.2.1",
 		"jsdom": "27.4.0",
 		"sharp": "0.34.5",
 		"ws": "8.19.0"
 	},
 	"devDependencies": {
-		"@types/node": "24.10.4"
+		"@types/node": "24.10.9"
 	}
 }
