@@ -14,6 +14,7 @@ class App {
 
 		this.canvas2D = document.getElementById("canvas2D");
 		this.ctx2D = this.canvas2D.getContext("2d");
+		this.canvas3D = document.getElementById("canvas3D");
 
 		this.lastFrameTime = performance.now();
 		this.isRunning = false;
@@ -26,8 +27,8 @@ class App {
 
 	async init() {
 		this.sceneManager = new SceneManager(
-			document.getElementById("canvas3D"),
-			document.getElementById("canvas2D")
+			this.canvas3D,
+			this.canvas2D
 		);
 		this.sceneManager.init();
 		this.avatar = new Avatar();
@@ -78,7 +79,12 @@ class App {
 				this.isDetecting = true;
 				this.faceTracker.detect(this.cameraManager.video, now)
 					.then(data => {
-						if (data) this.latestFaceData = data;
+						if (data) {
+							this.latestFaceData = data;
+							this.canvas3D.classList.remove("fade-out");
+						} else {
+							this.canvas3D.classList.add("fade-out");
+						}
 					})
 					.catch(e => {
 						console.warn("Detection error:", e);

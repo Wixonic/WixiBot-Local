@@ -47,7 +47,7 @@ export class FaceTracker {
 					matrix: results.facialTransformationMatrixes[0]
 				};
 				return this.lastResult;
-			}
+			} else this.lastResult = null;
 		} catch (e) {
 			console.warn("Face landmarker error:", e);
 			if (e.message.includes("Unset") || e.message.includes("call_indirect")) {
