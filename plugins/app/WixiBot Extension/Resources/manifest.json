@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"name": "SafariRPC",
 	"description": "Safari Extension for WixiBot",
-	"version": "0.14.0",
+	"version": "1.0.0",
 	"icons": {
 		"48": "images/icon-48.png",
 		"96": "images/icon-96.png",

@@ -28,6 +28,6 @@
 		"ws": "8.19.0"
 	},
 	"devDependencies": {
-		"@types/node": "24.10.13"
+		"@types/node": "24.10.14"
 	}
 }
